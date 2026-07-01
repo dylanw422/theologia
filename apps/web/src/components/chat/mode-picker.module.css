@@ -1,0 +1,39 @@
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
+.chip {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--parchment-dim);
+  background: transparent;
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  padding: 0.42rem 0.75rem;
+  cursor: pointer;
+  transition:
+    color 0.22s ease,
+    border-color 0.22s ease,
+    background-color 0.22s ease;
+}
+
+.chip:hover {
+  color: var(--parchment);
+  border-color: rgba(201, 162, 78, 0.55);
+}
+
+.chip:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.chipActive {
+  color: var(--gold);
+  border-color: var(--gold);
+  background: rgba(201, 162, 78, 0.08);
+}

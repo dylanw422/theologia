@@ -1,0 +1,86 @@
+/* Mirrors framework-picker's chip/select/caret pattern so mixed controls
+   read as one apparatus row inside the composer. */
+
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  transition: border-color 0.22s ease;
+  max-width: 100%;
+}
+.chip:hover,
+.chip:focus-within {
+  border-color: rgba(201, 162, 78, 0.55);
+}
+
+.select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  max-width: 17rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--parchment-dim);
+  padding: 0.5rem 1.7rem 0.5rem 0.75rem;
+}
+.chipSet .select {
+  color: var(--gold);
+}
+.select option {
+  background: var(--ink-deep);
+  color: var(--parchment);
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.caret {
+  position: absolute;
+  right: 0.5rem;
+  color: var(--stone);
+  pointer-events: none;
+}
+
+.versus {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone);
+  padding: 0 0.1rem;
+}
+
+.selected {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: rgba(201, 162, 78, 0.07);
+  border: 1px solid rgba(201, 162, 78, 0.4);
+  border-radius: 2px;
+  padding: 0.5rem 0.65rem;
+  cursor: pointer;
+  transition:
+    border-color 0.22s ease,
+    color 0.22s ease;
+}
+.selected:hover {
+  border-color: var(--gold);
+  color: var(--gold-bright);
+}
+.selected:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 2px;
+}
