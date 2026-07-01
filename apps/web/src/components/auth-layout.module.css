@@ -8,6 +8,7 @@
   --gold: #c9a24e;
   --gold-bright: #e6c984;
   --hairline: rgba(201, 162, 78, 0.26);
+  --error: #c0392b;
 
   position: relative;
   isolation: isolate;

@@ -5,6 +5,8 @@ import { api } from "@theologia/backend/convex/_generated/api";
 import { buttonVariants } from "@theologia/ui/components/button";
 import { Authenticated, AuthLoading, Unauthenticated, useQuery } from "convex/react";
 
+import AuthLayout from "@/components/auth-layout";
+import authStyles from "@/components/auth-layout.module.css";
 import SignInForm from "@/components/sign-in-form";
 import UserMenu from "@/components/user-menu";
 
@@ -53,7 +55,10 @@ export default function DashboardPage() {
         <DashboardContent />
       </Authenticated>
       <Unauthenticated>
-        <SignInForm />
+        <AuthLayout>
+          <h1 className={authStyles.cardTitle}>Welcome back</h1>
+          <SignInForm />
+        </AuthLayout>
       </Unauthenticated>
       <AuthLoading>
         <div>Loading...</div>

@@ -38,6 +38,7 @@ export default function SignUpForm() {
 
   return (
     <form
+      noValidate
       onSubmit={(e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -52,6 +53,7 @@ export default function SignUpForm() {
               id={field.name}
               name={field.name}
               type="text"
+              autoComplete="name"
               value={field.state.value}
               onBlur={field.handleBlur}
               onChange={(e) => field.handleChange(e.target.value)}
@@ -73,6 +75,7 @@ export default function SignUpForm() {
               id={field.name}
               name={field.name}
               type="email"
+              autoComplete="email"
               value={field.state.value}
               onBlur={field.handleBlur}
               onChange={(e) => field.handleChange(e.target.value)}
@@ -94,6 +97,7 @@ export default function SignUpForm() {
               id={field.name}
               name={field.name}
               type="password"
+              autoComplete="new-password"
               value={field.state.value}
               onBlur={field.handleBlur}
               onChange={(e) => field.handleChange(e.target.value)}

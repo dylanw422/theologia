@@ -8,7 +8,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <div className={styles.overlay} aria-hidden />
       <div className={styles.grain} aria-hidden />
       <div className={styles.shell}>
-        <nav className={styles.nav}>
+        <nav className={styles.nav} aria-label="Site">
           <Link href="/" className={styles.wordmark}>Theologia</Link>
         </nav>
         <main className={styles.main}>

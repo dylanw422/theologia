@@ -37,6 +37,7 @@ export default function SignInForm() {
 
   return (
     <form
+      noValidate
       onSubmit={(e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -51,6 +52,7 @@ export default function SignInForm() {
               id={field.name}
               name={field.name}
               type="email"
+              autoComplete="email"
               value={field.state.value}
               onBlur={field.handleBlur}
               onChange={(e) => field.handleChange(e.target.value)}
@@ -72,6 +74,7 @@ export default function SignInForm() {
               id={field.name}
               name={field.name}
               type="password"
+              autoComplete="current-password"
               value={field.state.value}
               onBlur={field.handleBlur}
               onChange={(e) => field.handleChange(e.target.value)}
