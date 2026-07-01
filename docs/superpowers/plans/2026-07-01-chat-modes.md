@@ -67,11 +67,11 @@ export function blocksToText(blocks: Block[]): string; // flatten for the copy b
 export function deriveTitle(text: string): string;     // unchanged
 ```
 
-- [ ] **Step 1: Update existing tests + add new failing tests** — `createConversation` now takes `{ mode, setup, firstMessage }`; add tests: mode + setup fields land on the conversation; `blocksToText` joins prose/scripture/history text with blank lines; `appendMessage` preserves `blocks`/`actions` and stays immutable.
-- [ ] **Step 2: Run tests, verify new ones fail.**
-- [ ] **Step 3: Implement model changes** (spread `setup` into the conversation; `blocksToText` switch over block types: prose→text, scripture→`reference — text`, history→`heading — text`, source→`work, citation — excerpt`, article→`label — body`, points→items `title: body`, resources→items `title (author)`, comparison→columns `tradition: position`, lexicon→entries `term (translit): gloss`).
-- [ ] **Step 4: Tests pass.**
-- [ ] **Step 5: Commit** `feat(chat): block-based message model + mode-aware conversations`
+- [x] **Step 1: Update existing tests + add new failing tests** — `createConversation` now takes `{ mode, setup, firstMessage }`; add tests: mode + setup fields land on the conversation; `blocksToText` joins prose/scripture/history text with blank lines; `appendMessage` preserves `blocks`/`actions` and stays immutable.
+- [x] **Step 2: Run tests, verify new ones fail.**
+- [x] **Step 3: Implement model changes** (spread `setup` into the conversation; `blocksToText` switch over block types: prose→text, scripture→`reference — text`, history→`heading — text`, source→`work, citation — excerpt`, article→`label — body`, points→items `title: body`, resources→items `title (author)`, comparison→columns `tradition: position`, lexicon→entries `term (translit): gloss`).
+- [x] **Step 4: Tests pass.**
+- [x] **Step 5: Commit** `feat(chat): block-based message model + mode-aware conversations`
 
 ### Task 2: Script engine
 
@@ -104,9 +104,9 @@ export function withReply(c: Conversation, script: Script, opts?: { actionNext?:
 
 Resolution order in `replyFor`: `opts.actionNext` → that step; else `opts.isFirst` → `script.entry`; else `c.nextTypedStep` → that step; else `{ blocks: script.fallback }`. Function-valued `blocks` are called with the conversation. `nextTypedStep` in the result is the resolved step's `onReply` (undefined when fallback). `withReply` appends the assistant message (`content: blocksToText(blocks)`) and sets/clears `nextTypedStep`.
 
-- [ ] **Step 1: Failing tests** with a stub script (entry step with an action → step "b" with `onReply: "c"` → step "c"): entry on `isFirst`; action routing; `onReply` consumed by next typed reply then cleared; fallback when nothing pending; function blocks receive the conversation.
-- [ ] **Step 2: Verify fail. Step 3: Implement. Step 4: Pass.**
-- [ ] **Step 5: Commit** `feat(chat): script engine for mocked multi-step flows`
+- [x] **Step 1: Failing tests** with a stub script (entry step with an action → step "b" with `onReply: "c"` → step "c"): entry on `isFirst`; action routing; `onReply` consumed by next typed reply then cleared; fallback when nothing pending; function blocks receive the conversation.
+- [x] **Step 2: Verify fail. Step 3: Implement. Step 4: Pass.**
+- [x] **Step 5: Commit** `feat(chat): script engine for mocked multi-step flows`
 
 ### Task 3: Mode definitions
 
@@ -136,8 +136,8 @@ export function describeSetup(c: Pick<Conversation, keyof ConversationSetup | "m
 
 Validity: `qa`/`scripture-study` need `framework`; `versus` modes need `framework` + `opposing` + different; `comparison` needs 2–4 unique `traditions`; `catechism` needs `document`; `resources` needs `framework` + `purpose`; `library` always valid. `describeSetup` → `"Reformed · Reformed Baptist"`, `"Reformed vs Arminian"`, `"Reformed · Arminian · Roman Catholic"` (comparison), document/collection/purpose labels, `""` for bare library. Document ids: `westminster`, `heidelberg`, `belgic`, `dort`, `london-1689`, `augsburg`, `luthers-catechisms`, `ecumenical-creeds`, `chalcedon`, `trent`, `baltimore`, `dordrecht`. Collections: `apostolic-fathers`, `ante-nicene`, `nicene-post-nicene`, `medieval`, `reformation`, `councils`. Purposes: `debate-prep`, `sermon-prep`, `personal-study`, `academic-research`.
 
-- [ ] **Steps 1–4 (TDD):** tests: 8 modes with qa first + unique ids; 3 sample prompts each; 12 documents; validity matrix (one assert per rule above, positive + negative); `describeSetup` cases. Implement to pass.
-- [ ] **Step 5: Commit** `feat(chat): mode definitions, setup validity, labels`
+- [x] **Steps 1–4 (TDD):** tests: 8 modes with qa first + unique ids; 3 sample prompts each; 12 documents; validity matrix (one assert per rule above, positive + negative); `describeSetup` cases. Implement to pass.
+- [x] **Step 5: Commit** `feat(chat): mode definitions, setup validity, labels`
 
 ### Task 4: Scripts — qa, library, scripture-study
 
@@ -149,8 +149,8 @@ Each exports `const script: Script`. Content per spec (authored at implementatio
 - **library** entry: prose + two `source` blocks (e.g., Ignatius *To the Smyrnaeans* on the Eucharist; Justin Martyr *First Apology* 61 on baptism); actions: *Explain this plainly* → `plain` (prose), *More from this era* → `more` (prose + source).
 - **scripture-study** entry (function blocks — cite `c.framework` label in prose): scripture + lexicon (2–3 Greek entries) + prose context; actions: *How has my tradition read this?* → `tradition-reading` (prose + history), *Patristic commentary* → `patristic` (prose + source).
 
-- [ ] **Step 1: Write the three scripts.** Structural validity is covered by the Task 8 test; run `bunx tsc --noEmit` here.
-- [ ] **Step 2: Commit** `feat(chat): scripted flows for Q&A, library, scripture study`
+- [x] **Step 1: Write the three scripts.** Structural validity is covered by the Task 8 test; run `bunx tsc --noEmit` here.
+- [x] **Step 2: Commit** `feat(chat): scripted flows for Q&A, library, scripture study`
 
 ### Task 5: Scripts — devils-advocate, debate-prep
 
@@ -159,8 +159,8 @@ Each exports `const script: Script`. Content per spec (authored at implementatio
 - **devils-advocate** entry (function blocks; name opposing tradition): prose framing + `points` kind "objection" (3 items); actions: *Show my tradition's responses* → `responses` (`points` kind "response") with action *Push the counter-rebuttal* → `counter` (prose + history).
 - **debate-prep** entry: prose + `points` kind "objection" with `weight` markers ("Historical frequency: high · weight: heavy" style); actions: *Standard responses from my tradition* → `responses` (`points` kind "response") with actions *Stress-test me (Socratic)* → `socratic` (prose question, `onReply: "socratic-eval"`) and *Export the outline* → `export` (prose: export ships with the Ministry plan); `socratic-eval`: prose evaluation + action *Continue the stress test* → `socratic`.
 
-- [ ] **Step 1: Write both scripts; typecheck.**
-- [ ] **Step 2: Commit** `feat(chat): scripted flows for devil's advocate and debate prep`
+- [x] **Step 1: Write both scripts; typecheck.**
+- [x] **Step 2: Commit** `feat(chat): scripted flows for devil's advocate and debate prep`
 
 ### Task 6: Script — comparison (12-tradition dictionary)
 
@@ -182,9 +182,9 @@ reformed: {
 },
 ```
 
-- [ ] **Step 1: Failing test:** every `FRAMEWORKS` id has a `COMPARISON_ENTRIES` entry with non-empty fields; entry blocks for a 3-tradition conversation yield a comparison block with 3 columns whose `tradition` values are the framework labels.
-- [ ] **Steps 2–4: Verify fail → write all 12 entries + script → pass.**
-- [ ] **Step 5: Commit** `feat(chat): comparison mode with per-tradition content`
+- [x] **Step 1: Failing test:** every `FRAMEWORKS` id has a `COMPARISON_ENTRIES` entry with non-empty fields; entry blocks for a 3-tradition conversation yield a comparison block with 3 columns whose `tradition` values are the framework labels.
+- [x] **Steps 2–4: Verify fail → write all 12 entries + script → pass.**
+- [x] **Step 5: Commit** `feat(chat): comparison mode with per-tradition content`
 
 ### Task 7: Scripts — catechism (12-document dictionary), resources
 
@@ -198,9 +198,9 @@ export const CATECHISM_ARTICLES: Record<string, { label: string; body: string; p
 - **catechism** entry (function blocks): `article` block from `c.document` + prose explanation; actions: *Quiz me* → `quiz` (prose question, `onReply: "quiz-eval"`), *Cross-reference the proofs* → `proofs` (prose + scripture); `quiz-eval`: prose evaluation + action *Ask me another* → `quiz`.
 - **resources** entry: prose + `resources` block (5 items across the 3 tiers, covenant-theology set per GOAL.md example); actions: *Primary sources only* → `primary` (prose + resources of primary sources), *More scholarly* → `scholarly` (prose + scholarly resources).
 
-- [ ] **Step 1: Failing test:** every `DOCUMENTS` id has a `CATECHISM_ARTICLES` entry (non-empty label/body/explanation); catechism entry blocks for `document: "heidelberg"` include an `article` block whose `source` is the Heidelberg label; resources entry includes all three tiers.
-- [ ] **Steps 2–4: fail → implement all 12 articles + resources script → pass.**
-- [ ] **Step 5: Commit** `feat(chat): catechism tutor and resource engine flows`
+- [x] **Step 1: Failing test:** every `DOCUMENTS` id has a `CATECHISM_ARTICLES` entry (non-empty label/body/explanation); catechism entry blocks for `document: "heidelberg"` include an `article` block whose `source` is the Heidelberg label; resources entry includes all three tiers.
+- [x] **Steps 2–4: fail → implement all 12 articles + resources script → pass.**
+- [x] **Step 5: Commit** `feat(chat): catechism tutor and resource engine flows`
 
 ### Task 8: Script registry + seeds
 
@@ -216,9 +216,9 @@ export const SEED_CONVERSATIONS: Conversation[]; // = buildSeeds()
 
 Seed setups: qa Reformed/Reformed Baptist "What does Romans 9 mean for election?"; devils-advocate Reformed vs Arminian on unconditional election; comparison [reformed, arminian-wesleyan, roman-catholic, eastern-orthodox] faith & works; debate-prep Reformed vs Arminian "Regeneration precedes faith"; catechism heidelberg "Walk me through Question 1"; resources Reformed + personal-study "Covenant theology"; library ante-nicene "What did the early church believe about the Eucharist?"; scripture-study Lutheran "1 Peter 3:18–22".
 
-- [ ] **Step 1: Failing tests:** for every mode, `getScript` returns a script whose entry exists, whose every `action.next` and `onReply` reference existing steps, and whose fallback is non-empty (walk `steps` recursively); `SEED_CONVERSATIONS` has 8 conversations, one per mode, each ending with an assistant message with ≥1 block.
-- [ ] **Steps 2–4: fail → implement → pass.** Delete `CANNED_REPLY`/old seeds; update anything importing them.
-- [ ] **Step 5: Commit** `feat(chat): script registry + one seeded study per mode`
+- [x] **Step 1: Failing tests:** for every mode, `getScript` returns a script whose entry exists, whose every `action.next` and `onReply` reference existing steps, and whose fallback is non-empty (walk `steps` recursively); `SEED_CONVERSATIONS` has 8 conversations, one per mode, each ending with an assistant message with ≥1 block.
+- [x] **Steps 2–4: fail → implement → pass.** Delete `CANNED_REPLY`/old seeds; update anything importing them.
+- [x] **Step 5: Commit** `feat(chat): script registry + one seeded study per mode`
 
 ### Task 9: Message blocks renderer
 
@@ -235,8 +235,8 @@ Seed setups: qa Reformed/Reformed Baptist "What does Romans 9 mean for election?
 - **source** — excerpt card: Fraunces italic excerpt with hanging quote, mono citation footer `AUTHOR · WORK · CITATION` in `--stone`/gold.
 - **article** — mono `source` eyebrow, Fraunces `label` heading, Inter body, `proofs` as mono chip row.
 
-- [ ] **Step 1: Implement component + CSS; typecheck.** (Visual component — no unit tests; verified in Task 13 walkthrough.)
-- [ ] **Step 2: Commit** `feat(chat): block renderer for structured answers`
+- [x] **Step 1: Implement component + CSS; typecheck.** (Visual component — no unit tests; verified in Task 13 walkthrough.)
+- [x] **Step 2: Commit** `feat(chat): block renderer for structured answers`
 
 ### Task 10: Mode picker + setup picker
 
@@ -257,8 +257,8 @@ export default function SetupPicker({ mode, setup, onChange }:
 
 Changing mode resets setup (owned by `ChatEmpty`, Task 11). Selects follow `framework-picker.module.css` chip/select/caret pattern.
 
-- [ ] **Step 1: Implement both + CSS; typecheck.**
-- [ ] **Step 2: Commit** `feat(chat): mode picker and per-mode setup controls`
+- [x] **Step 1: Implement both + CSS; typecheck.**
+- [x] **Step 2: Commit** `feat(chat): mode picker and per-mode setup controls`
 
 ### Task 11: ChatEmpty rewrite
 
@@ -266,8 +266,8 @@ Changing mode resets setup (owned by `ChatEmpty`, Task 11). Selects follow `fram
 
 New props: `onStart(input: { mode: ModeId; setup: ConversationSetup; firstMessage: string })`. State: `mode` (default `"qa"`), `setup` (`ConversationSetup`, reset on mode change). Layout: mark → `ModePicker` → headline `{pre}<em>{em}</em>{post}` → lede → composer (`contextFirst`, context = `SetupPicker`, placeholder from mode, disabled unless `isSetupValid`) → sample prompt cards from `getMode(mode).samplePrompts` (disabled unless valid). Keep reveal animation classes; add a `key={mode}` on the swap-content wrapper so copy changes re-reveal.
 
-- [ ] **Step 1: Implement; typecheck.**
-- [ ] **Step 2: Commit** `feat(chat): mode-aware new-study screen`
+- [x] **Step 1: Implement; typecheck.**
+- [x] **Step 2: Commit** `feat(chat): mode-aware new-study screen`
 
 ### Task 12: ChatThread blocks + action chips + header
 
@@ -278,8 +278,8 @@ New props: `onStart(input: { mode: ModeId; setup: ConversationSetup; firstMessag
 - Assistant rows render `<MessageBlocks blocks={message.blocks} />` when present, else `content`; copy uses `message.content` (already flattened).
 - After the **last** assistant message (and only when `!isReplying`): render `message.actions` as a chip row — mono ghost buttons, gold on hover → `onAction(a)`.
 
-- [ ] **Step 1: Implement; typecheck.**
-- [ ] **Step 2: Commit** `feat(chat): structured answers and follow-up chips in thread`
+- [x] **Step 1: Implement; typecheck.**
+- [x] **Step 2: Commit** `feat(chat): structured answers and follow-up chips in thread`
 
 ### Task 13: ChatApp wiring + sidebar marker
 
@@ -291,12 +291,12 @@ New props: `onStart(input: { mode: ModeId; setup: ConversationSetup; firstMessag
 - `scheduleReply(id, opts)`: `setIsReplying(true)`; timeout → `updateConversation(id, (c) => withReply(c, getScript(c.mode), opts))`; `setIsReplying(false)`.
 - Sidebar row marker: `` `${getMode(c.mode).label}${describeSetup(c) ? " · " + describeSetup(c) : ""}` ``, ellipsized.
 
-- [ ] **Step 1: Implement; run full test suite + typecheck.**
-- [ ] **Step 2: Manual walkthrough** (`bun run dev`, port 3001): each of the 8 modes — pick, validate gating, send, verify entry blocks render, click every action chip, type into `onReply` steps (quiz, Socratic), check fallback reply, sidebar markers, seeds, header chips, reduced-motion sanity.
-- [ ] **Step 3: Commit** `feat(chat): wire multi-mode flows through ChatApp`
+- [x] **Step 1: Implement; run full test suite + typecheck.**
+- [x] **Step 2: Manual walkthrough** (`bun run dev`, port 3001): each of the 8 modes — pick, validate gating, send, verify entry blocks render, click every action chip, type into `onReply` steps (quiz, Socratic), check fallback reply, sidebar markers, seeds, header chips, reduced-motion sanity.
+- [x] **Step 3: Commit** `feat(chat): wire multi-mode flows through ChatApp`
 
 ### Task 14: Final verification
 
-- [ ] **Step 1:** `bun run test` (all green), `bunx tsc --noEmit`, `bun run build` in `apps/web`.
-- [ ] **Step 2:** Re-read spec; confirm every section maps to shipped code; fix gaps.
-- [ ] **Step 3: Commit any fixes** `chore(chat): final verification fixes for multi-mode surface`
+- [x] **Step 1:** `bun run test` (all green), `bunx tsc --noEmit`, `bun run build` in `apps/web`.
+- [x] **Step 2:** Re-read spec; confirm every section maps to shipped code; fix gaps.
+- [x] **Step 3: Commit any fixes** `chore(chat): final verification fixes for multi-mode surface`
