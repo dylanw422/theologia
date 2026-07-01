@@ -6,7 +6,7 @@ import Link from "next/link";
 import UserMenu from "@/components/user-menu";
 
 import type { Conversation } from "./lib/chat-state";
-import { getFramework } from "./lib/frameworks";
+import { describeSetup, getMode } from "./lib/modes";
 import styles from "./chat-sidebar.module.css";
 
 export default function ChatSidebar({
@@ -35,7 +35,9 @@ export default function ChatSidebar({
       <p className={styles.indexLabel}>Studies</p>
       <nav className={styles.list} aria-label="Conversations">
         {conversations.map((conversation) => {
-          const label = getFramework(conversation.framework)?.label ?? "";
+          const mode = getMode(conversation.mode).label;
+          const setup = describeSetup(conversation);
+          const label = setup ? `${mode} · ${setup}` : mode;
           const isActive = conversation.id === activeId;
           return (
             <button
