@@ -108,7 +108,7 @@ export default function Hero() {
                 {sec.charAt(0).toUpperCase() + sec.slice(1)}
               </button>
             ))}
-            <Link href="/dashboard" className={styles.navSignIn}>
+            <Link href="/sign-in" className={styles.navSignIn}>
               Sign in
             </Link>
           </div>
