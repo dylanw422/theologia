@@ -1,66 +1,77 @@
-import type { Conversation } from "./chat-state";
+import {
+  createConversation,
+  withReply,
+  type Conversation,
+  type ConversationSetup,
+  type ModeId,
+} from "./chat-state";
+import { getScript } from "./scripts";
 
-/**
- * Placeholder assistant reply used while this route is a UI shell. Real
- * framework-aware answers (Claude + tradition system prompts) arrive in a later
- * slice; until then every send resolves to this so the thread feels alive.
- */
-export const CANNED_REPLY =
-  "This is a preview of Theologia's study environment. In the full release, an answer here would be shaped by your selected tradition — drawing on its confessions, key theologians, and exegetical method — with the relevant church-history context woven in and every Scripture reference exegeted in place. For now the conversation surface is in place and the reasoning is on its way.";
-
-/**
- * A few seeded conversations so the sidebar and thread read as populated on
- * first load. State is in-memory only and resets on reload.
- */
-export const SEED_CONVERSATIONS: Conversation[] = [
+const SEED_INPUTS: {
+  mode: ModeId;
+  setup: ConversationSetup;
+  firstMessage: string;
+}[] = [
   {
-    id: "seed-romans-9",
-    title: "What does Romans 9 mean?",
-    framework: "reformed",
-    subTradition: "reformed-baptist",
-    messages: [
-      {
-        id: "seed-romans-9-1",
-        role: "user",
-        content: "What does Romans 9 mean for unconditional election?",
-      },
-      { id: "seed-romans-9-2", role: "assistant", content: CANNED_REPLY },
-    ],
+    mode: "qa",
+    setup: { framework: "reformed", subTradition: "reformed-baptist" },
+    firstMessage: "Does baptism save?",
   },
   {
-    id: "seed-baptism",
-    title: "Does baptism save?",
-    framework: "lutheran",
-    messages: [
-      {
-        id: "seed-baptism-1",
-        role: "user",
-        content: "Does baptism save, and how should I read 1 Peter 3:21?",
-      },
-      { id: "seed-baptism-2", role: "assistant", content: CANNED_REPLY },
-    ],
+    mode: "devils-advocate",
+    setup: { framework: "reformed", opposing: "arminian-wesleyan" },
+    firstMessage: "Test unconditional election against Romans 9.",
   },
   {
-    id: "seed-justification",
-    title: "Justification: faith and works",
-    framework: "roman-catholic",
-    subTradition: "post-vatican-ii",
-    messages: [
-      {
-        id: "seed-justification-1",
-        role: "user",
-        content: "How do faith and works relate in justification?",
-      },
-      { id: "seed-justification-2", role: "assistant", content: CANNED_REPLY },
-    ],
+    mode: "comparison",
+    setup: {
+      traditions: [
+        "reformed",
+        "arminian-wesleyan",
+        "roman-catholic",
+        "eastern-orthodox",
+      ],
+    },
+    firstMessage: "How do faith and works relate in salvation?",
+  },
+  {
+    mode: "debate-prep",
+    setup: { framework: "reformed", opposing: "arminian-wesleyan" },
+    firstMessage: "Regeneration precedes faith.",
+  },
+  {
+    mode: "catechism",
+    setup: { document: "heidelberg" },
+    firstMessage: "Walk me through Question 1.",
+  },
+  {
+    mode: "resources",
+    setup: { framework: "reformed", purpose: "personal-study" },
+    firstMessage: "Covenant theology",
+  },
+  {
+    mode: "library",
+    setup: { collection: "ante-nicene" },
+    firstMessage: "What did the early church believe about the Eucharist?",
+  },
+  {
+    mode: "scripture-study",
+    setup: { framework: "lutheran" },
+    firstMessage: "1 Peter 3:18–22",
   },
 ];
 
-export const SAMPLE_PROMPTS = [
-  { topic: "Exegesis", prompt: "What does Romans 9 mean for election?" },
-  { topic: "Sacraments", prompt: "Does baptism save?" },
-  {
-    topic: "Soteriology",
-    prompt: "How do faith and works relate in salvation?",
-  },
-];
+/**
+ * One seeded study per mode, each opened with its script's entry reply, so
+ * every answer format is browsable on first load. State is in-memory only and
+ * resets on reload.
+ */
+export function buildSeeds(): Conversation[] {
+  return SEED_INPUTS.map((input) =>
+    withReply(createConversation(input), getScript(input.mode), {
+      isFirst: true,
+    }),
+  );
+}
+
+export const SEED_CONVERSATIONS: Conversation[] = buildSeeds();

@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 
 import { createConversation } from "../chat-state";
 import { FRAMEWORKS } from "../frameworks";
-import { DOCUMENTS } from "../modes";
+import { SEED_CONVERSATIONS } from "../mock-chat";
+import { DOCUMENTS, MODES } from "../modes";
+import { getScript } from "./index";
 import { CATECHISM_ARTICLES, script as catechism } from "./catechism";
 import { COMPARISON_ENTRIES, script as comparison } from "./comparison";
 import { script as resources } from "./resources";
@@ -39,6 +41,53 @@ describe("comparison content", () => {
       "Arminian",
       "Roman Catholic",
     ]);
+  });
+});
+
+describe("script registry", () => {
+  it("provides a structurally valid script for every mode", () => {
+    for (const mode of MODES) {
+      const script = getScript(mode.id);
+      expect(
+        script.steps[script.entry],
+        `${mode.id}: entry step missing`,
+      ).toBeDefined();
+      expect(
+        script.fallback.length,
+        `${mode.id}: empty fallback`,
+      ).toBeGreaterThan(0);
+
+      for (const [stepId, step] of Object.entries(script.steps)) {
+        for (const action of step.actions ?? []) {
+          expect(
+            script.steps[action.next],
+            `${mode.id}/${stepId}: action "${action.id}" targets missing step "${action.next}"`,
+          ).toBeDefined();
+        }
+        if (step.onReply) {
+          expect(
+            script.steps[step.onReply],
+            `${mode.id}/${stepId}: onReply targets missing step "${step.onReply}"`,
+          ).toBeDefined();
+        }
+      }
+    }
+  });
+});
+
+describe("seed conversations", () => {
+  it("seeds one conversation per mode, each with a block-bearing answer", () => {
+    expect(SEED_CONVERSATIONS).toHaveLength(8);
+    expect(new Set(SEED_CONVERSATIONS.map((c) => c.mode)).size).toBe(8);
+
+    for (const convo of SEED_CONVERSATIONS) {
+      const last = convo.messages[convo.messages.length - 1];
+      expect(last.role, `${convo.mode}: no assistant reply`).toBe("assistant");
+      expect(
+        last.blocks?.length ?? 0,
+        `${convo.mode}: reply has no blocks`,
+      ).toBeGreaterThan(0);
+    }
   });
 });
 
