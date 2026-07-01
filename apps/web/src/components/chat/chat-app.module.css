@@ -9,8 +9,6 @@
   --hairline: rgba(201, 162, 78, 0.26);
   --error: #c0392b;
 
-  position: relative;
-  isolation: isolate;
   height: 100svh;
   overflow: hidden;
   color: var(--parchment);
@@ -70,15 +68,22 @@
 }
 
 .shell {
-  position: relative;
-  z-index: 3;
   height: 100svh;
   display: grid;
   grid-template-columns: clamp(240px, 22vw, 288px) minmax(0, 1fr);
 }
 
 .main {
+  position: relative;
+  isolation: isolate;
   min-width: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.content {
+  position: relative;
+  z-index: 2;
   height: 100%;
 }
 

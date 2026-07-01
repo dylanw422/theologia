@@ -77,10 +77,6 @@ export default function ChatApp() {
 
   return (
     <div className={styles.root}>
-      <div className={styles.fresco} aria-hidden />
-      <div className={styles.overlay} aria-hidden />
-      <div className={styles.grain} aria-hidden />
-
       <div className={styles.shell}>
         <ChatSidebar
           conversations={conversations}
@@ -89,15 +85,20 @@ export default function ChatApp() {
           onNewChat={handleNewChat}
         />
         <main className={styles.main}>
-          {activeConversation ? (
-            <ChatThread
-              conversation={activeConversation}
-              isReplying={isReplying}
-              onSend={handleSend}
-            />
-          ) : (
-            <ChatEmpty onStart={handleStart} />
-          )}
+          <div className={styles.fresco} aria-hidden />
+          <div className={styles.overlay} aria-hidden />
+          <div className={styles.grain} aria-hidden />
+          <div className={styles.content}>
+            {activeConversation ? (
+              <ChatThread
+                conversation={activeConversation}
+                isReplying={isReplying}
+                onSend={handleSend}
+              />
+            ) : (
+              <ChatEmpty onStart={handleStart} />
+            )}
+          </div>
         </main>
       </div>
     </div>

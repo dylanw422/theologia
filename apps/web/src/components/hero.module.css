@@ -335,7 +335,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(11, 8, 5, 0.42);
+  background: rgba(11, 8, 5, 0.68);
   z-index: -1;
 }
 .emailInput {
