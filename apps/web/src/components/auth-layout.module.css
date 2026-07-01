@@ -1,0 +1,117 @@
+/* apps/web/src/components/auth-layout.module.css */
+.root {
+  --ink: #14100a;
+  --ink-deep: #0b0805;
+  --parchment: #f1e8d6;
+  --parchment-dim: #b9a886;
+  --stone: #8a7d68;
+  --gold: #c9a24e;
+  --gold-bright: #e6c984;
+  --hairline: rgba(201, 162, 78, 0.26);
+
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--ink-deep);
+  color: var(--parchment);
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+.fresco {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: url("/creation-of-adam.jpg") center 40% / cover no-repeat;
+  filter: saturate(1.1) contrast(1.08) brightness(0.38);
+  transform: scale(1.05);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .fresco {
+    animation: drift 46s ease-in-out infinite alternate;
+  }
+}
+@keyframes drift {
+  from { transform: scale(1.05) translate3d(0, 0, 0); }
+  to   { transform: scale(1.12) translate3d(-1.2%, -0.8%, 0); }
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(11,8,5,0.78) 0%, rgba(11,8,5,0) 22%),
+    linear-gradient(180deg, rgba(11,8,5,0) 60%, rgba(11,8,5,0.88) 100%),
+    radial-gradient(
+      130% 100% at 50% 44%,
+      rgba(11,8,5,0) 30%,
+      rgba(11,8,5,0.55) 80%,
+      rgba(11,8,5,0.94) 100%
+    );
+}
+
+.grain {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.06;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.shell {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 100svh;
+}
+
+.nav {
+  padding: clamp(1.15rem, 2.4vw, 1.9rem) clamp(1.25rem, 4vw, 3.5rem);
+}
+
+.wordmark {
+  font-family: var(--font-fraunces), serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-size: 1.4rem;
+  letter-spacing: 0.01em;
+  color: var(--parchment);
+  text-decoration: none;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(2rem, 5vh, 5rem) clamp(1.25rem, 4vw, 3.5rem);
+}
+
+.card {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(11, 8, 5, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(201, 162, 78, 0.28);
+  border-radius: 2px;
+  padding: 2.4rem 2.8rem;
+}
+
+.cardTitle {
+  font-family: var(--font-fraunces), serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-size: 1.75rem;
+  color: var(--parchment);
+  margin-bottom: 1.8rem;
+  letter-spacing: -0.01em;
+}
