@@ -1,3 +1,5 @@
+import type { Script } from "./scripts/types";
+
 export type Role = "user" | "assistant";
 
 export type ModeId =
@@ -145,6 +147,51 @@ export function appendMessage(
   return {
     ...conversation,
     messages: [...conversation.messages, { ...message, id: id() }],
+  };
+}
+
+export interface ReplyParts {
+  blocks: Block[];
+  actions?: Action[];
+  nextTypedStep?: string;
+}
+
+/**
+ * Resolve the scripted reply for the current turn. Resolution order: an
+ * explicit action target, the entry step for a conversation's first exchange,
+ * a pending typed-reply step (quiz/Socratic), then the script's fallback.
+ */
+export function replyFor(
+  conversation: Conversation,
+  script: Script,
+  opts?: { actionNext?: string; isFirst?: boolean },
+): ReplyParts {
+  const stepId =
+    opts?.actionNext ??
+    (opts?.isFirst ? script.entry : conversation.nextTypedStep);
+  const step = stepId ? script.steps[stepId] : undefined;
+  if (!step) return { blocks: script.fallback };
+
+  const blocks =
+    typeof step.blocks === "function" ? step.blocks(conversation) : step.blocks;
+  return { blocks, actions: step.actions, nextTypedStep: step.onReply };
+}
+
+/** Append the scripted assistant reply and update the pending typed step. */
+export function withReply(
+  conversation: Conversation,
+  script: Script,
+  opts?: { actionNext?: string; isFirst?: boolean },
+): Conversation {
+  const reply = replyFor(conversation, script, opts);
+  return {
+    ...appendMessage(conversation, {
+      role: "assistant",
+      content: blocksToText(reply.blocks),
+      blocks: reply.blocks,
+      actions: reply.actions,
+    }),
+    nextTypedStep: reply.nextTypedStep,
   };
 }
 
