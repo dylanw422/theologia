@@ -1,0 +1,162 @@
+.empty {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1.5rem, 5vh, 4rem) clamp(1.25rem, 5vw, 3.5rem);
+  overflow-y: auto;
+}
+
+.inner {
+  width: 100%;
+  max-width: 660px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.mark {
+  font-family: var(--font-fraunces), serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-size: 1.15rem;
+  letter-spacing: 0.04em;
+  color: var(--gold);
+  margin: 0 0 1.6rem;
+  user-select: none;
+}
+
+.headline {
+  font-family: var(--font-fraunces), serif;
+  font-optical-sizing: auto;
+  font-weight: 370;
+  font-size: clamp(2rem, 4.6vw, 3.1rem);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  color: var(--parchment);
+  margin: 0 0 1rem;
+}
+.headline em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--gold-bright);
+}
+
+.lede {
+  font-family: var(--font-inter), sans-serif;
+  font-size: clamp(0.95rem, 1.3vw, 1.05rem);
+  line-height: 1.6;
+  color: var(--parchment-dim);
+  margin: 0 0 2.4rem;
+  max-width: 30rem;
+}
+
+.composer {
+  width: 100%;
+  text-align: left;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+  width: 100%;
+  margin-top: 1.1rem;
+}
+
+.cardBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.45rem;
+  text-align: left;
+  background: rgba(244, 232, 208, 0.02);
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+  padding: 0.85rem 1rem;
+  cursor: pointer;
+  transition:
+    border-color 0.22s ease,
+    background 0.22s ease,
+    transform 0.22s ease;
+}
+.cardBtn:hover:not(:disabled) {
+  border-color: rgba(201, 162, 78, 0.55);
+  background: rgba(201, 162, 78, 0.07);
+  transform: translateY(-1px);
+}
+.cardBtn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.cardBtn:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.cardTopic {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.56rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.cardPrompt {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: var(--parchment-dim);
+}
+
+/* Entrance choreography — slow, reverent, guarded */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal {
+    opacity: 0;
+    animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  }
+  .d1 {
+    animation-delay: 0.05s;
+  }
+  .d2 {
+    animation-delay: 0.14s;
+  }
+  .d3 {
+    animation-delay: 0.24s;
+  }
+  .d4 {
+    animation-delay: 0.36s;
+  }
+  .d5 {
+    animation-delay: 0.5s;
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .cards {
+    grid-template-columns: 1fr;
+  }
+  .cardBtn:hover:not(:disabled) {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cardBtn {
+    transition: none;
+  }
+  .cardBtn:hover:not(:disabled) {
+    transform: none;
+  }
+}

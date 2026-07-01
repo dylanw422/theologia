@@ -1,0 +1,177 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  border-right: 1px solid var(--hairline);
+  /* Frosted dark panel so the rail stays crisp over the cloud fresco. */
+  background: rgba(11, 8, 5, 0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.head {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  padding: clamp(1.15rem, 2vw, 1.6rem) clamp(1rem, 1.6vw, 1.4rem);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.wordmark {
+  font-family: var(--font-fraunces), serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-size: 1.3rem;
+  letter-spacing: 0.01em;
+  color: var(--parchment);
+  text-decoration: none;
+}
+.wordmark:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 3px;
+}
+
+/* The one solid-gold CTA in the app */
+.newChat {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  font-family: var(--font-inter), sans-serif;
+  font-weight: 600;
+  font-size: 0.82rem;
+  color: #1a1206;
+  background: var(--gold);
+  border: 1px solid var(--gold);
+  border-radius: 2px;
+  padding: 0.6rem 0.85rem;
+  cursor: pointer;
+  transition:
+    background 0.22s ease,
+    transform 0.22s ease,
+    box-shadow 0.22s ease;
+}
+.newChat:hover {
+  background: var(--gold-bright);
+  border-color: var(--gold-bright);
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px -14px rgba(201, 162, 78, 0.6);
+}
+.newChat:focus-visible {
+  outline: 1px solid var(--gold-bright);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .newChat {
+    transition: none;
+  }
+  .newChat:hover {
+    transform: none;
+  }
+}
+
+/* The conversation list reads as a book's index */
+.indexLabel {
+  flex-shrink: 0;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--stone);
+  margin: 1.1rem clamp(1rem, 1.6vw, 1.4rem) 0.3rem;
+}
+
+.list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.4rem 0.5rem 0.7rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--hairline) transparent;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  text-align: left;
+  background: transparent;
+  border: none;
+  border-left: 2px solid transparent;
+  border-radius: 2px;
+  padding: 0.6rem 0.75rem;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+.item:hover {
+  background: rgba(201, 162, 78, 0.06);
+}
+.item:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: -1px;
+}
+.itemActive {
+  background: rgba(201, 162, 78, 0.1);
+  border-left-color: var(--gold);
+}
+
+.itemTitle {
+  font-family: var(--font-fraunces), serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-size: 0.92rem;
+  letter-spacing: 0.002em;
+  color: var(--parchment);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.itemFramework {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--stone);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.footer {
+  flex-shrink: 0;
+  padding: 0.85rem clamp(1rem, 1.6vw, 1.4rem);
+  border-top: 1px solid var(--hairline);
+}
+
+/* Blend the shared UserMenu trigger (a shadcn outline button) into the
+   apparatus so the rail stays typographically consistent. */
+.footer button {
+  width: 100%;
+  height: auto;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  padding: 0.6rem 0.85rem;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--parchment-dim);
+  transition:
+    border-color 0.22s ease,
+    color 0.22s ease;
+}
+.footer button:hover {
+  border-color: var(--gold);
+  color: var(--gold-bright);
+  background: rgba(201, 162, 78, 0.08);
+}

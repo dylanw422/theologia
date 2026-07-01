@@ -1,0 +1,123 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background: rgba(14, 10, 6, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+  padding: 0.9rem 0.9rem 0.65rem 1.05rem;
+  transition:
+    border-color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+.card:focus-within {
+  border-color: rgba(201, 162, 78, 0.55);
+  box-shadow: 0 10px 40px -18px rgba(201, 162, 78, 0.25);
+}
+
+.input {
+  width: 100%;
+  resize: none;
+  min-height: 1.6rem;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--parchment);
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  padding: 0;
+}
+.input::placeholder {
+  color: var(--stone);
+  font-style: italic;
+}
+
+.contextTop {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  padding-bottom: 0.75rem;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.7rem;
+}
+
+.context {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  flex-shrink: 0;
+}
+
+.hint {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  color: var(--stone);
+  user-select: none;
+}
+
+.send {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  background: var(--gold);
+  color: #1a1206;
+  border: 1px solid var(--gold);
+  border-radius: 2px;
+  cursor: pointer;
+  transition:
+    background 0.22s ease,
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    opacity 0.22s ease;
+}
+.send:hover:not(:disabled) {
+  background: var(--gold-bright);
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px -14px rgba(201, 162, 78, 0.6);
+}
+.send:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.send:focus-visible {
+  outline: 1px solid var(--gold-bright);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .send {
+    transition: none;
+  }
+  .send:hover:not(:disabled) {
+    transform: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .hint {
+    display: none;
+  }
+}

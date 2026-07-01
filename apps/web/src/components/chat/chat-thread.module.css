@@ -1,0 +1,208 @@
+.thread {
+  --measure: 720px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+/* ── Header ── */
+.header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: 0.95rem clamp(1.25rem, 4vw, 2.4rem);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.headerTitle {
+  font-family: var(--font-fraunces), serif;
+  font-optical-sizing: auto;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 0.95rem;
+  color: var(--parchment);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.headerChip {
+  flex-shrink: 0;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  padding: 0.35rem 0.65rem;
+}
+
+/* ── Messages ── */
+.scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--hairline) transparent;
+}
+
+.messages {
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: clamp(1.5rem, 4vh, 2.75rem) clamp(1.25rem, 4vw, 2.4rem);
+  display: flex;
+  flex-direction: column;
+  gap: 2.1rem;
+}
+
+.userRow {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.userCard {
+  max-width: 75%;
+  background: rgba(201, 162, 78, 0.09);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+  padding: 0.8rem 1.05rem;
+  color: var(--parchment);
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.94rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.assistant {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.assistantHead {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.assistantName {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--parchment-dim);
+}
+
+.copy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  width: 1.7rem;
+  height: 1.7rem;
+  background: transparent;
+  border: none;
+  border-radius: 2px;
+  color: var(--stone);
+  cursor: pointer;
+  opacity: 0;
+  transition:
+    opacity 0.2s ease,
+    color 0.2s ease;
+}
+.assistant:hover .copy,
+.copy:focus-visible {
+  opacity: 1;
+}
+.copy:hover {
+  color: var(--gold-bright);
+}
+.copy:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.assistantBody {
+  margin: 0;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.96rem;
+  line-height: 1.75;
+  color: color-mix(in srgb, var(--parchment) 82%, var(--parchment-dim));
+  white-space: pre-wrap;
+}
+
+.typing {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 1.3rem;
+}
+.typing span {
+  width: 0.3rem;
+  height: 0.3rem;
+  border-radius: 50%;
+  background: var(--gold);
+  opacity: 0.35;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .typing span {
+    animation: pulse 1.3s ease-in-out infinite;
+  }
+  .typing span:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  .typing span:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+}
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+/* ── Composer ── */
+.composerBar {
+  flex-shrink: 0;
+  padding: 0 clamp(1.25rem, 4vw, 2.4rem) clamp(0.9rem, 2.2vh, 1.4rem);
+}
+
+.composerInner {
+  max-width: var(--measure);
+  margin: 0 auto;
+}
+
+.lockChip {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--stone);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .headerTitle {
+    display: none;
+  }
+  .userCard {
+    max-width: 88%;
+  }
+  /* Touch screens have no hover — keep the copy action reachable */
+  .copy {
+    opacity: 1;
+  }
+}
