@@ -138,6 +138,40 @@
   white-space: pre-wrap;
 }
 
+/* Follow-up chips under the latest scripted reply */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+}
+
+.actionChip {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--parchment-dim);
+  background: transparent;
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  padding: 0.45rem 0.8rem;
+  cursor: pointer;
+  transition:
+    color 0.22s ease,
+    border-color 0.22s ease,
+    background-color 0.22s ease;
+}
+.actionChip:hover {
+  color: var(--gold);
+  border-color: rgba(201, 162, 78, 0.55);
+  background: rgba(201, 162, 78, 0.06);
+}
+.actionChip:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 2px;
+}
+
 .typing {
   display: inline-flex;
   align-items: center;
