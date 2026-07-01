@@ -38,6 +38,7 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${inter.variable} ${fraunces.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning
       >
         <Providers initialToken={token}>{children}</Providers>
       </body>

@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@theologia/backend/convex/_generated/api";
 
 import styles from "./hero.module.css";
 
@@ -56,6 +58,28 @@ const PRICING = [
 
 export default function Hero() {
   const [active, setActive] = useState<ActiveSection>(null);
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const joinWaitlist = useMutation(api.waitlist.join);
+  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const alreadyRegistered = useQuery(
+    api.waitlist.isRegistered,
+    isEmailValid ? { email } : "skip",
+  );
+
+  const handleWaitlist = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || alreadyRegistered || isLoading) return;
+    setIsLoading(true);
+    try {
+      await joinWaitlist({ email });
+      setSubmitted(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const toggle = (section: ActiveSection) =>
     setActive((prev) => (prev === section ? null : section));
@@ -117,20 +141,45 @@ export default function Hero() {
                       grounded in church history, and tested against the strongest
                       arguments on the other side — no strawmen, no tribalism.
                     </p>
-                    <div className={`${styles.actions} ${styles.reveal} ${styles.d4}`}>
-                      <Link href="/dashboard" className={styles.btnPrimary}>
-                        Start studying — free
-                        <span className={styles.arrow} aria-hidden>
-                          →
-                        </span>
-                      </Link>
+                    {/* <Link href="/dashboard" className={styles.btnPrimary}>
+                      Start studying — free
+                      <span className={styles.arrow} aria-hidden>→</span>
+                    </Link>
+                    <button onClick={() => setActive("frameworks")} className={styles.btnGhost}>
+                      Choose your tradition
+                    </button> */}
+                    <form
+                      onSubmit={handleWaitlist}
+                      className={`${styles.waitlistForm} ${styles.reveal} ${styles.d4}`}
+                    >
+                      <input
+                        type="email"
+                        required
+                        placeholder="your@email.com"
+                        value={email}
+                        onChange={(e) => !submitted && setEmail(e.target.value)}
+                        disabled={submitted || isLoading}
+                        className={styles.emailInput}
+                      />
                       <button
-                        onClick={() => setActive("frameworks")}
-                        className={styles.btnGhost}
+                        type="submit"
+                        disabled={submitted || isLoading || !!alreadyRegistered}
+                        className={`${styles.btnPrimary} ${submitted || alreadyRegistered ? styles.btnPrimarySuccess : ""}`}
                       >
-                        Choose your tradition
+                        {submitted
+                          ? "You're on the list"
+                          : alreadyRegistered
+                            ? "Already registered"
+                            : isLoading
+                              ? "Joining…"
+                              : (
+                                <>
+                                  Join Waitlist
+                                  <span className={styles.arrow} aria-hidden>→</span>
+                                </>
+                              )}
                       </button>
-                    </div>
+                    </form>
                   </>
                 )}
 
