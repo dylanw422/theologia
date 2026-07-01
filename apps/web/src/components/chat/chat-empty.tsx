@@ -3,33 +3,34 @@
 import { useState } from "react";
 
 import ChatComposer from "./chat-composer";
-import FrameworkPicker from "./framework-picker";
-import { SAMPLE_PROMPTS } from "./lib/mock-chat";
+import type { ConversationSetup, ModeId } from "./lib/chat-state";
+import { getMode, isSetupValid } from "./lib/modes";
+import ModePicker from "./mode-picker";
+import SetupPicker from "./setup-picker";
 import styles from "./chat-empty.module.css";
 
 export default function ChatEmpty({
   onStart,
 }: {
   onStart: (input: {
-    framework: string;
-    subTradition?: string;
+    mode: ModeId;
+    setup: ConversationSetup;
     firstMessage: string;
   }) => void;
 }) {
-  const [framework, setFramework] = useState("");
-  const [subTradition, setSubTradition] = useState("");
+  const [mode, setMode] = useState<ModeId>("qa");
+  const [setup, setSetup] = useState<ConversationSetup>({});
 
-  function handleFrameworkChange(id: string) {
-    setFramework(id);
-    setSubTradition("");
+  const modeDef = getMode(mode);
+  const canSend = isSetupValid(mode, setup);
+
+  function handleModeChange(next: ModeId) {
+    setMode(next);
+    setSetup({});
   }
 
   function handleSend(text: string) {
-    onStart({
-      framework,
-      subTradition: subTradition || undefined,
-      firstMessage: text,
-    });
+    onStart({ mode, setup, firstMessage: text });
   }
 
   return (
@@ -38,47 +39,51 @@ export default function ChatEmpty({
         <p className={`${styles.mark} ${styles.reveal} ${styles.d1}`}>
           Theologia
         </p>
-        <h1 className={`${styles.headline} ${styles.reveal} ${styles.d2}`}>
-          What will you <em>study</em> today?
-        </h1>
-        <p className={`${styles.lede} ${styles.reveal} ${styles.d3}`}>
-          Ask anything. Theologia answers from within your tradition — its
-          confessions, its theologians, its history.
-        </p>
 
-        <div className={`${styles.composer} ${styles.reveal} ${styles.d4}`}>
-          <ChatComposer
-            onSend={handleSend}
-            disabled={!framework}
-            autoFocus
-            contextFirst
-            placeholder={
-              framework ? "Ask a question…" : "Choose a tradition to begin…"
-            }
-            context={
-              <FrameworkPicker
-                framework={framework}
-                subTradition={subTradition}
-                onFrameworkChange={handleFrameworkChange}
-                onSubTraditionChange={setSubTradition}
-              />
-            }
-          />
+        <div className={`${styles.modes} ${styles.reveal} ${styles.d2}`}>
+          <ModePicker mode={mode} onChange={handleModeChange} />
         </div>
 
-        <div className={`${styles.cards} ${styles.reveal} ${styles.d5}`}>
-          {SAMPLE_PROMPTS.map(({ topic, prompt }) => (
-            <button
-              key={prompt}
-              type="button"
-              className={styles.cardBtn}
-              disabled={!framework}
-              onClick={() => framework && handleSend(prompt)}
-            >
-              <span className={styles.cardTopic}>{topic}</span>
-              <span className={styles.cardPrompt}>{prompt}</span>
-            </button>
-          ))}
+        {/* Re-key on mode so the copy re-reveals when the study changes */}
+        <div key={mode} className={styles.modeContent}>
+          <h1 className={`${styles.headline} ${styles.reveal} ${styles.d2}`}>
+            {modeDef.heading.pre}
+            <em>{modeDef.heading.em}</em>
+            {modeDef.heading.post}
+          </h1>
+          <p className={`${styles.lede} ${styles.reveal} ${styles.d3}`}>
+            {modeDef.lede}
+          </p>
+
+          <div className={`${styles.composer} ${styles.reveal} ${styles.d4}`}>
+            <ChatComposer
+              onSend={handleSend}
+              disabled={!canSend}
+              autoFocus
+              contextFirst
+              placeholder={
+                canSend ? modeDef.placeholder : "Complete the setup to begin…"
+              }
+              context={
+                <SetupPicker mode={mode} setup={setup} onChange={setSetup} />
+              }
+            />
+          </div>
+
+          <div className={`${styles.cards} ${styles.reveal} ${styles.d5}`}>
+            {modeDef.samplePrompts.map(({ topic, prompt }) => (
+              <button
+                key={prompt}
+                type="button"
+                className={styles.cardBtn}
+                disabled={!canSend}
+                onClick={() => canSend && handleSend(prompt)}
+              >
+                <span className={styles.cardTopic}>{topic}</span>
+                <span className={styles.cardPrompt}>{prompt}</span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>

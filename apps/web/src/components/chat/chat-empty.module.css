@@ -27,6 +27,19 @@
   user-select: none;
 }
 
+.modes {
+  width: 100%;
+  margin: 0 0 1.9rem;
+}
+
+.modeContent {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
 .headline {
   font-family: var(--font-fraunces), serif;
   font-optical-sizing: auto;
