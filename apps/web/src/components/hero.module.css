@@ -1,0 +1,372 @@
+.hero {
+  --ink: #14100a;
+  --ink-deep: #0b0805;
+  --parchment: #f1e8d6;
+  --parchment-dim: #b9a886;
+  --stone: #8a7d68;
+  --gold: #c9a24e;
+  --gold-bright: #e6c984;
+  --hairline: rgba(201, 162, 78, 0.26);
+
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--ink-deep);
+  color: var(--parchment);
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+/* ---- The fresco: darkened + saturated so the colors pop ---- */
+.fresco {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: url("/school-of-athens.jpg") center 20% / cover no-repeat;
+  filter: saturate(1.14) contrast(1.07) brightness(0.6);
+  transform: scale(1.05);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .fresco {
+    animation: drift 46s ease-in-out infinite alternate;
+  }
+}
+@keyframes drift {
+  from {
+    transform: scale(1.05) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(1.12) translate3d(-1.6%, -1.1%, 0);
+  }
+}
+
+/* ---- Vignette + directional darkening so text reads and center glows ---- */
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      95deg,
+      rgba(11, 8, 5, 0.94) 0%,
+      rgba(11, 8, 5, 0.62) 32%,
+      rgba(11, 8, 5, 0.16) 56%,
+      rgba(11, 8, 5, 0) 76%
+    ),
+    linear-gradient(180deg, rgba(11, 8, 5, 0.72) 0%, rgba(11, 8, 5, 0) 24%),
+    linear-gradient(
+      180deg,
+      rgba(11, 8, 5, 0) 52%,
+      rgba(11, 8, 5, 0.82) 86%,
+      var(--ink-deep) 100%
+    ),
+    radial-gradient(
+      125% 92% at 52% 36%,
+      rgba(11, 8, 5, 0) 38%,
+      rgba(11, 8, 5, 0.5) 76%,
+      rgba(11, 8, 5, 0.92) 100%
+    );
+}
+
+/* Faint film grain to unify the composite and add texture */
+.grain {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.06;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---- Foreground shell ---- */
+.shell {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 100svh;
+}
+
+.nav {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: clamp(1.15rem, 2.4vw, 1.9rem) clamp(1.25rem, 4vw, 3.5rem);
+}
+.wordmark {
+  font-family: var(--font-fraunces), serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-size: 1.4rem;
+  letter-spacing: 0.01em;
+  color: var(--parchment);
+}
+.navLinks {
+  display: flex;
+  align-items: center;
+  gap: clamp(1.25rem, 2.6vw, 2.4rem);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.navLinks a {
+  color: var(--parchment-dim);
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+.navLinks a:hover {
+  color: var(--parchment);
+}
+.navSignIn {
+  color: var(--gold) !important;
+}
+.navSignIn:hover {
+  color: var(--gold-bright) !important;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: clamp(2rem, 5vh, 5rem) clamp(1.25rem, 4vw, 3.5rem);
+}
+.inner {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 170px minmax(0, 1fr);
+  gap: clamp(1.6rem, 3vw, 3.25rem);
+  align-items: start;
+}
+
+/* ---- Signature: the critical-edition margin apparatus ---- */
+.apparatus {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-top: 0.55rem;
+  padding-right: clamp(1rem, 1.6vw, 1.7rem);
+  text-align: right;
+  border-right: 1px solid var(--hairline);
+}
+.cite {
+  display: block;
+}
+.citeRef {
+  display: block;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.13em;
+  color: var(--gold);
+}
+.citeNote {
+  display: block;
+  margin-top: 0.3rem;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--stone);
+}
+
+/* ---- Text column ---- */
+.eyebrow {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: clamp(1.1rem, 2.4vw, 1.7rem);
+}
+.eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 2.2rem;
+  height: 1px;
+  margin-right: 0.9rem;
+  vertical-align: middle;
+  background: var(--gold);
+  opacity: 0.7;
+}
+.headline {
+  font-family: var(--font-fraunces), serif;
+  font-optical-sizing: auto;
+  font-weight: 370;
+  font-size: clamp(2.55rem, 6.6vw, 5.5rem);
+  line-height: 0.99;
+  letter-spacing: -0.02em;
+  color: var(--parchment);
+  max-width: 15ch;
+  text-wrap: balance;
+}
+.headline em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--gold-bright);
+}
+.lede {
+  margin-top: clamp(1.4rem, 2.8vw, 2rem);
+  max-width: 46ch;
+  font-size: clamp(1rem, 1.35vw, 1.16rem);
+  line-height: 1.6;
+  color: var(--parchment-dim);
+  text-shadow:
+    0 1px 2px rgba(11, 8, 5, 0.9),
+    0 2px 18px rgba(11, 8, 5, 0.8);
+}
+.actions {
+  margin-top: clamp(1.9rem, 3.4vw, 2.6rem);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.9rem;
+}
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--gold);
+  color: #1a1206;
+  font-weight: 600;
+  font-size: 0.98rem;
+  padding: 0.95rem 1.65rem;
+  border: 1px solid var(--gold);
+  border-radius: 2px;
+  text-decoration: none;
+  transition:
+    background 0.22s ease,
+    transform 0.22s ease,
+    box-shadow 0.22s ease;
+}
+.btnPrimary:hover {
+  background: var(--gold-bright);
+  transform: translateY(-1px);
+  box-shadow: 0 14px 34px -14px rgba(201, 162, 78, 0.6);
+}
+.btnPrimary .arrow {
+  transition: transform 0.22s ease;
+}
+.btnPrimary:hover .arrow {
+  transform: translateX(3px);
+}
+.btnGhost {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--parchment);
+  padding: 0.92rem 1.4rem;
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  text-decoration: none;
+  transition:
+    border-color 0.22s ease,
+    background 0.22s ease,
+    color 0.22s ease;
+}
+.btnGhost:hover {
+  border-color: var(--gold);
+  color: var(--gold-bright);
+  background: rgba(201, 162, 78, 0.07);
+}
+
+/* ---- Framework index strip ---- */
+.frameworks {
+  position: relative;
+  z-index: 3;
+  padding: 0 clamp(1.25rem, 4vw, 3.5rem) clamp(1.8rem, 4vh, 3rem);
+  max-width: 1180px;
+  margin: 0 auto;
+  width: 100%;
+}
+.frameworkList {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: clamp(0.6rem, 0.82vw, 0.72rem);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  line-height: 2;
+  color: var(--parchment-dim);
+}
+.frameworkList .dot {
+  color: var(--gold);
+  opacity: 0.55;
+  margin: 0 0.55em;
+}
+.frameworkNote {
+  color: var(--stone);
+  text-transform: none;
+  letter-spacing: 0.04em;
+}
+
+/* ---- Entrance choreography ---- */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+.d1 {
+  animation-delay: 0.05s;
+}
+.d2 {
+  animation-delay: 0.16s;
+}
+.d3 {
+  animation-delay: 0.28s;
+}
+.d4 {
+  animation-delay: 0.4s;
+}
+.d5 {
+  animation-delay: 0.54s;
+}
+@keyframes rise {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 760px) {
+  .navLinks {
+    display: none;
+  }
+  .inner {
+    grid-template-columns: 1fr;
+    gap: 1.4rem;
+  }
+  .apparatus {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1.1rem 1.6rem;
+    text-align: left;
+    border-right: none;
+    border-left: 1px solid var(--hairline);
+    padding-right: 0;
+    padding-left: 1rem;
+    order: 2;
+  }
+  .textColumn {
+    order: 1;
+  }
+  .headline {
+    max-width: 100%;
+  }
+}
