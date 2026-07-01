@@ -1,17 +1,101 @@
 export type Role = "user" | "assistant";
 
+export type ModeId =
+  | "qa"
+  | "devils-advocate"
+  | "comparison"
+  | "debate-prep"
+  | "catechism"
+  | "resources"
+  | "library"
+  | "scripture-study";
+
+/**
+ * Assistant answers are lists of typed content blocks — prose plus the
+ * structured forms each study mode needs (comparison columns, ranked
+ * objections, source excerpts, confession articles…). User messages remain
+ * plain `content`.
+ */
+export type Block =
+  | { type: "prose"; text: string }
+  | { type: "scripture"; reference: string; text: string }
+  | { type: "history"; heading: string; text: string }
+  | {
+      type: "lexicon";
+      entries: { term: string; translit: string; gloss: string }[];
+    }
+  | {
+      type: "comparison";
+      columns: {
+        tradition: string;
+        position: string;
+        texts: string;
+        theologians: string;
+      }[];
+    }
+  | {
+      type: "points";
+      kind: "objection" | "response";
+      items: { title: string; body: string; weight?: string }[];
+    }
+  | {
+      type: "resources";
+      items: {
+        title: string;
+        author: string;
+        tier: "introductory" | "intermediate" | "scholarly";
+        note: string;
+      }[];
+    }
+  | {
+      type: "source";
+      work: string;
+      author: string;
+      citation: string;
+      excerpt: string;
+    }
+  | {
+      type: "article";
+      source: string;
+      label: string;
+      body: string;
+      proofs?: string[];
+    };
+
+/** A follow-up chip: sends `prefill` as the user turn, replies with step `next`. */
+export interface Action {
+  id: string;
+  label: string;
+  prefill: string;
+  next: string;
+}
+
 export interface Message {
   id: string;
   role: Role;
   content: string;
+  blocks?: Block[];
+  actions?: Action[];
 }
 
-export interface Conversation {
+/** The mode-specific choices made on the new-study screen. */
+export interface ConversationSetup {
+  framework?: string;
+  subTradition?: string;
+  opposing?: string;
+  traditions?: string[];
+  document?: string;
+  purpose?: string;
+  collection?: string;
+}
+
+export interface Conversation extends ConversationSetup {
   id: string;
   title: string;
-  framework: string;
-  subTradition?: string;
+  mode: ModeId;
   messages: Message[];
+  /** Script step that should answer the next typed message (quiz, Socratic). */
+  nextTypedStep?: string;
 }
 
 const TITLE_MAX = 48;
@@ -32,15 +116,15 @@ export function deriveTitle(text: string): string {
 }
 
 export function createConversation(input: {
-  framework: string;
-  subTradition?: string;
+  mode: ModeId;
+  setup: ConversationSetup;
   firstMessage: string;
 }): Conversation {
   return {
+    ...input.setup,
     id: id(),
     title: deriveTitle(input.firstMessage),
-    framework: input.framework,
-    subTradition: input.subTradition,
+    mode: input.mode,
     messages: [{ id: id(), role: "user", content: input.firstMessage }],
   };
 }
@@ -51,13 +135,49 @@ export function createConversation(input: {
  */
 export function appendMessage(
   conversation: Conversation,
-  message: { role: Role; content: string },
+  message: {
+    role: Role;
+    content: string;
+    blocks?: Block[];
+    actions?: Action[];
+  },
 ): Conversation {
   return {
     ...conversation,
-    messages: [
-      ...conversation.messages,
-      { id: id(), role: message.role, content: message.content },
-    ],
+    messages: [...conversation.messages, { ...message, id: id() }],
   };
+}
+
+/** Flatten blocks to plain text for the copy button and `Message.content`. */
+export function blocksToText(blocks: Block[]): string {
+  return blocks
+    .map((block) => {
+      switch (block.type) {
+        case "prose":
+          return block.text;
+        case "scripture":
+          return `${block.reference} — ${block.text}`;
+        case "history":
+          return `${block.heading} — ${block.text}`;
+        case "lexicon":
+          return block.entries
+            .map((e) => `${e.term} (${e.translit}): ${e.gloss}`)
+            .join("\n");
+        case "comparison":
+          return block.columns
+            .map((c) => `${c.tradition}: ${c.position}`)
+            .join("\n");
+        case "points":
+          return block.items.map((i) => `${i.title}: ${i.body}`).join("\n");
+        case "resources":
+          return block.items
+            .map((i) => `${i.title} (${i.author}) — ${i.note}`)
+            .join("\n");
+        case "source":
+          return `${block.work}, ${block.citation} — ${block.excerpt}`;
+        case "article":
+          return `${block.label} — ${block.body}`;
+      }
+    })
+    .join("\n\n");
 }
