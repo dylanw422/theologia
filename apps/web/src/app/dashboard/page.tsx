@@ -4,10 +4,8 @@ import { CheckoutLink, CustomerPortalLink } from "@convex-dev/polar/react";
 import { api } from "@theologia/backend/convex/_generated/api";
 import { buttonVariants } from "@theologia/ui/components/button";
 import { Authenticated, AuthLoading, Unauthenticated, useQuery } from "convex/react";
-import { useState } from "react";
 
 import SignInForm from "@/components/sign-in-form";
-import SignUpForm from "@/components/sign-up-form";
 import UserMenu from "@/components/user-menu";
 
 function DashboardContent() {
@@ -49,19 +47,13 @@ function DashboardContent() {
 }
 
 export default function DashboardPage() {
-  const [showSignIn, setShowSignIn] = useState(false);
-
   return (
     <>
       <Authenticated>
         <DashboardContent />
       </Authenticated>
       <Unauthenticated>
-        {showSignIn ? (
-          <SignInForm onSwitchToSignUp={() => setShowSignIn(false)} />
-        ) : (
-          <SignUpForm onSwitchToSignIn={() => setShowSignIn(true)} />
-        )}
+        <SignInForm />
       </Unauthenticated>
       <AuthLoading>
         <div>Loading...</div>
