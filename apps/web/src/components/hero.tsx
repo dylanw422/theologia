@@ -152,15 +152,17 @@ export default function Hero() {
                       onSubmit={handleWaitlist}
                       className={`${styles.waitlistForm} ${styles.reveal} ${styles.d4}`}
                     >
-                      <input
-                        type="email"
-                        required
-                        placeholder="your@email.com"
-                        value={email}
-                        onChange={(e) => !submitted && setEmail(e.target.value)}
-                        disabled={submitted || isLoading}
-                        className={styles.emailInput}
-                      />
+                      <div className={styles.emailInputWrapper}>
+                        <input
+                          type="email"
+                          required
+                          placeholder="your@email.com"
+                          value={email}
+                          onChange={(e) => !submitted && setEmail(e.target.value)}
+                          disabled={submitted || isLoading}
+                          className={styles.emailInput}
+                        />
+                      </div>
                       <button
                         type="submit"
                         disabled={submitted || isLoading || !!alreadyRegistered}

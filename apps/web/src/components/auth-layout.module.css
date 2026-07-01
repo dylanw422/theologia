@@ -97,14 +97,33 @@
 }
 
 .card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   width: 100%;
   max-width: 420px;
-  background: rgba(11, 8, 5, 0.72);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(201, 162, 78, 0.28);
   border-radius: 2px;
   padding: 2.4rem 2.8rem;
+}
+
+/* Blurred background image embedded directly in the card */
+.card::before {
+  content: '';
+  position: absolute;
+  inset: -40px;
+  background: url("/creation-of-adam.jpg") center 35% / cover no-repeat;
+  filter: blur(20px) brightness(0.46) saturate(1.15) contrast(1.05);
+  z-index: -2;
+}
+
+/* Dark tint over the blur */
+.card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(11, 8, 5, 0.44);
+  z-index: -1;
 }
 
 .cardTitle {

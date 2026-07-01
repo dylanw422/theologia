@@ -310,26 +310,49 @@
   align-items: stretch;
   gap: 0.6rem;
 }
-.emailInput {
+.emailInputWrapper {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
   width: 350px;
-  background: rgba(11, 8, 5, 0.55);
-  border: 1px solid var(--hairline);
   border-radius: 2px;
+  border: 1px solid var(--hairline);
+  transition: border-color 0.22s ease;
+}
+.emailInputWrapper:focus-within {
+  border-color: rgba(201, 162, 78, 0.55);
+}
+.emailInputWrapper::before {
+  content: '';
+  position: absolute;
+  inset: -30px;
+  background: url("/school-of-athens.jpg") center 20% / cover no-repeat;
+  filter: blur(18px) brightness(0.46) saturate(1.14) contrast(1.07);
+  z-index: -2;
+}
+.emailInputWrapper::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(11, 8, 5, 0.42);
+  z-index: -1;
+}
+.emailInput {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  background: transparent;
+  border: none;
   color: var(--parchment);
   font-family: var(--font-geist-mono), monospace;
   font-size: 0.82rem;
   letter-spacing: 0.05em;
   padding: 0.95rem 1.1rem;
   outline: none;
-  transition: border-color 0.22s ease;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
 }
 .emailInput::placeholder {
   color: var(--stone);
-}
-.emailInput:focus {
-  border-color: rgba(201, 162, 78, 0.55);
 }
 .emailInput:disabled {
   opacity: 0.5;
@@ -421,12 +444,27 @@
   max-width: 540px;
 }
 .pricingCard {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   padding: 1.1rem 1.25rem;
   border: 1px solid rgba(201, 162, 78, 0.28);
   border-radius: 2px;
-  background: rgba(11, 8, 5, 0.72);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+}
+.pricingCard::before {
+  content: '';
+  position: absolute;
+  inset: -30px;
+  background: url("/school-of-athens.jpg") center 20% / cover no-repeat;
+  filter: blur(18px) brightness(0.46) saturate(1.14) contrast(1.07);
+  z-index: -2;
+}
+.pricingCard::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(11, 8, 5, 0.52);
+  z-index: -1;
 }
 .pricingPlan {
   font-family: var(--font-geist-mono), monospace;
