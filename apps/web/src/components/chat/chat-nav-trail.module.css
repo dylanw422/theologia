@@ -6,42 +6,55 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 1px;
   z-index: 10;
   pointer-events: none;
 }
 
+/* Transparent hit target — visual dot is drawn by ::before */
 .dot {
   position: relative;
-  width: 5px;
-  height: 5px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   border: none;
   padding: 0;
-  background: var(--hairline);
+  background: transparent;
   cursor: pointer;
   pointer-events: all;
+}
+
+.dot::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--hairline);
   transition:
     background 200ms ease,
     transform 200ms ease;
 }
 
-.dot:hover {
+.dot:hover::before {
   background: var(--stone);
 }
 
-.active {
+.active::before {
   background: var(--gold);
-  transform: scale(1.3);
+  transform: translate(-50%, -50%) scale(1.3);
 }
 
-.dot.active:hover {
+.dot.active:hover::before {
   background: var(--gold);
 }
 
 .dot:focus-visible {
   outline: 1px solid var(--gold);
-  outline-offset: 3px;
+  outline-offset: 2px;
 }
 
 .preview {
@@ -54,8 +67,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   font-family: var(--font-inter), sans-serif;
-  font-size: 0.7rem;
-  line-height: 1;
+  font-size: 0.72rem;
   color: var(--parchment-dim);
   background: rgba(15, 12, 8, 0.85);
   backdrop-filter: blur(8px);
