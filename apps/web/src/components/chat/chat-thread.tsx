@@ -1,10 +1,21 @@
 "use client";
 
 import { Check, Copy } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
+
+import {
+  MessageScroller,
+  MessageScrollerButton,
+  MessageScrollerContent,
+  MessageScrollerItem,
+  MessageScrollerProvider,
+  MessageScrollerViewport,
+} from "@theologia/ui/components/message-scroller";
 
 import ChatComposer from "./chat-composer";
+import ChatNavTrail from "./chat-nav-trail";
 import type { Action, Conversation } from "./lib/chat-state";
+import { groupIntoExchanges } from "./lib/exchanges";
 import { describeSetup, getMode } from "./lib/modes";
 import MessageBlocks from "./message-blocks";
 import styles from "./chat-thread.module.css";
@@ -41,98 +52,118 @@ export default function ChatThread({
   onSend: (text: string) => void;
   onAction: (action: Action) => void;
 }) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-
   const modeLabel = getMode(conversation.mode).label;
   const setupLabel = describeSetup(conversation);
   const contextLabel = setupLabel
     ? `${modeLabel} · ${setupLabel}`
     : modeLabel;
 
+  const exchanges = groupIntoExchanges(conversation.messages);
   const lastMessage =
     conversation.messages[conversation.messages.length - 1];
 
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (el) el.scrollTop = el.scrollHeight;
-  }, [conversation.messages.length, isReplying]);
-
   return (
-    <div className={styles.thread}>
-      <header className={styles.header}>
-        <span className={styles.headerTitle}>{conversation.title}</span>
-        <span className={styles.headerChip}>{contextLabel}</span>
-      </header>
+    <MessageScrollerProvider>
+      <div className={styles.thread}>
+        <header className={styles.header}>
+          <span className={styles.headerTitle}>{conversation.title}</span>
+          <span className={styles.headerChip}>{contextLabel}</span>
+        </header>
 
-      <div className={styles.scroll} ref={scrollRef}>
-        <div className={styles.messages}>
-          {conversation.messages.map((message) => {
-            if (message.role === "user") {
-              return (
-                <div key={message.id} className={styles.userRow}>
-                  <div className={styles.userCard}>{message.content}</div>
-                </div>
-              );
-            }
+        <MessageScroller className={styles.scroller}>
+          <MessageScrollerViewport className={styles.viewport}>
+            <MessageScrollerContent className={styles.messagesContent}>
+              {exchanges.map((exchange, i) => {
+                const isLast = i === exchanges.length - 1;
+                const showActions =
+                  exchange.assistant === lastMessage &&
+                  !isReplying &&
+                  (exchange.assistant?.actions?.length ?? 0) > 0;
 
-            const showActions =
-              message === lastMessage &&
-              !isReplying &&
-              (message.actions?.length ?? 0) > 0;
+                return (
+                  <MessageScrollerItem
+                    key={exchange.id}
+                    messageId={exchange.id}
+                    scrollAnchor={isLast && !isReplying}
+                    className={styles.exchangeItem}
+                  >
+                    <div className={styles.userRow}>
+                      <div className={styles.userCard}>
+                        {exchange.user.content}
+                      </div>
+                    </div>
 
-            return (
-              <div key={message.id} className={styles.assistant}>
-                <div className={styles.assistantHead}>
-                  <span className={styles.assistantName}>Theologia</span>
-                  <CopyButton text={message.content} />
-                </div>
-                {message.blocks ? (
-                  <MessageBlocks blocks={message.blocks} />
-                ) : (
-                  <p className={styles.assistantBody}>{message.content}</p>
-                )}
-                {showActions ? (
-                  <div className={styles.actions}>
-                    {message.actions?.map((action) => (
-                      <button
-                        key={action.id}
-                        type="button"
-                        className={styles.actionChip}
-                        onClick={() => onAction(action)}
-                      >
-                        {action.label}
-                      </button>
-                    ))}
+                    {exchange.assistant ? (
+                      <div className={styles.assistant}>
+                        <div className={styles.assistantHead}>
+                          <span className={styles.assistantName}>
+                            Theologia
+                          </span>
+                          <CopyButton text={exchange.assistant.content} />
+                        </div>
+                        {exchange.assistant.blocks ? (
+                          <MessageBlocks blocks={exchange.assistant.blocks} />
+                        ) : (
+                          <p className={styles.assistantBody}>
+                            {exchange.assistant.content}
+                          </p>
+                        )}
+                        {showActions ? (
+                          <div className={styles.actions}>
+                            {exchange.assistant.actions?.map((action) => (
+                              <button
+                                key={action.id}
+                                type="button"
+                                className={styles.actionChip}
+                                onClick={() => onAction(action)}
+                              >
+                                {action.label}
+                              </button>
+                            ))}
+                          </div>
+                        ) : null}
+                      </div>
+                    ) : null}
+                  </MessageScrollerItem>
+                );
+              })}
+
+              {isReplying ? (
+                <MessageScrollerItem messageId="typing" scrollAnchor>
+                  <div className={styles.assistant}>
+                    <div className={styles.assistantHead}>
+                      <span className={styles.assistantName}>Theologia</span>
+                    </div>
+                    <div
+                      className={styles.typing}
+                      aria-label="Composing a response"
+                    >
+                      <span />
+                      <span />
+                      <span />
+                    </div>
                   </div>
-                ) : null}
-              </div>
-            );
-          })}
+                </MessageScrollerItem>
+              ) : null}
+            </MessageScrollerContent>
+          </MessageScrollerViewport>
 
-          {isReplying ? (
-            <div className={styles.assistant}>
-              <div className={styles.assistantHead}>
-                <span className={styles.assistantName}>Theologia</span>
-              </div>
-              <div className={styles.typing} aria-label="Composing a response">
-                <span />
-                <span />
-                <span />
-              </div>
-            </div>
-          ) : null}
+          <MessageScrollerButton direction="end" />
+          <ChatNavTrail exchanges={exchanges} />
+        </MessageScroller>
+
+        <div className={styles.composerBar}>
+          <div className={styles.composerInner}>
+            <ChatComposer
+              onSend={onSend}
+              disabled={isReplying}
+              context={
+                <span className={styles.lockChip}>{contextLabel}</span>
+              }
+            />
+          </div>
         </div>
       </div>
-
-      <div className={styles.composerBar}>
-        <div className={styles.composerInner}>
-          <ChatComposer
-            onSend={onSend}
-            disabled={isReplying}
-            context={<span className={styles.lockChip}>{contextLabel}</span>}
-          />
-        </div>
-      </div>
-    </div>
+    </MessageScrollerProvider>
   );
 }

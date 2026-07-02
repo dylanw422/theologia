@@ -42,19 +42,22 @@
 }
 
 /* ── Messages ── */
-.scroll {
+.scroller {
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: thin;
+}
+
+.viewport {
   scrollbar-color: var(--hairline) transparent;
 }
 
-.messages {
+.messagesContent {
   max-width: var(--measure);
   margin: 0 auto;
   padding: clamp(1.5rem, 4vh, 2.75rem) clamp(1.25rem, 4vw, 2.4rem);
+}
+
+.exchangeItem {
   display: flex;
   flex-direction: column;
   gap: 2.1rem;
