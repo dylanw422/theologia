@@ -6,18 +6,20 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 2px;
   z-index: 10;
   pointer-events: none;
 }
 
 .dot {
   position: relative;
-  width: 5px;
-  height: 5px;
+  width: 7px;
+  height: 7px;
+  padding: 5px;
+  box-sizing: content-box;
+  background-clip: content-box;
   border-radius: 50%;
   border: none;
-  padding: 0;
   background: var(--hairline);
   cursor: pointer;
   pointer-events: all;
@@ -54,8 +56,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   font-family: var(--font-inter), sans-serif;
-  font-size: 0.7rem;
-  line-height: 1;
+  font-size: 0.72rem;
   color: var(--parchment-dim);
   background: rgba(15, 12, 8, 0.85);
   backdrop-filter: blur(8px);
