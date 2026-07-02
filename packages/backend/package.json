@@ -18,6 +18,7 @@
     "ai": "^6.0.208",
     "better-auth": "catalog:",
     "convex": "catalog:",
+    "convex-helpers": "^0.1.119",
     "dotenv": "catalog:",
     "zod": "catalog:"
   },
