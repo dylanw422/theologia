@@ -34,25 +34,25 @@ const PRICING = [
     plan: "Free",
     price: "$0",
     period: "/mo",
-    desc: "20 queries/month · Framework Q&A",
+    desc: "Limited usage · 20 queries/month · Framework Q&A",
   },
   {
     plan: "Scholar",
     price: "$19",
     period: "/mo",
-    desc: "Unlimited Q&A · Devil's Advocate · Comparison · Resource Engine",
+    desc: "Standard usage · Devil's Advocate · Comparison · Resource Engine",
   },
   {
     plan: "Ministry",
     price: "$39",
     period: "/mo",
-    desc: "All Scholar + Debate Prep · Catechism Tutor · Patristic Library · Scripture Study · Export",
+    desc: "Increased usage · All Scholar + Debate Prep · Catechism Tutor · Patristic Library · Scripture Study · Export",
   },
   {
     plan: "Church Team",
     price: "$99",
     period: "/mo",
-    desc: "5 seats · All Ministry features · Shared notes & study sessions",
+    desc: "Pooled team usage · 5 seats · All Ministry features · Shared notes & sessions",
   },
 ] as const;
 

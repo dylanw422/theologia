@@ -241,12 +241,14 @@ A deep-dive exegetical mode where users bring a passage and receive a thorough, 
 
 ## Pricing
 
-| Plan            | Price  | Best For                      | Included                                                                                                   |
-| --------------- | ------ | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| **Free**        | $0/mo  | Casual users, trial           | 20 queries/month, Framework Q&A only                                                                       |
-| **Scholar**     | $12/mo | Serious laypeople, students   | Unlimited Q&A, Devil's Advocate, Comparison Mode, Resource Engine                                          |
-| **Ministry**    | $28/mo | Pastors, apologists, teachers | All Scholar features + Debate Prep, Catechism Tutor, Patristic Library, Scripture Study Mode, export tools |
-| **Church Team** | $75/mo | Church staff, study groups    | Up to 5 seats, all Ministry features, shared notes and study sessions                                      |
+| Plan            | Price  | Best For                      | Usage                                                         | Included                                                                                                   |
+| --------------- | ------ | ----------------------------- | ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| **Free**        | $0/mo  | Casual users, trial           | Limited usage — 20 queries/month                              | Framework Q&A only                                                                                         |
+| **Scholar**     | $19/mo | Serious laypeople, students   | Standard usage — ~150 queries/month (fair use)                | Framework Q&A, Devil's Advocate, Comparison Mode, Resource Engine                                          |
+| **Ministry**    | $39/mo | Pastors, apologists, teachers | Increased usage — ~300 queries/month + 100 deep-study sessions | All Scholar features + Debate Prep, Catechism Tutor, Patristic Library, Scripture Study Mode, export tools |
+| **Church Team** | $99/mo | Church staff, study groups    | Pooled team usage — ~700 queries/month shared across 5 seats  | Up to 5 seats, all Ministry features, shared notes and study sessions                                      |
+
+Usage limits are sized so that model API costs stay at or below ~30% of each tier's revenue (~70% gross margin). See [PRICING.md](./PRICING.md) for the full cost model, per-query economics, and fair-use policy.
 
 ---
 
@@ -265,7 +267,7 @@ A deep-dive exegetical mode where users bring a passage and receive a thorough, 
 
 ### AI Layer
 
-- **Primary Model:** Anthropic Claude API
+- **Primary Model:** Claude Sonnet 5 (`claude-sonnet-5`) via the Anthropic Claude API — a single model serves every query type in the app; see [PRICING.md](./PRICING.md) for the cost model
 - **System Prompt Architecture:** Each theological framework is backed by a carefully crafted system prompt encoding the tradition's confessional standards, hermeneutical commitments, key theologians, and interpretive priorities
 - **Retrieval-Augmented Generation (RAG):** Primary sources from the patristic library and confessional standards are embedded and retrieved contextually using Convex vector search
 
