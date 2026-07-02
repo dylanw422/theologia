@@ -1,14 +1,22 @@
-import type { Conversation, ConversationSetup, ModeId } from "./chat-state";
+import type { Conversation } from "./chat-state";
 import { getFramework, getSubTradition } from "./frameworks";
+import {
+  COLLECTIONS,
+  DOCUMENTS,
+  MODE_SETUP,
+  PURPOSES,
+  type ConversationSetup,
+  type ModeId,
+  type SetupKind,
+} from "@theologia/backend/convex/lib/studyData";
 
-/** Which setup controls the composer shows for a mode. */
-export type SetupKind =
-  | "tradition"
-  | "versus"
-  | "multi-tradition"
-  | "document"
-  | "tradition-purpose"
-  | "collection";
+export {
+  DOCUMENTS,
+  COLLECTIONS,
+  PURPOSES,
+  isSetupValid,
+  type SetupKind,
+} from "@theologia/backend/convex/lib/studyData";
 
 export interface Mode {
   id: ModeId;
@@ -32,7 +40,7 @@ export const MODES: Mode[] = [
     heading: { pre: "What will you ", em: "study", post: " today?" },
     lede: "Ask anything. Theologia answers from within your tradition — its confessions, its theologians, its history.",
     placeholder: "Ask a question…",
-    setup: "tradition",
+    setup: MODE_SETUP.qa,
     samplePrompts: [
       { topic: "Exegesis", prompt: "What does Romans 9 mean for election?" },
       { topic: "Sacraments", prompt: "Does baptism save?" },
@@ -48,7 +56,7 @@ export const MODES: Mode[] = [
     heading: { pre: "Face the ", em: "strongest", post: " objections." },
     lede: "Lock in your tradition, choose a rival, and hear its best case — argued seriously, never as a strawman.",
     placeholder: "Name the doctrine or passage to put under pressure…",
-    setup: "versus",
+    setup: MODE_SETUP["devils-advocate"],
     samplePrompts: [
       {
         topic: "Election",
@@ -70,7 +78,7 @@ export const MODES: Mode[] = [
     heading: { pre: "Set the traditions ", em: "side by side", post: "." },
     lede: "Choose two to four traditions and see each position, its texts, and its theologians — none privileged, all serious.",
     placeholder: "Enter a passage, doctrine, or question to compare…",
-    setup: "multi-tradition",
+    setup: MODE_SETUP.comparison,
     samplePrompts: [
       {
         topic: "Soteriology",
@@ -86,7 +94,7 @@ export const MODES: Mode[] = [
     heading: { pre: "Defend your ", em: "thesis", post: "." },
     lede: "State what you are defending. Theologia ranks the objections you will face and drills you until you can answer them.",
     placeholder: "State the thesis you are defending…",
-    setup: "versus",
+    setup: MODE_SETUP["debate-prep"],
     samplePrompts: [
       { topic: "Ordo salutis", prompt: "Regeneration precedes faith." },
       {
@@ -105,7 +113,7 @@ export const MODES: Mode[] = [
     heading: { pre: "Study the ", em: "confessions", post: " with a tutor." },
     lede: "Read the church's confessional documents with explanation, cross-references, and a tutor who quizzes you back.",
     placeholder: "Ask about the document, or say where to begin…",
-    setup: "document",
+    setup: MODE_SETUP.catechism,
     samplePrompts: [
       { topic: "Start", prompt: "Walk me through the opening question." },
       {
@@ -121,7 +129,7 @@ export const MODES: Mode[] = [
     heading: { pre: "Build your ", em: "shelf", post: "." },
     lede: "Tradition-aware recommendations — primary sources first, tiered from introductory to scholarly, matched to your purpose.",
     placeholder: "Name the topic you are studying…",
-    setup: "tradition-purpose",
+    setup: MODE_SETUP.resources,
     samplePrompts: [
       { topic: "Covenant", prompt: "Covenant theology" },
       { topic: "Commentary", prompt: "A commentary on Romans" },
@@ -134,7 +142,7 @@ export const MODES: Mode[] = [
     heading: { pre: "Search the ", em: "Fathers", post: "." },
     lede: "The patristic and primary-source library — councils, confessions, and the Fathers, searchable and explained in plain language.",
     placeholder: "Search the primary sources…",
-    setup: "collection",
+    setup: MODE_SETUP.library,
     samplePrompts: [
       {
         topic: "Eucharist",
@@ -156,7 +164,7 @@ export const MODES: Mode[] = [
     heading: { pre: "Go ", em: "deep", post: " in the text." },
     lede: "Bring a passage. Receive original-language notes, historical context, your tradition's reading, and the Fathers on the text.",
     placeholder: "Enter a passage — e.g., Romans 9:14–24…",
-    setup: "tradition",
+    setup: MODE_SETUP["scripture-study"],
     samplePrompts: [
       { topic: "Peter", prompt: "1 Peter 3:18–22" },
       { topic: "Romans", prompt: "Romans 9:14–24" },
@@ -169,67 +177,6 @@ export function getMode(id: ModeId): Mode {
   const mode = MODES.find((m) => m.id === id);
   if (!mode) throw new Error(`Unknown mode: ${id}`);
   return mode;
-}
-
-/** The 12 confessional documents from GOAL.md's Catechism & Confession Tutor. */
-export const DOCUMENTS = [
-  { id: "westminster", label: "Westminster Standards" },
-  { id: "heidelberg", label: "Heidelberg Catechism" },
-  { id: "belgic", label: "Belgic Confession" },
-  { id: "dort", label: "Canons of Dort" },
-  { id: "london-1689", label: "1689 London Baptist Confession" },
-  { id: "augsburg", label: "Augsburg Confession" },
-  { id: "luthers-catechisms", label: "Luther's Catechisms" },
-  { id: "ecumenical-creeds", label: "The Ecumenical Creeds" },
-  { id: "chalcedon", label: "Definition of Chalcedon" },
-  { id: "trent", label: "Council of Trent" },
-  { id: "baltimore", label: "Baltimore Catechism" },
-  { id: "dordrecht", label: "Dordrecht Confession" },
-];
-
-/** Library eras/collections from GOAL.md's Patristic & Primary Source Library. */
-export const COLLECTIONS = [
-  { id: "apostolic-fathers", label: "Apostolic Fathers" },
-  { id: "ante-nicene", label: "Ante-Nicene Fathers" },
-  { id: "nicene-post-nicene", label: "Nicene & Post-Nicene Fathers" },
-  { id: "medieval", label: "Medieval Theologians" },
-  { id: "reformation", label: "Reformation Sources" },
-  { id: "councils", label: "Council Documents" },
-];
-
-export const PURPOSES = [
-  { id: "debate-prep", label: "Debate prep" },
-  { id: "sermon-prep", label: "Sermon prep" },
-  { id: "personal-study", label: "Personal study" },
-  { id: "academic-research", label: "Academic research" },
-];
-
-/** Whether the new-study setup is complete enough to send the first message. */
-export function isSetupValid(mode: ModeId, setup: ConversationSetup): boolean {
-  switch (getMode(mode).setup) {
-    case "tradition":
-      return Boolean(setup.framework);
-    case "versus":
-      return Boolean(
-        setup.framework &&
-          setup.opposing &&
-          setup.opposing !== setup.framework,
-      );
-    case "multi-tradition": {
-      const traditions = setup.traditions ?? [];
-      return (
-        traditions.length >= 2 &&
-        traditions.length <= 4 &&
-        new Set(traditions).size === traditions.length
-      );
-    }
-    case "document":
-      return Boolean(setup.document);
-    case "tradition-purpose":
-      return Boolean(setup.framework && setup.purpose);
-    case "collection":
-      return true;
-  }
 }
 
 function frameworkLabel(id?: string): string {

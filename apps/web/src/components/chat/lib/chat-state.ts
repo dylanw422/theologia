@@ -1,16 +1,17 @@
 import type { Script } from "./scripts/types";
+import {
+  deriveTitle,
+  type ConversationSetup,
+  type ModeId,
+} from "@theologia/backend/convex/lib/studyData";
+
+export {
+  deriveTitle,
+  type ConversationSetup,
+  type ModeId,
+} from "@theologia/backend/convex/lib/studyData";
 
 export type Role = "user" | "assistant";
-
-export type ModeId =
-  | "qa"
-  | "devils-advocate"
-  | "comparison"
-  | "debate-prep"
-  | "catechism"
-  | "resources"
-  | "library"
-  | "scripture-study";
 
 /**
  * Assistant answers are lists of typed content blocks — prose plus the
@@ -80,17 +81,6 @@ export interface Message {
   actions?: Action[];
 }
 
-/** The mode-specific choices made on the new-study screen. */
-export interface ConversationSetup {
-  framework?: string;
-  subTradition?: string;
-  opposing?: string;
-  traditions?: string[];
-  document?: string;
-  purpose?: string;
-  collection?: string;
-}
-
 export interface Conversation extends ConversationSetup {
   id: string;
   title: string;
@@ -100,21 +90,8 @@ export interface Conversation extends ConversationSetup {
   nextTypedStep?: string;
 }
 
-const TITLE_MAX = 48;
-
 function id(): string {
   return crypto.randomUUID();
-}
-
-/**
- * Derive a sidebar title from the first line of a message, trimmed and
- * truncated. Empty input falls back to a neutral default.
- */
-export function deriveTitle(text: string): string {
-  const firstLine = text.split("\n")[0]?.trim() ?? "";
-  if (firstLine.length === 0) return "New conversation";
-  if (firstLine.length <= TITLE_MAX) return firstLine;
-  return `${firstLine.slice(0, TITLE_MAX).trimEnd()}…`;
 }
 
 export function createConversation(input: {
