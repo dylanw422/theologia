@@ -44,11 +44,13 @@ function CopyButton({ text }: { text: string }) {
 export default function ChatThread({
   conversation,
   isReplying,
+  isStreaming = false,
   onSend,
   onAction,
 }: {
   conversation: Conversation;
   isReplying: boolean;
+  isStreaming?: boolean;
   onSend: (text: string) => void;
   onAction: (action: Action) => void;
 }) {
@@ -78,6 +80,7 @@ export default function ChatThread({
                 const showActions =
                   exchange.assistant === lastMessage &&
                   !isReplying &&
+                  !isStreaming &&
                   (exchange.assistant?.actions?.length ?? 0) > 0;
 
                 return (
@@ -156,7 +159,7 @@ export default function ChatThread({
           <div className={styles.composerInner}>
             <ChatComposer
               onSend={onSend}
-              disabled={isReplying}
+              disabled={isReplying || isStreaming}
               context={
                 <span className={styles.lockChip}>{contextLabel}</span>
               }

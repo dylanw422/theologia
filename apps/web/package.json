@@ -10,6 +10,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@convex-dev/agent": "^0.6.4",
     "@convex-dev/better-auth": "catalog:",
     "@convex-dev/polar": "catalog:",
     "@polar-sh/checkout": "^0.2.1",
