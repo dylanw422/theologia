@@ -15,10 +15,10 @@
       "react": "^19.2.6",
       "react-dom": "^19.2.6",
       "sonner": "^2.0.5",
-      "convex": "^1.33.1",
+      "convex": "^1.42.1",
       "better-auth": "~1.6.9",
       "@convex-dev/better-auth": "^0.12.2",
-      "@convex-dev/polar": "^0.9.1",
+      "@convex-dev/polar": "^0.9.2",
       "@types/react": "^19.2.15",
       "@types/react-dom": "^19.2.3",
       "tailwindcss": "^4.1.18"
