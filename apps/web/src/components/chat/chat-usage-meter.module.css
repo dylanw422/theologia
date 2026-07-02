@@ -1,0 +1,118 @@
+.meter {
+  position: absolute;
+  right: 0.9rem;
+  bottom: 0.9rem;
+  z-index: 10;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: default;
+}
+
+.trigger:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.ring {
+  width: 20px;
+  height: 20px;
+}
+
+.track {
+  fill: none;
+  stroke: var(--hairline);
+  stroke-width: 2;
+}
+
+.progress {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 2;
+  stroke-linecap: round;
+  transition: stroke 200ms ease;
+}
+
+.trigger:hover .progress {
+  stroke: var(--gold-bright);
+}
+
+/* ── Hover card ── */
+.card {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 0.6rem);
+  width: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  font-family: var(--font-inter), sans-serif;
+  background: rgba(15, 12, 8, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  padding: 0.7rem 0.8rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+
+.meter:hover .card,
+.meter:focus-within .card {
+  opacity: 1;
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.cardLabel {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--parchment-dim);
+}
+
+.percent {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.78rem;
+  color: var(--parchment);
+}
+
+.bar {
+  height: 3px;
+  border-radius: 999px;
+  background: var(--hairline);
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--gold);
+}
+
+.reset {
+  font-size: 0.7rem;
+  color: var(--parchment-dim);
+}
+
+@media (max-width: 760px) {
+  .meter {
+    display: none;
+  }
+}

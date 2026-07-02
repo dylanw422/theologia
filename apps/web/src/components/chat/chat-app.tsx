@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import ChatEmpty from "./chat-empty";
 import ChatSidebar from "./chat-sidebar";
 import ChatThread from "./chat-thread";
+import ChatUsageMeter from "./chat-usage-meter";
 import {
   appendMessage,
   createConversation,
@@ -114,6 +115,7 @@ export default function ChatApp() {
               <ChatEmpty onStart={handleStart} />
             )}
           </div>
+          <ChatUsageMeter />
         </main>
       </div>
     </div>

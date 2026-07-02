@@ -100,10 +100,11 @@ At ~$0.04/query, 150 queries ≈ $6.00 — right at budget at full utilization (
 
 ## Fair-Use Enforcement
 
-1. **Soft caps, not hard walls.** Marketing says "standard/increased usage"; enforcement is graceful. At 100% of the cap: notify. At ~120%: downgrade over-cap queries to Haiku 4.5 and/or apply response throttling. Never mid-month hard-block a paying user. (This is the only place Haiku appears in the architecture.)
-2. **Metering unit is the query, not the token.** Users understand queries; tokens are invisible to them. Internally, track token spend per user to validate that the per-query cost assumptions hold.
-3. **Deep-study sessions metered separately** (or at a 3× query multiplier) so a Debate Prep marathon doesn't silently exhaust a Ministry user's standard allowance.
-4. **Upgrade prompts at the cap** are the conversion mechanism: Scholar → Ministry at the query cap, Ministry → Church Team when a user shares exports repeatedly.
+1. **Limits are metered weekly.** Each plan's allowance is enforced as a weekly window of the monthly API budget ÷ 4, resetting Monday 00:00 local. Four weekly windows add up to the monthly budget the cost model is sized on, never more.
+2. **Soft caps, not hard walls.** Marketing says "standard/increased usage"; enforcement is graceful. At 100% of the cap: notify. At ~120%: downgrade over-cap queries to Haiku 4.5 and/or apply response throttling. Never mid-month hard-block a paying user. (This is the only place Haiku appears in the architecture.)
+3. **Metering unit is dollar cost, not the query or token.** Usage is tracked as actual API spend against the weekly budget. Users never see dollars, tokens, or query counts — the UI surfaces only the percentage of the weekly allowance used and a countdown to the reset. The per-query estimates above remain the sizing and marketing vocabulary.
+4. **Deep-study sessions metered separately** (or at a 3× query multiplier) so a Debate Prep marathon doesn't silently exhaust a Ministry user's standard allowance.
+5. **Upgrade prompts at the cap** are the conversion mechanism: Scholar → Ministry at the query cap, Ministry → Church Team when a user shares exports repeatedly.
 
 ---
 
