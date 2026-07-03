@@ -1,4 +1,5 @@
 import type { Block } from "./lib/chat-state";
+import { renderInline } from "./lib/inline";
 import styles from "./message-blocks.module.css";
 
 /**
@@ -18,7 +19,7 @@ export default function MessageBlocks({ blocks }: { blocks: Block[] }) {
 function BlockView({ block }: { block: Block }) {
   switch (block.type) {
     case "prose":
-      return <p className={styles.prose}>{block.text}</p>;
+      return <p className={styles.prose}>{renderInline(block.text)}</p>;
 
     case "scripture":
       return (
@@ -33,7 +34,7 @@ function BlockView({ block }: { block: Block }) {
         <aside className={styles.history}>
           <span className={styles.historyEyebrow}>Church history</span>
           <h4 className={styles.historyHeading}>{block.heading}</h4>
-          <p className={styles.historyText}>{block.text}</p>
+          <p className={styles.historyText}>{renderInline(block.text)}</p>
         </aside>
       );
 
@@ -90,7 +91,7 @@ function BlockView({ block }: { block: Block }) {
                     <span className={styles.pointWeight}>{item.weight}</span>
                   ) : null}
                 </div>
-                <p className={styles.pointText}>{item.body}</p>
+                <p className={styles.pointText}>{renderInline(item.body)}</p>
               </div>
             </li>
           ))}
@@ -123,7 +124,7 @@ function BlockView({ block }: { block: Block }) {
       return (
         <figure className={styles.source}>
           <blockquote className={styles.sourceExcerpt}>
-            {block.excerpt}
+            {renderInline(block.excerpt)}
           </blockquote>
           <figcaption className={styles.sourceCite}>
             <span className={styles.sourceAuthor}>{block.author}</span>
@@ -139,7 +140,7 @@ function BlockView({ block }: { block: Block }) {
         <article className={styles.article}>
           <span className={styles.articleSource}>{block.source}</span>
           <h4 className={styles.articleLabel}>{block.label}</h4>
-          <p className={styles.articleBody}>{block.body}</p>
+          <p className={styles.articleBody}>{renderInline(block.body)}</p>
           {block.proofs && block.proofs.length > 0 ? (
             <div className={styles.articleProofs}>
               {block.proofs.map((proof) => (
