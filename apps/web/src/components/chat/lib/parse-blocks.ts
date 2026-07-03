@@ -76,6 +76,11 @@ function pushProse(blocks: Block[], raw: string): void {
   }
 }
 
+/** Drop a partially typed tag hanging off the end of streaming text. */
+function stripPartialTag(s: string): string {
+  return s.replace(/<[^>]*$/, "");
+}
+
 const TIERS = ["introductory", "intermediate", "scholarly"] as const;
 type Tier = (typeof TIERS)[number];
 
@@ -168,6 +173,58 @@ function toBlock(
   }
 }
 
+/**
+ * Partial-mode counterpart of toBlock: builds a block for a tag whose closing
+ * tag has not arrived yet. Attributes are complete (they live in the opening
+ * tag); the body may be empty or mid-word. Returns null when the tag should
+ * stay withheld (missing required attribute, or nothing to show yet).
+ */
+function toPartialBlock(
+  tag: Exclude<TagName, "followups">,
+  attrs: Record<string, string>,
+  inner: string,
+): Block | null {
+  const body = unescapeEntities(stripPartialTag(inner).trim());
+  switch (tag) {
+    case "scripture":
+      return attrs.ref
+        ? { type: "scripture", reference: attrs.ref, text: body }
+        : null;
+    case "history":
+      return attrs.heading
+        ? { type: "history", heading: attrs.heading, text: body }
+        : null;
+    case "source":
+      return attrs.work
+        ? {
+            type: "source",
+            work: attrs.work,
+            author: attrs.author ?? "",
+            citation: attrs.citation ?? "",
+            excerpt: body,
+          }
+        : null;
+    case "article": {
+      if (!attrs.label) return null;
+      const proofs = attrs.proofs
+        ? attrs.proofs.split(";").map((p) => p.trim()).filter(Boolean)
+        : undefined;
+      return {
+        type: "article",
+        source: attrs.source ?? "",
+        label: attrs.label,
+        body,
+        ...(proofs && proofs.length > 0 ? { proofs } : {}),
+      };
+    }
+    case "lexicon":
+    case "comparison":
+    case "points":
+    case "resources":
+      return null;
+  }
+}
+
 export function parseBlocks(
   text: string,
   opts?: { partial?: boolean },
@@ -187,8 +244,18 @@ export function parseBlocks(
 
     if (closeIndex === -1) {
       if (opts?.partial) {
-        // Unclosed tag while streaming: emit the prose before it, withhold the rest.
+        // Unclosed tag while streaming: emit the prose before it, then a
+        // partial block that fills in as its content arrives. followups and
+        // unsupported partials stay withheld.
         pushProse(blocks, text.slice(cursor, match.index));
+        if (tag !== "followups") {
+          const block = toPartialBlock(
+            tag,
+            parseAttrs(match[2]),
+            text.slice(openEnd),
+          );
+          if (block) blocks.push(block);
+        }
         cursor = text.length;
         pending = true;
         break;

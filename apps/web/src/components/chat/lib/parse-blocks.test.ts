@@ -221,6 +221,73 @@ describe("parseBlocks — streaming partials", () => {
     expect(pending).toBe(false);
   });
 
+  it("emits a partial scripture block once its open tag completes", () => {
+    const { blocks, pending } = parseBlocks(
+      '<scripture ref="John 1:1">In the beginning was the W',
+      { partial: true },
+    );
+    expect(blocks).toEqual([
+      {
+        type: "scripture",
+        reference: "John 1:1",
+        text: "In the beginning was the W",
+        streaming: true,
+      },
+    ]);
+    expect(pending).toBe(true);
+  });
+
+  it("a partial body strips a half-typed closing tag", () => {
+    const { blocks } = parseBlocks(
+      '<source work="Confessions" author="Augustine" citation="I.1">Our heart is restless</sou',
+      { partial: true },
+    );
+    expect(blocks).toEqual([
+      {
+        type: "source",
+        work: "Confessions",
+        author: "Augustine",
+        citation: "I.1",
+        excerpt: "Our heart is restless",
+        streaming: true,
+      },
+    ]);
+  });
+
+  it("a partial article carries its proofs from the open tag", () => {
+    const { blocks } = parseBlocks(
+      '<article source="Westminster Confession" label="III.1" proofs="Eph 1:11; Rom 11:33">God orda',
+      { partial: true },
+    );
+    expect(blocks).toEqual([
+      {
+        type: "article",
+        source: "Westminster Confession",
+        label: "III.1",
+        body: "God orda",
+        proofs: ["Eph 1:11", "Rom 11:33"],
+        streaming: true,
+      },
+    ]);
+  });
+
+  it("an unclosed body tag missing its required attribute stays withheld", () => {
+    const { blocks, pending } = parseBlocks("Intro.\n\n<scripture>In the begi", {
+      partial: true,
+    });
+    expect(blocks).toEqual([{ type: "prose", text: "Intro.", streaming: true }]);
+    expect(pending).toBe(true);
+  });
+
+  it("a partial body tag with an empty body still renders its shell", () => {
+    const { blocks } = parseBlocks('<history heading="An old debate">', {
+      partial: true,
+    });
+    expect(blocks).toEqual([
+      { type: "history", heading: "An old debate", text: "", streaming: true },
+    ]);
+  });
+
   it("marks the last block streaming in partial mode only", () => {
     const partial = parseBlocks("First done.\n\nSecond arrivi", { partial: true });
     expect(partial.blocks).toEqual([
