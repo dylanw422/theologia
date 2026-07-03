@@ -81,8 +81,51 @@ function stripPartialTag(s: string): string {
   return s.replace(/<[^>]*$/, "");
 }
 
+/** The in-progress last <tag …>body child of `inner`, if its open tag is complete. */
+function trailingChild(
+  inner: string,
+  tag: string,
+): { attrs: Record<string, string>; body: string } | null {
+  const close = `</${tag}>`;
+  const last = inner.lastIndexOf(close);
+  const rest = inner.slice(last === -1 ? 0 : last + close.length);
+  const m = rest.match(new RegExp(`<${tag}(\\s[^>]*)?>([\\s\\S]*)$`));
+  return m ? { attrs: parseAttrs(m[1]), body: m[2] ?? "" } : null;
+}
+
 const TIERS = ["introductory", "intermediate", "scholarly"] as const;
 type Tier = (typeof TIERS)[number];
+
+function resourceTier(raw: string | undefined): Tier {
+  return (TIERS as readonly string[]).includes(raw ?? "")
+    ? (raw as Tier)
+    : "introductory";
+}
+
+function pointItems(
+  inner: string,
+): { title: string; body: string; weight?: string }[] {
+  return children(inner, "point")
+    .map((p) => ({
+      title: p.attrs.title ?? "",
+      body: unescapeEntities(p.body),
+      ...(p.attrs.weight ? { weight: p.attrs.weight } : {}),
+    }))
+    .filter((i) => i.title && i.body);
+}
+
+function resourceItems(
+  inner: string,
+): { title: string; author: string; tier: Tier; note: string }[] {
+  return children(inner, "item")
+    .map((it) => ({
+      title: it.attrs.title ?? "",
+      author: it.attrs.author ?? "",
+      tier: resourceTier(it.attrs.tier),
+      note: unescapeEntities(it.body),
+    }))
+    .filter((i) => i.title);
+}
 
 function toBlock(
   tag: Exclude<TagName, "followups">,
@@ -123,26 +166,11 @@ function toBlock(
     }
     case "points": {
       const kind = attrs.kind === "response" ? "response" : "objection";
-      const items = children(inner, "point")
-        .map((p) => ({
-          title: p.attrs.title ?? "",
-          body: unescapeEntities(p.body),
-          ...(p.attrs.weight ? { weight: p.attrs.weight } : {}),
-        }))
-        .filter((i) => i.title && i.body);
+      const items = pointItems(inner);
       return items.length > 0 ? { type: "points", kind, items } : null;
     }
     case "resources": {
-      const items = children(inner, "item")
-        .map((it) => ({
-          title: it.attrs.title ?? "",
-          author: it.attrs.author ?? "",
-          tier: (TIERS as readonly string[]).includes(it.attrs.tier ?? "")
-            ? (it.attrs.tier as Tier)
-            : "introductory",
-          note: unescapeEntities(it.body),
-        }))
-        .filter((i) => i.title);
+      const items = resourceItems(inner);
       return items.length > 0 ? { type: "resources", items } : null;
     }
     case "source": {
@@ -219,9 +247,34 @@ function toPartialBlock(
     }
     case "lexicon":
     case "comparison":
-    case "points":
-    case "resources":
-      return null;
+      // Attribute/field-based children render only once complete.
+      return toBlock(tag, attrs, inner);
+    case "points": {
+      const kind = attrs.kind === "response" ? "response" : "objection";
+      const items = pointItems(inner);
+      const tail = trailingChild(inner, "point");
+      if (tail?.attrs.title) {
+        items.push({
+          title: tail.attrs.title,
+          body: unescapeEntities(stripPartialTag(tail.body).trim()),
+          ...(tail.attrs.weight ? { weight: tail.attrs.weight } : {}),
+        });
+      }
+      return items.length > 0 ? { type: "points", kind, items } : null;
+    }
+    case "resources": {
+      const items = resourceItems(inner);
+      const tail = trailingChild(inner, "item");
+      if (tail?.attrs.title) {
+        items.push({
+          title: tail.attrs.title,
+          author: tail.attrs.author ?? "",
+          tier: resourceTier(tail.attrs.tier),
+          note: unescapeEntities(stripPartialTag(tail.body).trim()),
+        });
+      }
+      return items.length > 0 ? { type: "resources", items } : null;
+    }
   }
 }
 

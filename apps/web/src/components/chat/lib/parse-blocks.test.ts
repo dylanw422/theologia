@@ -190,14 +190,103 @@ describe("parseBlocks — followups", () => {
 });
 
 describe("parseBlocks — streaming partials", () => {
-  it("withholds a trailing unclosed tag and reports pending", () => {
+  it("streams points: completed items plus the in-progress one", () => {
     const { blocks, pending } = parseBlocks(
-      'Intro prose.\n\n<points kind="objection"><point title="First">Half of the bo',
+      '<points kind="objection"><point title="First" weight="Strong">Done body.</point><point title="Second">Half of the bo',
       { partial: true },
     );
     expect(blocks).toEqual([
-      { type: "prose", text: "Intro prose.", streaming: true },
+      {
+        type: "points",
+        kind: "objection",
+        items: [
+          { title: "First", body: "Done body.", weight: "Strong" },
+          { title: "Second", body: "Half of the bo" },
+        ],
+        streaming: true,
+      },
     ]);
+    expect(pending).toBe(true);
+  });
+
+  it("streams resources: completed items plus the in-progress one", () => {
+    const { blocks } = parseBlocks(
+      '<resources><item title="Institutes" author="John Calvin" tier="scholarly">The fountainhead.</item><item title="Bondage" author="Luther" tier="intermediate">Why it ma',
+      { partial: true },
+    );
+    expect(blocks).toEqual([
+      {
+        type: "resources",
+        items: [
+          {
+            title: "Institutes",
+            author: "John Calvin",
+            tier: "scholarly",
+            note: "The fountainhead.",
+          },
+          {
+            title: "Bondage",
+            author: "Luther",
+            tier: "intermediate",
+            note: "Why it ma",
+          },
+        ],
+        streaming: true,
+      },
+    ]);
+  });
+
+  it("streams lexicon entries as each completes", () => {
+    const { blocks } = parseBlocks(
+      '<lexicon><entry term="λόγος" translit="logos" gloss="word" /><entry term="ἀρχή" translit="arch',
+      { partial: true },
+    );
+    expect(blocks).toEqual([
+      {
+        type: "lexicon",
+        entries: [{ term: "λόγος", translit: "logos", gloss: "word" }],
+        streaming: true,
+      },
+    ]);
+  });
+
+  it("streams comparison columns as each completes", () => {
+    const { blocks } = parseBlocks(
+      '<comparison><column tradition="Reformed"><position>Monergism.</position><texts>Rom 9:16</texts><theologians>Calvin</theologians></column><column tradition="Lutheran"><position>Means of gra',
+      { partial: true },
+    );
+    expect(blocks).toEqual([
+      {
+        type: "comparison",
+        columns: [
+          {
+            tradition: "Reformed",
+            position: "Monergism.",
+            texts: "Rom 9:16",
+            theologians: "Calvin",
+          },
+        ],
+        streaming: true,
+      },
+    ]);
+  });
+
+  it("an unclosed container with no complete children stays withheld", () => {
+    const { blocks, pending } = parseBlocks(
+      'Intro.\n\n<lexicon><entry term="λό',
+      { partial: true },
+    );
+    expect(blocks).toEqual([{ type: "prose", text: "Intro.", streaming: true }]);
+    expect(pending).toBe(true);
+  });
+
+  it("a streaming followups tag stays withheld until closed", () => {
+    const { blocks, actions, pending } = parseBlocks(
+      'Answer.\n\n<followups><q label="Next">Wha',
+      { partial: true },
+    );
+    expect(blocks).toEqual([{ type: "prose", text: "Answer.", streaming: true }]);
+    expect(actions).toEqual([]);
     expect(pending).toBe(true);
   });
 
