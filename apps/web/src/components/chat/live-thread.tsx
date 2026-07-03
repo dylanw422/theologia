@@ -16,7 +16,7 @@ import {
 import { parseBlocks } from "./lib/parse-blocks";
 import { useSmoothStreamText } from "./lib/use-smooth-stream-text";
 
-/** A Convex-backed conversation: the mock Conversation shape plus its ids. */
+/** A Convex-backed conversation: the Conversation shape plus its ids. */
 export interface LiveConversation extends Conversation {
   threadId: string;
   convexId: Id<"conversations">;

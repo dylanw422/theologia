@@ -1,8 +1,6 @@
-import type { Script } from "./scripts/types";
-import {
-  deriveTitle,
-  type ConversationSetup,
-  type ModeId,
+import type {
+  ConversationSetup,
+  ModeId,
 } from "@theologia/backend/convex/lib/studyData";
 
 export {
@@ -90,90 +88,6 @@ export interface Conversation extends ConversationSetup {
   title: string;
   mode: ModeId;
   messages: Message[];
-  /** Script step that should answer the next typed message (quiz, Socratic). */
-  nextTypedStep?: string;
-}
-
-function id(): string {
-  return crypto.randomUUID();
-}
-
-export function createConversation(input: {
-  mode: ModeId;
-  setup: ConversationSetup;
-  firstMessage: string;
-}): Conversation {
-  return {
-    ...input.setup,
-    id: id(),
-    title: deriveTitle(input.firstMessage),
-    mode: input.mode,
-    messages: [{ id: id(), role: "user", content: input.firstMessage }],
-  };
-}
-
-/**
- * Return a new conversation with the message appended. The original is left
- * untouched so callers can treat conversation state immutably.
- */
-export function appendMessage(
-  conversation: Conversation,
-  message: {
-    role: Role;
-    content: string;
-    blocks?: Block[];
-    actions?: Action[];
-  },
-): Conversation {
-  return {
-    ...conversation,
-    messages: [...conversation.messages, { ...message, id: id() }],
-  };
-}
-
-export interface ReplyParts {
-  blocks: Block[];
-  actions?: Action[];
-  nextTypedStep?: string;
-}
-
-/**
- * Resolve the scripted reply for the current turn. Resolution order: an
- * explicit action target, the entry step for a conversation's first exchange,
- * a pending typed-reply step (quiz/Socratic), then the script's fallback.
- */
-export function replyFor(
-  conversation: Conversation,
-  script: Script,
-  opts?: { actionNext?: string; isFirst?: boolean },
-): ReplyParts {
-  const stepId =
-    opts?.actionNext ??
-    (opts?.isFirst ? script.entry : conversation.nextTypedStep);
-  const step = stepId ? script.steps[stepId] : undefined;
-  if (!step) return { blocks: script.fallback };
-
-  const blocks =
-    typeof step.blocks === "function" ? step.blocks(conversation) : step.blocks;
-  return { blocks, actions: step.actions, nextTypedStep: step.onReply };
-}
-
-/** Append the scripted assistant reply and update the pending typed step. */
-export function withReply(
-  conversation: Conversation,
-  script: Script,
-  opts?: { actionNext?: string; isFirst?: boolean },
-): Conversation {
-  const reply = replyFor(conversation, script, opts);
-  return {
-    ...appendMessage(conversation, {
-      role: "assistant",
-      content: blocksToText(reply.blocks),
-      blocks: reply.blocks,
-      actions: reply.actions,
-    }),
-    nextTypedStep: reply.nextTypedStep,
-  };
 }
 
 /** Flatten blocks to plain text for the copy button and `Message.content`. */
