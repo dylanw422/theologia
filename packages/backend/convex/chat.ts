@@ -171,7 +171,7 @@ export const streamReply = internalAction({
         ctx,
         { threadId: args.threadId },
         { promptMessageId: args.promptMessageId, system },
-        { saveStreamDeltas: true },
+        { saveStreamDeltas: { chunking: "word" } },
       );
       await result.consumeStream();
     } catch (error) {
