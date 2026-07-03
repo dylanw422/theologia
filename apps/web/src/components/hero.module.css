@@ -324,7 +324,7 @@
   border-color: rgba(201, 162, 78, 0.55);
 }
 .emailInputWrapper::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: -30px;
   background: url("/school-of-athens.jpg") center 20% / cover no-repeat;
@@ -332,7 +332,7 @@
   z-index: -2;
 }
 .emailInputWrapper::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background: rgba(11, 8, 5, 0.68);
@@ -452,7 +452,7 @@
   border-radius: 2px;
 }
 .pricingCard::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: -30px;
   background: url("/school-of-athens.jpg") center 20% / cover no-repeat;
@@ -460,7 +460,7 @@
   z-index: -2;
 }
 .pricingCard::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background: rgba(11, 8, 5, 0.52);
