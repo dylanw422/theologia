@@ -420,6 +420,23 @@
   padding: 0.22rem 0.5rem;
 }
 
+.caret {
+  display: inline-block;
+  width: 2px;
+  height: 0.95em;
+  margin-left: 3px;
+  vertical-align: -0.12em;
+  background: currentColor;
+  opacity: 0.7;
+  animation: caretBlink 1s steps(2, jump-none) infinite;
+}
+
+@keyframes caretBlink {
+  50% {
+    opacity: 0;
+  }
+}
+
 @media (max-width: 560px) {
   .lexiconRow {
     grid-template-columns: 1fr;

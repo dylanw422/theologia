@@ -16,16 +16,29 @@ export default function MessageBlocks({ blocks }: { blocks: Block[] }) {
   );
 }
 
+/** Blinking caret marking text that is still filling in. */
+function Caret({ show }: { show?: boolean }) {
+  return show ? <span className={styles.caret} aria-hidden /> : null;
+}
+
 function BlockView({ block }: { block: Block }) {
   switch (block.type) {
     case "prose":
-      return <p className={styles.prose}>{renderInline(block.text)}</p>;
+      return (
+        <p className={styles.prose}>
+          {renderInline(block.text)}
+          <Caret show={block.streaming} />
+        </p>
+      );
 
     case "scripture":
       return (
         <blockquote className={styles.scripture}>
           <span className={styles.scriptureRef}>{block.reference}</span>
-          <p className={styles.scriptureText}>{block.text}</p>
+          <p className={styles.scriptureText}>
+            {block.text}
+            <Caret show={block.streaming} />
+          </p>
         </blockquote>
       );
 
@@ -34,7 +47,10 @@ function BlockView({ block }: { block: Block }) {
         <aside className={styles.history}>
           <span className={styles.historyEyebrow}>Church history</span>
           <h4 className={styles.historyHeading}>{block.heading}</h4>
-          <p className={styles.historyText}>{renderInline(block.text)}</p>
+          <p className={styles.historyText}>
+            {renderInline(block.text)}
+            <Caret show={block.streaming} />
+          </p>
         </aside>
       );
 
@@ -91,7 +107,12 @@ function BlockView({ block }: { block: Block }) {
                     <span className={styles.pointWeight}>{item.weight}</span>
                   ) : null}
                 </div>
-                <p className={styles.pointText}>{renderInline(item.body)}</p>
+                <p className={styles.pointText}>
+                  {renderInline(item.body)}
+                  <Caret
+                    show={block.streaming && index === block.items.length - 1}
+                  />
+                </p>
               </div>
             </li>
           ))}
@@ -101,7 +122,7 @@ function BlockView({ block }: { block: Block }) {
     case "resources":
       return (
         <ul className={styles.resources}>
-          {block.items.map((item) => (
+          {block.items.map((item, index) => (
             <li key={item.title} className={styles.resource}>
               <div className={styles.resourceHead}>
                 <span className={styles.resourceTitle}>{item.title}</span>
@@ -114,7 +135,12 @@ function BlockView({ block }: { block: Block }) {
                 </span>
               </div>
               <span className={styles.resourceAuthor}>{item.author}</span>
-              <p className={styles.resourceNote}>{item.note}</p>
+              <p className={styles.resourceNote}>
+                {item.note}
+                <Caret
+                  show={block.streaming && index === block.items.length - 1}
+                />
+              </p>
             </li>
           ))}
         </ul>
@@ -125,6 +151,7 @@ function BlockView({ block }: { block: Block }) {
         <figure className={styles.source}>
           <blockquote className={styles.sourceExcerpt}>
             {renderInline(block.excerpt)}
+            <Caret show={block.streaming} />
           </blockquote>
           <figcaption className={styles.sourceCite}>
             <span className={styles.sourceAuthor}>{block.author}</span>
@@ -140,7 +167,10 @@ function BlockView({ block }: { block: Block }) {
         <article className={styles.article}>
           <span className={styles.articleSource}>{block.source}</span>
           <h4 className={styles.articleLabel}>{block.label}</h4>
-          <p className={styles.articleBody}>{renderInline(block.body)}</p>
+          <p className={styles.articleBody}>
+            {renderInline(block.body)}
+            <Caret show={block.streaming} />
+          </p>
           {block.proofs && block.proofs.length > 0 ? (
             <div className={styles.articleProofs}>
               {block.proofs.map((proof) => (
