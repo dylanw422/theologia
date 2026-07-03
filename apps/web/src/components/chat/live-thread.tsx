@@ -14,6 +14,7 @@ import {
   type Message,
 } from "./lib/chat-state";
 import { parseBlocks } from "./lib/parse-blocks";
+import { useSmoothStreamText } from "./lib/use-smooth-stream-text";
 
 /** A Convex-backed conversation: the mock Conversation shape plus its ids. */
 export interface LiveConversation extends Conversation {
@@ -21,12 +22,16 @@ export interface LiveConversation extends Conversation {
   convexId: Id<"conversations">;
 }
 
-function toMessage(m: UIMessage): Message | null {
+function toMessage(
+  m: UIMessage,
+  text: string,
+  partial: boolean,
+): Message | null {
   if (m.role === "user") {
     return { id: m.key, role: "user", content: m.text };
   }
   if (m.role !== "assistant") return null;
-  const parsed = parseBlocks(m.text, { partial: m.status === "streaming" });
+  const parsed = parseBlocks(text, { partial });
   if (parsed.blocks.length === 0) return null; // nothing renderable yet
   return {
     id: m.key,
@@ -50,12 +55,30 @@ export default function LiveThread({
   const sendMessage = useMutation(api.chat.sendMessage);
 
   const uiMessages = results ?? [];
+  const last = uiMessages.at(-1);
+  const lastAssistant = last && last.role === "assistant" ? last : undefined;
+
+  // Only the newest assistant message can stream; smooth its text so delta
+  // batches read as a steady character flow. Streaming lasts until the
+  // deltas stop AND the reveal catches up.
+  const smoothText = useSmoothStreamText(
+    lastAssistant?.key ?? "",
+    lastAssistant?.text ?? "",
+    lastAssistant?.status === "streaming",
+  );
+  const isStreaming =
+    lastAssistant !== undefined &&
+    (lastAssistant.status === "streaming" ||
+      smoothText.length < lastAssistant.text.length);
+
   const messages = uiMessages
-    .map(toMessage)
+    .map((m) =>
+      m === lastAssistant
+        ? toMessage(m, smoothText, isStreaming)
+        : toMessage(m, m.text, false),
+    )
     .filter((m): m is Message => m !== null);
 
-  const last = uiMessages.at(-1);
-  const isStreaming = last?.role === "assistant" && last.status === "streaming";
   const isReplying = messages.at(-1)?.role === "user";
 
   function send(text: string) {
