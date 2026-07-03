@@ -239,5 +239,9 @@ export function parseBlocks(
     pushProse(blocks, tail);
   }
 
+  if (opts?.partial && blocks.length > 0) {
+    blocks[blocks.length - 1]!.streaming = true;
+  }
+
   return { blocks, actions, pending };
 }

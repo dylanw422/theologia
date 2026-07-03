@@ -19,7 +19,7 @@ export type Role = "user" | "assistant";
  * objections, source excerpts, confession articles…). User messages remain
  * plain `content`.
  */
-export type Block =
+export type Block = (
   | { type: "prose"; text: string }
   | { type: "scripture"; reference: string; text: string }
   | { type: "history"; heading: string; text: string }
@@ -63,7 +63,11 @@ export type Block =
       label: string;
       body: string;
       proofs?: string[];
-    };
+    }
+) & {
+  /** Set on the last block of a partial parse: content still filling in. */
+  streaming?: boolean;
+};
 
 /** A follow-up chip: sends `prefill` as the user turn, replies with step `next`. */
 export interface Action {

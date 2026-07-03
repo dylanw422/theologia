@@ -195,7 +195,9 @@ describe("parseBlocks — streaming partials", () => {
       'Intro prose.\n\n<points kind="objection"><point title="First">Half of the bo',
       { partial: true },
     );
-    expect(blocks).toEqual([{ type: "prose", text: "Intro prose." }]);
+    expect(blocks).toEqual([
+      { type: "prose", text: "Intro prose.", streaming: true },
+    ]);
     expect(pending).toBe(true);
   });
 
@@ -203,7 +205,9 @@ describe("parseBlocks — streaming partials", () => {
     const { blocks, pending } = parseBlocks("Prose so far <scrip", {
       partial: true,
     });
-    expect(blocks).toEqual([{ type: "prose", text: "Prose so far" }]);
+    expect(blocks).toEqual([
+      { type: "prose", text: "Prose so far", streaming: true },
+    ]);
     expect(pending).toBe(true);
   });
 
@@ -211,8 +215,21 @@ describe("parseBlocks — streaming partials", () => {
     const { blocks, pending } = parseBlocks("Streaming prose still arrivi", {
       partial: true,
     });
-    expect(blocks).toEqual([{ type: "prose", text: "Streaming prose still arrivi" }]);
+    expect(blocks).toEqual([
+      { type: "prose", text: "Streaming prose still arrivi", streaming: true },
+    ]);
     expect(pending).toBe(false);
+  });
+
+  it("marks the last block streaming in partial mode only", () => {
+    const partial = parseBlocks("First done.\n\nSecond arrivi", { partial: true });
+    expect(partial.blocks).toEqual([
+      { type: "prose", text: "First done." },
+      { type: "prose", text: "Second arrivi", streaming: true },
+    ]);
+
+    const final = parseBlocks("First done.\n\nSecond done.");
+    expect(final.blocks.every((b) => b.streaming === undefined)).toBe(true);
   });
 
   it("completed tags parse even in partial mode", () => {
