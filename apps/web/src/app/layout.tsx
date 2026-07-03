@@ -4,7 +4,7 @@ import { Fraunces, Geist_Mono, Inter } from "next/font/google";
 import "../index.css";
 
 import Providers from "@/components/providers";
-import { getToken } from "@/lib/auth-server";
+import { getInitialToken } from "@/lib/auth-server";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -33,7 +33,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const token = await getToken();
+  const token = await getInitialToken();
   return (
     <html lang="en" suppressHydrationWarning>
       <body
