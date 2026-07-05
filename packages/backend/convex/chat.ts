@@ -20,13 +20,17 @@ import {
   type MutationCtx,
 } from "./_generated/server";
 import { authComponent } from "./auth";
+import { PLANS } from "./lib/plans";
 import { buildSystemPrompt } from "./lib/prompts";
 import { deriveTitle, isSetupValid } from "./lib/studyData";
+import { getPlanIdForUser } from "./polar";
 import { vMode, vSetup } from "./schema";
+import { assertUnderLimitAndCount, usageHandler } from "./usage";
 
 export const theologiaAgent = new Agent(components.agent, {
   name: "Theologia",
-  languageModel: anthropic("claude-sonnet-4-6"),
+  languageModel: anthropic("claude-sonnet-5"),
+  usageHandler,
 });
 
 const REPLY_ERROR_TEXT =
@@ -52,6 +56,9 @@ export const createConversation = mutation({
     }
     const text = args.firstMessage.trim();
     if (!text) throw new Error("Message is empty");
+
+    const planId = await getPlanIdForUser(ctx, user._id);
+    await assertUnderLimitAndCount(ctx, user._id, planId);
 
     const threadId = await createThread(ctx, components.agent, {
       userId: user._id,
@@ -89,6 +96,9 @@ export const sendMessage = mutation({
     }
     const text = args.text.trim();
     if (!text) throw new Error("Message is empty");
+
+    const planId = await getPlanIdForUser(ctx, user._id);
+    await assertUnderLimitAndCount(ctx, user._id, planId);
 
     const { messageId } = await saveMessage(ctx, components.agent, {
       threadId: conversation.threadId,
@@ -165,12 +175,14 @@ export const streamReply = internalAction({
     );
     if (!conversation) return;
 
+    const planId = await getPlanIdForUser(ctx, conversation.userId);
+    const model = anthropic(PLANS[planId].model);
     const system = buildSystemPrompt(conversation.mode, conversation);
     try {
       const result = await theologiaAgent.streamText(
         ctx,
         { threadId: args.threadId },
-        { promptMessageId: args.promptMessageId, system },
+        { promptMessageId: args.promptMessageId, system, model },
         { saveStreamDeltas: { chunking: "word" } },
       );
       await result.consumeStream();
