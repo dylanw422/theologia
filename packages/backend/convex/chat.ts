@@ -175,10 +175,10 @@ export const streamReply = internalAction({
     );
     if (!conversation) return;
 
-    const planId = await getPlanIdForUser(ctx, conversation.userId);
-    const model = anthropic(PLANS[planId].model);
     const system = buildSystemPrompt(conversation.mode, conversation);
     try {
+      const planId = await getPlanIdForUser(ctx, conversation.userId);
+      const model = anthropic(PLANS[planId].model);
       const result = await theologiaAgent.streamText(
         ctx,
         { threadId: args.threadId },
