@@ -7,11 +7,10 @@ import { api } from "@theologia/backend/convex/_generated/api";
 
 import styles from "./hero.module.css";
 
-type ActiveSection = "why" | "frameworks" | "library" | "pricing" | null;
+type ActiveSection = "why" | "library" | "pricing" | null;
 
 const NAV_SECTIONS = [
   { id: "why", label: "Why Theologia?" },
-  { id: "frameworks", label: "Frameworks" },
   { id: "library", label: "Library" },
   { id: "pricing", label: "Pricing" },
 ] as const;
@@ -189,13 +188,6 @@ export default function Hero() {
                       grounded in church history, and tested against the strongest
                       arguments on the other side — no strawmen, no tribalism.
                     </p>
-                    {/* <Link href="/dashboard" className={styles.btnPrimary}>
-                      Start studying — free
-                      <span className={styles.arrow} aria-hidden>→</span>
-                    </Link>
-                    <button onClick={() => setActive("frameworks")} className={styles.btnGhost}>
-                      Choose your tradition
-                    </button> */}
                     <form
                       onSubmit={handleWaitlist}
                       className={`${styles.waitlistForm} ${styles.reveal} ${styles.d4}`}
@@ -257,26 +249,6 @@ export default function Hero() {
                         {WHY_FACETS[whyFacet].lede}
                       </p>
                     </div>
-                  </>
-                )}
-
-                {active === "frameworks" && (
-                  <>
-                    <p className={`${styles.eyebrow} ${styles.reveal} ${styles.d1}`}>
-                      Framework-aware
-                    </p>
-                    <h1 className={`${styles.headline} ${styles.reveal} ${styles.d2}`}>
-                      The same question, read through <em>your confession</em>.
-                    </h1>
-                    <p className={`${styles.lede} ${styles.reveal} ${styles.d3}`}>
-                      A Reformed pastor and a Wesleyan pastor asking about Romans 9
-                      aren't asking the same question — not really. Theologia honors
-                      that. Select your tradition and every answer draws from your
-                      confession, your hermeneutics, and the theologians who shaped
-                      how your tradition reads Scripture. Internal debates within your
-                      tradition are noted. Opposing views are given their strongest
-                      argument, not a strawman.
-                    </p>
                   </>
                 )}
 
