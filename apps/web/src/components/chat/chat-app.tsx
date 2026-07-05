@@ -8,6 +8,7 @@ import { toast } from "sonner";
 
 import ChatEmpty from "./chat-empty";
 import ChatSidebar from "./chat-sidebar";
+import ChatUpgradeBanner from "./chat-upgrade-banner";
 import ChatUsageMeter from "./chat-usage-meter";
 import LiveThread, { type LiveConversation } from "./live-thread";
 import type { ConversationSetup, ModeId } from "./lib/chat-state";
@@ -67,6 +68,7 @@ export default function ChatApp() {
           <div className={styles.fresco} aria-hidden />
           <div className={styles.overlay} aria-hidden />
           <div className={styles.grain} aria-hidden />
+          <ChatUpgradeBanner />
           <div className={styles.content}>
             {active ? (
               <LiveThread key={active.id} conversation={active} />

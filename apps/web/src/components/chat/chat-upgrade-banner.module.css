@@ -1,0 +1,22 @@
+.banner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 8px 16px;
+  font-size: 12.5px;
+  text-align: center;
+  background: rgba(11, 8, 5, 0.72);
+  border-bottom: 1px solid var(--hairline);
+  color: var(--parchment-dim);
+}
+
+.cta {
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  white-space: nowrap;
+  color: var(--gold);
+}
