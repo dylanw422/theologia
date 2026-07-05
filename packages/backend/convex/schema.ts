@@ -37,4 +37,20 @@ export default defineSchema({
   })
     .index("by_user", ["userId"])
     .index("by_thread", ["threadId"]),
+
+  usageWeeks: defineTable({
+    userId: v.string(),
+    weekStart: v.number(), // ms epoch of Monday 00:00 UTC
+    microUsd: v.number(), // accumulated API cost, millionths of a dollar
+    inputTokens: v.number(), // uncached input tokens
+    outputTokens: v.number(),
+    cacheReadTokens: v.number(),
+    cacheWriteTokens: v.number(),
+  }).index("by_user_week", ["userId", "weekStart"]),
+
+  usageMonths: defineTable({
+    userId: v.string(),
+    monthStart: v.number(), // ms epoch of the 1st, 00:00 UTC
+    queries: v.number(), // free-tier query counter
+  }).index("by_user_month", ["userId", "monthStart"]),
 });
