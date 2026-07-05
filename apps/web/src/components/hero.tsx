@@ -16,10 +16,37 @@ const NAV_SECTIONS = [
   { id: "pricing", label: "Pricing" },
 ] as const;
 
-const WHY_POINTS = [
-  "Conviction, not consensus — every answer stands inside a real tradition and says so",
-  "Steel-man discipline — the strongest form of the opposing argument, never a strawman",
-  "Built for the work — sermon prep, debate prep, catechesis, and close reading of the text",
+const WHY_FACETS = [
+  {
+    id: "conviction",
+    label: "Conviction",
+    headline: (
+      <>
+        Most AI reads Scripture from <em>nowhere</em>.
+      </>
+    ),
+    lede: "Ask a generic chatbot a doctrinal question and you get the average of the internet — tradition-less, source-less, allergic to conviction. Theologia answers from within a real tradition: your confession, your hermeneutics, the theologians who shaped how your church reads the text. Where your tradition debates itself, it says so.",
+  },
+  {
+    id: "steelman",
+    label: "The other side",
+    headline: (
+      <>
+        Tested against <em>their best</em>, not a strawman.
+      </>
+    ),
+    lede: "Anyone can win against a strawman. Devil's Advocate and Debate Prep argue the opposing tradition at full strength — its sharpest exegetes, its strongest texts — then press where a capable opponent would actually press. If your position survives here, it will survive the pulpit, the classroom, and the debate.",
+  },
+  {
+    id: "work",
+    label: "Built for the work",
+    headline: (
+      <>
+        Modes shaped by <em>real study</em>, not chat.
+      </>
+    ),
+    lede: "Sermon prep, debate prep, catechism teaching, verse-by-verse study — each a purpose-built mode with its own discipline: Scripture quoted in place, original-language notes where the vocabulary matters, primary sources cited precisely enough to look up. Not a chatbot with a Bible bolted on — a study environment.",
+  },
 ] as const;
 
 const CITATIONS = [
@@ -76,6 +103,7 @@ const PRICING = [
 
 export default function Hero() {
   const [active, setActive] = useState<ActiveSection>(null);
+  const [whyFacet, setWhyFacet] = useState(0);
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -210,25 +238,25 @@ export default function Hero() {
                     <p className={`${styles.eyebrow} ${styles.reveal} ${styles.d1}`}>
                       Why Theologia
                     </p>
-                    <h1 className={`${styles.headline} ${styles.reveal} ${styles.d2}`}>
-                      Most AI reads Scripture from <em>nowhere</em>.
-                    </h1>
-                    <p className={`${styles.lede} ${styles.reveal} ${styles.d3}`}>
-                      Ask a generic chatbot a doctrinal question and you get the
-                      average of the internet — tradition-less, source-less,
-                      allergic to conviction. Theologia is built differently:
-                      answers shaped by your confession, grounded in the primary
-                      sources, and stress-tested against the strongest objections
-                      the other side actually makes. Study you can take into the
-                      pulpit, the classroom, or the debate.
-                    </p>
-                    <ul className={`${styles.whyList} ${styles.reveal} ${styles.d4}`}>
-                      {WHY_POINTS.map((point) => (
-                        <li key={point} className={styles.whyItem}>
-                          {point}
-                        </li>
+                    <div className={`${styles.whyTabs} ${styles.reveal} ${styles.d2}`}>
+                      {WHY_FACETS.map((facet, i) => (
+                        <button
+                          key={facet.id}
+                          onClick={() => setWhyFacet(i)}
+                          className={`${styles.whyTab}${whyFacet === i ? ` ${styles.whyTabActive}` : ""}`}
+                        >
+                          {facet.label}
+                        </button>
                       ))}
-                    </ul>
+                    </div>
+                    <div key={WHY_FACETS[whyFacet].id}>
+                      <h1 className={`${styles.headline} ${styles.reveal} ${styles.d2}`}>
+                        {WHY_FACETS[whyFacet].headline}
+                      </h1>
+                      <p className={`${styles.lede} ${styles.reveal} ${styles.d3}`}>
+                        {WHY_FACETS[whyFacet].lede}
+                      </p>
+                    </div>
                   </>
                 )}
 

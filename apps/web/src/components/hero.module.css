@@ -436,28 +436,36 @@
 }
 
 /* ---- Section: why Theologia ---- */
-.whyList {
-  list-style: none;
-  margin: clamp(1.2rem, 2vw, 1.6rem) 0 0;
-  padding: 0;
-  display: grid;
-  gap: 0.55rem;
-  max-width: 560px;
+/* Facet chips sit above the headline so they never move when the
+   headline/lede below them swaps. */
+.whyTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: clamp(0.9rem, 1.6vw, 1.2rem);
 }
-.whyItem {
-  position: relative;
-  padding-left: 1.1rem;
+.whyTab {
+  background: none;
+  cursor: pointer;
+  padding: 0.32rem 0.7rem;
+  border: 1px solid rgba(201, 162, 78, 0.28);
+  border-radius: 2px;
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.67rem;
-  letter-spacing: 0.06em;
-  line-height: 1.7;
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   color: var(--parchment-dim);
+  transition:
+    color 0.22s ease,
+    border-color 0.22s ease;
 }
-.whyItem::before {
-  content: "—";
-  position: absolute;
-  left: 0;
+.whyTab:hover {
+  color: var(--parchment);
+  border-color: rgba(201, 162, 78, 0.5);
+}
+.whyTabActive {
   color: var(--gold);
+  border-color: rgba(201, 162, 78, 0.6);
 }
 
 /* ---- Section: pricing cards ---- */
