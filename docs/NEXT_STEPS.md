@@ -18,7 +18,6 @@ What's still missing or unfinished, grouped by area. Billing/metering shipped 20
 
 ## Small polish (from code-review backlog)
 
-- [ ] "Manage Subscription" menu item renders as a briefly-empty row while `CustomerPortalLink` fetches the portal URL — render a disabled placeholder.
 - [ ] Thread `planId` through `streamReply`'s scheduler args instead of re-resolving the plan in both the send mutation and the action (removes a duplicate subscription lookup and a benign TOCTOU window).
 - [ ] Meter aria-label: "5 of 20 used" reads better than "5 / 20 used" for screen readers.
 - [ ] Meter bar fill uses the rounded percent; the ring uses the exact fraction (≤0.5% visual mismatch).
