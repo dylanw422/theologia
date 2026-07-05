@@ -14,6 +14,7 @@ import {
   type Message,
 } from "./lib/chat-state";
 import { parseBlocks } from "./lib/parse-blocks";
+import { usageLimitMessage } from "./lib/usage-limit";
 import { useSmoothStreamText } from "./lib/use-smooth-stream-text";
 
 /** A Convex-backed conversation: the Conversation shape plus its ids. */
@@ -83,9 +84,14 @@ export default function LiveThread({
 
   function send(text: string) {
     if (isReplying || isStreaming) return;
-    sendMessage({ conversationId: conversation.convexId, text }).catch(() => {
-      toast.error("Could not send the message. Please try again.");
-    });
+    sendMessage({ conversationId: conversation.convexId, text }).catch(
+      (error) => {
+        toast.error(
+          usageLimitMessage(error) ??
+            "Could not send the message. Please try again.",
+        );
+      },
+    );
   }
 
   return (

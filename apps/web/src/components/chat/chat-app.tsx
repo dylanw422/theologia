@@ -12,6 +12,7 @@ import ChatUpgradeBanner from "./chat-upgrade-banner";
 import ChatUsageMeter from "./chat-usage-meter";
 import LiveThread, { type LiveConversation } from "./live-thread";
 import type { ConversationSetup, ModeId } from "./lib/chat-state";
+import { usageLimitMessage } from "./lib/usage-limit";
 import styles from "./chat-app.module.css";
 
 export default function ChatApp() {
@@ -50,8 +51,11 @@ export default function ChatApp() {
     try {
       const conversationId = await createConversation(input);
       setActiveId(conversationId);
-    } catch {
-      toast.error("Could not start the study. Please try again.");
+    } catch (error) {
+      toast.error(
+        usageLimitMessage(error) ??
+          "Could not start the study. Please try again.",
+      );
     }
   }
 
