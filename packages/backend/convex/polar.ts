@@ -3,6 +3,7 @@ import { Polar } from "@convex-dev/polar";
 import { api, components } from "./_generated/api";
 import type { DataModel } from "./_generated/dataModel";
 import { action, query } from "./_generated/server";
+import { planFromProductKey, type PlanId } from "./lib/plans";
 
 type CurrentSubscription = Awaited<ReturnType<Polar<DataModel>["getCurrentSubscription"]>>;
 
@@ -22,6 +23,11 @@ export const polar: Polar<DataModel> = new Polar<DataModel>(components.polar, {
       userId: user._id,
       email: user.email,
     };
+  },
+  products: {
+    scholar: process.env.POLAR_PRODUCT_SCHOLAR!,
+    ministry: process.env.POLAR_PRODUCT_MINISTRY!,
+    churchTeam: process.env.POLAR_PRODUCT_CHURCH_TEAM!,
   },
 });
 
@@ -47,6 +53,31 @@ export const getCurrentSubscription = query({
     return await polar.getCurrentSubscription(ctx, {
       userId: user._id,
     });
+  },
+});
+
+type RunQueryCtx = Parameters<Polar<DataModel>["getCurrentSubscription"]>[0];
+
+/** Resolve a user's plan from their Polar subscription. No sub → free. */
+export async function getPlanIdForUser(
+  ctx: RunQueryCtx,
+  userId: string,
+): Promise<PlanId> {
+  const subscription = await polar.getCurrentSubscription(ctx, { userId });
+  return planFromProductKey(subscription?.productKey);
+}
+
+export const getPlanForCurrentUser = query({
+  args: {},
+  handler: async (
+    ctx,
+  ): Promise<{ userId: string; planId: PlanId } | null> => {
+    const user = await ctx.runQuery(api.auth.getCurrentUser);
+    if (!user) return null;
+    return {
+      userId: user._id,
+      planId: await getPlanIdForUser(ctx, user._id),
+    };
   },
 });
 
