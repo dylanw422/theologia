@@ -450,6 +450,16 @@
   padding: 1.1rem 1.25rem;
   border: 1px solid rgba(201, 162, 78, 0.28);
   border-radius: 2px;
+  /* The card itself is a link (checkout or sign-up). */
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 0.22s ease;
+}
+.pricingCard:hover,
+.pricingCard:focus-visible {
+  border-color: rgba(201, 162, 78, 0.6);
 }
 .pricingCard::before {
   content: "";
@@ -497,23 +507,6 @@
   color: var(--parchment-dim);
   line-height: 1.7;
 }
-.pricingCta {
-  display: inline-block;
-  margin-top: 10px;
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 0.67rem;
-  font-weight: 600;
-  letter-spacing: 0.09em;
-  color: var(--gold);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  cursor: pointer;
-  transition: color 0.22s ease;
-}
-.pricingCta:hover {
-  color: var(--gold-bright);
-}
-
 /* ---- Responsive ---- */
 @media (max-width: 760px) {
   .navLinks {

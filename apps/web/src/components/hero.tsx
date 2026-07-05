@@ -238,38 +238,50 @@ export default function Hero() {
                       Depth that scales with <em>your study</em>.
                     </h1>
                     <div className={`${styles.pricingCards} ${styles.reveal} ${styles.d3}`}>
-                      {PRICING.map((p) => (
-                        <div key={p.plan} className={styles.pricingCard}>
-                          <p className={styles.pricingPlan}>{p.plan}</p>
-                          <p className={styles.pricingPrice}>
-                            {p.price}
-                            <span className={styles.pricingPeriod}>{p.period}</span>
-                          </p>
-                          <p className={styles.pricingDesc}>{p.desc}</p>
-                          {(() => {
-                            const product = p.productKey ? products?.[p.productKey] : null;
-                            if (user && product) {
-                              return (
-                                <CheckoutLink
-                                  polarApi={api.polar}
-                                  productIds={[product.id]}
-                                  className={styles.pricingCta}
-                                >
-                                  Get {p.plan}
-                                </CheckoutLink>
-                              );
+                      {PRICING.map((p) => {
+                        // The whole card is the link — no CTA row, so the
+                        // cards keep their original height (no scroll) and
+                        // the auth/product swap never changes the layout.
+                        const product = p.productKey
+                          ? products?.[p.productKey]
+                          : null;
+                        const card = (
+                          <>
+                            <p className={styles.pricingPlan}>{p.plan}</p>
+                            <p className={styles.pricingPrice}>
+                              {p.price}
+                              <span className={styles.pricingPeriod}>
+                                {p.period}
+                              </span>
+                            </p>
+                            <p className={styles.pricingDesc}>{p.desc}</p>
+                          </>
+                        );
+                        if (user && product) {
+                          return (
+                            <CheckoutLink
+                              key={p.plan}
+                              polarApi={api.polar}
+                              productIds={[product.id]}
+                              className={styles.pricingCard}
+                            >
+                              {card}
+                            </CheckoutLink>
+                          );
+                        }
+                        return (
+                          <Link
+                            key={p.plan}
+                            href={user ? "/chat" : "/sign-up"}
+                            className={styles.pricingCard}
+                            aria-label={
+                              p.productKey ? `Get ${p.plan}` : "Start free"
                             }
-                            return (
-                              <Link
-                                href={user ? "/chat" : "/sign-up"}
-                                className={styles.pricingCta}
-                              >
-                                {p.productKey ? `Get ${p.plan}` : "Start free"}
-                              </Link>
-                            );
-                          })()}
-                        </div>
-                      ))}
+                          >
+                            {card}
+                          </Link>
+                        );
+                      })}
                     </div>
                   </>
                 )}
