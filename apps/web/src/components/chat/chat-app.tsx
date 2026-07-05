@@ -72,7 +72,7 @@ export default function ChatApp() {
           <div className={styles.fresco} aria-hidden />
           <div className={styles.overlay} aria-hidden />
           <div className={styles.grain} aria-hidden />
-          <ChatUpgradeBanner />
+          <ChatUpgradeBanner belowHeader={active !== null} />
           <div className={styles.content}>
             {active ? (
               <LiveThread key={active.id} conversation={active} />

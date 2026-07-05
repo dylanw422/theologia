@@ -1,6 +1,11 @@
+/* Overlay strip — absolutely positioned so it never reflows the 100%-height
+   chat layout underneath it. */
 .banner {
-  position: relative;
-  z-index: 2;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -11,6 +16,11 @@
   background: rgba(11, 8, 5, 0.72);
   border-bottom: 1px solid var(--hairline);
   color: var(--parchment-dim);
+}
+
+/* Thread view: sit just below the conversation title bar. */
+.belowHeader {
+  top: var(--thread-header-h);
 }
 
 .cta {

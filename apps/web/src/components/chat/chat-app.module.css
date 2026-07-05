@@ -8,6 +8,8 @@
   --gold-bright: #e6c984;
   --hairline: rgba(201, 162, 78, 0.26);
   --error: #c0392b;
+  /* Shared with chat-thread's title bar and the upgrade banner offset. */
+  --thread-header-h: 48px;
 
   height: 100svh;
   overflow: hidden;
