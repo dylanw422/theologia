@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import { CheckoutLink } from "@convex-dev/polar/react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@theologia/backend/convex/_generated/api";
 
@@ -34,24 +35,28 @@ const PRICING = [
     plan: "Free",
     price: "$0",
     period: "/mo",
+    productKey: null,
     desc: "Limited usage · 20 queries/month · Framework Q&A",
   },
   {
     plan: "Scholar",
     price: "$19",
     period: "/mo",
+    productKey: "scholar",
     desc: "Standard usage · Devil's Advocate · Comparison · Resource Engine",
   },
   {
     plan: "Ministry",
     price: "$39",
     period: "/mo",
+    productKey: "ministry",
     desc: "Increased usage · All Scholar + Debate Prep · Catechism Tutor · Patristic Library · Scripture Study · Export",
   },
   {
     plan: "Church Team",
     price: "$99",
     period: "/mo",
+    productKey: "churchTeam",
     desc: "Pooled team usage · 5 seats · All Ministry features · Shared notes & sessions",
   },
 ] as const;
@@ -63,6 +68,8 @@ export default function Hero() {
   const [isLoading, setIsLoading] = useState(false);
 
   const joinWaitlist = useMutation(api.waitlist.join);
+  const user = useQuery(api.auth.getCurrentUser);
+  const products = useQuery(api.polar.getConfiguredProducts);
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const alreadyRegistered = useQuery(
     api.waitlist.isRegistered,
@@ -239,6 +246,28 @@ export default function Hero() {
                             <span className={styles.pricingPeriod}>{p.period}</span>
                           </p>
                           <p className={styles.pricingDesc}>{p.desc}</p>
+                          {(() => {
+                            const product = p.productKey ? products?.[p.productKey] : null;
+                            if (user && product) {
+                              return (
+                                <CheckoutLink
+                                  polarApi={api.polar}
+                                  productIds={[product.id]}
+                                  className={styles.pricingCta}
+                                >
+                                  Get {p.plan}
+                                </CheckoutLink>
+                              );
+                            }
+                            return (
+                              <Link
+                                href={user ? "/chat" : "/sign-up"}
+                                className={styles.pricingCta}
+                              >
+                                {p.productKey ? `Get ${p.plan}` : "Start free"}
+                              </Link>
+                            );
+                          })()}
                         </div>
                       ))}
                     </div>
