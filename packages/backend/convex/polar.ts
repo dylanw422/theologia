@@ -2,7 +2,7 @@ import { Polar } from "@convex-dev/polar";
 
 import { api, components } from "./_generated/api";
 import type { DataModel } from "./_generated/dataModel";
-import { action, query } from "./_generated/server";
+import { action, internalAction, query } from "./_generated/server";
 import { planFromProductKey, type PlanId } from "./lib/plans";
 
 type CurrentSubscription = Awaited<ReturnType<Polar<DataModel>["getCurrentSubscription"]>>;
@@ -90,6 +90,15 @@ export const syncProducts = action({
       throw new Error("Not authenticated");
     }
 
+    await polar.syncProducts(ctx);
+  },
+});
+
+// Operational sync for the CLI/dashboard (internal functions aren't callable
+// from clients): `bunx convex run polar:syncProductsInternal`.
+export const syncProductsInternal = internalAction({
+  args: {},
+  handler: async (ctx): Promise<void> => {
     await polar.syncProducts(ctx);
   },
 });
