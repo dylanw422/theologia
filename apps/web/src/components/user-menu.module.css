@@ -1,0 +1,62 @@
+/* Matches the app's ink/gold/parchment language (values mirror the palette
+   in chat-app.module.css — the dropdown portals to <body>, outside the
+   scope where those custom properties are defined). Doubled class names
+   raise specificity above the ui-kit's Tailwind defaults. */
+
+.content.content {
+  min-width: 220px;
+  padding: 0.35rem;
+  background: #14100a;
+  color: #f1e8d6;
+  border: 1px solid rgba(201, 162, 78, 0.26);
+  border-radius: 2px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+.label.label {
+  padding: 0.45rem 0.6rem 0.35rem;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #c9a24e;
+}
+
+.separator.separator {
+  margin: 0.15rem 0.35rem;
+  height: 1px;
+  background: rgba(201, 162, 78, 0.26);
+}
+
+.email {
+  padding: 0.45rem 0.6rem;
+  font-size: 0.78rem;
+  color: #b9a886;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item.item {
+  padding: 0.45rem 0.6rem;
+  border-radius: 2px;
+  font-size: 0.8rem;
+  color: #f1e8d6;
+  cursor: pointer;
+  text-decoration: none;
+}
+.item.item:focus,
+.item.item[data-highlighted] {
+  background: rgba(201, 162, 78, 0.12);
+  color: #f1e8d6;
+}
+
+.signOut.signOut {
+  color: #c0392b;
+}
+.signOut.signOut:focus,
+.signOut.signOut[data-highlighted] {
+  background: rgba(192, 57, 43, 0.12);
+  color: #e0584a;
+}
