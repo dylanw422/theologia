@@ -18,6 +18,7 @@ import type * as lib_studyData from "../lib/studyData.js";
 import type * as lib_usageMath from "../lib/usageMath.js";
 import type * as polar from "../polar.js";
 import type * as privateData from "../privateData.js";
+import type * as usage from "../usage.js";
 import type * as waitlist from "../waitlist.js";
 
 import type {
@@ -37,6 +38,7 @@ declare const fullApi: ApiFromModules<{
   "lib/usageMath": typeof lib_usageMath;
   polar: typeof polar;
   privateData: typeof privateData;
+  usage: typeof usage;
   waitlist: typeof waitlist;
 }>;
 

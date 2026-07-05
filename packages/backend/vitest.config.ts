@@ -4,5 +4,6 @@ export default defineConfig({
   test: {
     environment: "node",
     include: ["convex/**/*.test.ts"],
+    server: { deps: { inline: ["convex-test"] } },
   },
 });
