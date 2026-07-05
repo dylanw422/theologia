@@ -1,11 +1,4 @@
-/* Overlay strip — absolutely positioned so it never reflows the 100%-height
-   chat layout underneath it. */
 .banner {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 3;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -18,9 +11,21 @@
   color: var(--parchment-dim);
 }
 
-/* Thread view: sit just below the conversation title bar. */
-.belowHeader {
-  top: var(--thread-header-h);
+/* Empty view: overlay pinned to the top of the chat pane so the centered
+   100%-height layout underneath never reflows. */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+}
+
+/* Thread view: in the thread column's flow between the title bar and the
+   scroller, so messages keep their normal top spacing below it. */
+.inline {
+  position: relative;
+  flex-shrink: 0;
 }
 
 .cta {

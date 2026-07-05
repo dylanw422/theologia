@@ -7,10 +7,11 @@ import { useQuery } from "convex/react";
 import styles from "./chat-upgrade-banner.module.css";
 
 export default function ChatUpgradeBanner({
-  belowHeader = false,
+  variant = "overlay",
 }: {
-  /** Offset below the thread title bar instead of hugging the top edge. */
-  belowHeader?: boolean;
+  /** "overlay" pins to the top of the chat pane; "inline" flows inside the
+   * thread column below the title bar. */
+  variant?: "overlay" | "inline";
 }) {
   const usage = useQuery(api.usage.getUsage);
   const products = useQuery(api.polar.getConfiguredProducts);
@@ -24,11 +25,7 @@ export default function ChatUpgradeBanner({
     : [];
 
   return (
-    <div
-      className={
-        belowHeader ? `${styles.banner} ${styles.belowHeader}` : styles.banner
-      }
-    >
+    <div className={`${styles.banner} ${styles[variant]}`}>
       <span>
         You&rsquo;re on the Free plan — upgrade for increased usage and better
         outputs.

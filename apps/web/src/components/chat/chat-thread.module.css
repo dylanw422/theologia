@@ -13,10 +13,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 1.25rem;
-  /* Fixed height keeps the upgrade-banner overlay offset in sync
-     (--thread-header-h is defined on chat-app's .root). */
-  height: var(--thread-header-h);
-  padding: 0 clamp(1.25rem, 4vw, 2.4rem);
+  padding: 0.95rem clamp(1.25rem, 4vw, 2.4rem);
   border-bottom: 1px solid var(--hairline);
 }
 

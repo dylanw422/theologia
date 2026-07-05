@@ -14,6 +14,7 @@ import {
 
 import ChatComposer from "./chat-composer";
 import ChatNavTrail from "./chat-nav-trail";
+import ChatUpgradeBanner from "./chat-upgrade-banner";
 import type { Action, Conversation } from "./lib/chat-state";
 import { groupIntoExchanges } from "./lib/exchanges";
 import { describeSetup, getMode } from "./lib/modes";
@@ -71,6 +72,8 @@ export default function ChatThread({
           <span className={styles.headerTitle}>{conversation.title}</span>
           <span className={styles.headerChip}>{contextLabel}</span>
         </header>
+
+        <ChatUpgradeBanner variant="inline" />
 
         <MessageScroller className={styles.scroller}>
           <MessageScrollerViewport className={styles.viewport}>
