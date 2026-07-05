@@ -26,16 +26,16 @@ A typical Theologia query (framework-aware Q&A with RAG):
 
 Deep-study sessions (Debate Prep, Scripture Study Mode) are multi-turn; budget them at roughly **3× a standard query**.
 
-### Model architecture: Claude Sonnet 5 (paid) + Haiku 4.5 (free)
+### Single-model architecture: Claude Sonnet 5
 
-**Paid-tier queries run on Claude Sonnet 5 (`claude-sonnet-5`); free-tier queries run on Claude Haiku 4.5 (`claude-haiku-4-5`).** Sonnet 5 is judged sufficient for every paid query type Theologia serves — Framework Q&A, comparisons, and the deep-study modes — so there is no Opus tier in the routing and no per-mode model split.
+**All queries in the app — free and paid — run on Claude Sonnet 5 (`claude-sonnet-5`).** It is judged sufficient for every query type Theologia serves — Framework Q&A, comparisons, and the deep-study modes — so there is no Opus tier in the routing and no per-mode model split. Serving free users the same model keeps the trial honest (the product they sample is the product they'd buy) and keeps output formatting consistent — smaller models drift on the app's structured tag vocabulary.
 
 Claude API pricing as of July 2026:
 
 | Model        | Input $/MTok | Output $/MTok | Est. cost/query (with caching) | Role                                             |
 | ------------ | ------------ | ------------- | ------------------------------ | ------------------------------------------------ |
-| **Sonnet 5** | $3 ($2 intro) | $15 ($10 intro) | ~$0.04 (~$0.027 intro)       | **Paid tiers** — Q&A, comparisons, deep-study    |
-| Haiku 4.5    | $1           | $5            | ~$0.015                        | **Free tier** — all free queries                 |
+| **Sonnet 5** | $3 ($2 intro) | $15 ($10 intro) | ~$0.04 (~$0.027 intro)       | **All queries** — free and paid                  |
+| Haiku 4.5    | $1           | $5            | ~$0.015                        | Unused in routing — optional cost lever only     |
 
 > **Introductory pricing:** Sonnet 5 bills at $2/$10 per MTok through **August 31, 2026**, then reverts to $3/$15. All limits in this document are sized on the **standard** $3/$15 rate — the intro period is temporary margin upside (~33% lower cost per query), not a basis for capacity planning.
 
@@ -58,10 +58,10 @@ Deep-study sessions (Debate Prep, Scripture Study Mode) are multi-turn at roughl
 | -------------------- | ---------------------------------------------- |
 | API budget           | Acquisition cost, not revenue                  |
 | Limit                | 20 queries/calendar month (hard counter)       |
-| Model                | Haiku 4.5                                      |
-| Worst-case cost/user | ~$0.30/month                                   |
+| Model                | Sonnet 5                                       |
+| Worst-case cost/user | ~$0.80/month                                   |
 
-Free is a funnel, not a plan. Free queries run on Claude Haiku 4.5, capping the acquisition cost at ~$0.30/user/month at full utilization (20 queries). Usage is enforced by a hard counter — 20 queries per calendar month, counted transactionally at send time and resetting the 1st at 00:00 UTC — not a dollar budget. The product quality difference between free (Haiku) and paid (Sonnet 5) is an intentional conversion lever.
+Free is a funnel, not a plan. Serving free users the same Sonnet 5 quality as paid tiers makes the trial honest — the product they sample is the product they'd buy — and caps the loss at ~$0.80/user/month at full utilization (20 queries at ~$0.04). Usage is enforced by a hard counter — 20 queries per calendar month, counted transactionally at send time and resetting the 1st at 00:00 UTC — not a dollar budget. The usage limit, not model quality, is the conversion lever. If free-tier volume ever makes the spend material, downgrading free to Haiku (~$0.30/user worst case) is the escape hatch.
 
 ### Scholar — $19/mo
 

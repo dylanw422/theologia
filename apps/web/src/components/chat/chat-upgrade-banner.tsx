@@ -26,10 +26,7 @@ export default function ChatUpgradeBanner({
 
   return (
     <div className={`${styles.banner} ${styles[variant]}`}>
-      <span>
-        You&rsquo;re on the Free plan — upgrade for increased usage and better
-        outputs.
-      </span>
+      <span>You&rsquo;re on the Free plan — upgrade for increased usage.</span>
       {productIds.length > 0 ? (
         <CheckoutLink
           polarApi={api.polar}

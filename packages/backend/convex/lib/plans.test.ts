@@ -17,14 +17,16 @@ describe("planFromProductKey", () => {
 });
 
 describe("PLANS", () => {
-  test("free runs Haiku with no dollar budget", () => {
-    expect(PLANS.free.model).toBe("claude-haiku-4-5");
+  test("free runs Sonnet 5 with no dollar budget", () => {
+    expect(PLANS.free.model).toBe("claude-sonnet-5");
     expect(PLANS.free.weeklyBudgetMicroUsd).toBeNull();
     expect(FREE_MONTHLY_QUERY_LIMIT).toBe(20);
   });
 
-  test("paid plans run Sonnet 5 with weekly budgets from PRICING.md", () => {
+  test("all paid plans run Sonnet 5 with weekly budgets from PRICING.md", () => {
     expect(PLANS.scholar.model).toBe("claude-sonnet-5");
+    expect(PLANS.ministry.model).toBe("claude-sonnet-5");
+    expect(PLANS.churchTeam.model).toBe("claude-sonnet-5");
     expect(PLANS.scholar.weeklyBudgetMicroUsd).toBe(1_375_000);
     expect(PLANS.ministry.weeklyBudgetMicroUsd).toBe(2_825_000);
     expect(PLANS.churchTeam.weeklyBudgetMicroUsd).toBe(7_200_000);

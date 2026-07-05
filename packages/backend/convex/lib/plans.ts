@@ -18,7 +18,10 @@ export const PLANS: Record<PlanId, Plan> = {
   free: {
     id: "free",
     label: "Free",
-    model: "claude-haiku-4-5",
+    // Same model as paid tiers: the trial is honest — the product free users
+    // sample is the product they'd buy. The limit, not the model, is the
+    // upgrade lever.
+    model: "claude-sonnet-5",
     weeklyBudgetMicroUsd: null,
   },
   scholar: {
