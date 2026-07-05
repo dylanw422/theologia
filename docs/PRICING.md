@@ -100,7 +100,7 @@ At ~$0.04/query, 150 queries ≈ $6.00 — right at budget at full utilization (
 
 ## Fair-Use Enforcement
 
-1. **Paid tiers: hard weekly caps.** Each paid plan's allowance is enforced as a weekly window of the monthly API budget ÷ 4 (Scholar $5.50/wk, Ministry $11.30/wk, Church Team $28.80/wk), resetting Monday 00:00 UTC. Requests that would exceed the weekly cap are blocked with an upgrade-or-wait message. There is no grace period, no Haiku downgrade at any cap level, and no soft-cap at 120%.
+1. **Paid tiers: hard weekly caps.** Each paid plan's allowance is enforced as a weekly window of the monthly API budget ÷ 4 (Scholar $5.50/wk, Ministry $11.30/wk, Church Team $28.80/wk), resetting Monday 00:00 UTC. Once cumulative spend reaches the weekly cap, further requests are blocked with an upgrade-or-wait message (the request that crosses the line completes, so actual spend can land slightly over budget). There is no grace period, no Haiku downgrade at any cap level, and no soft-cap at 120%.
 2. **Free tier: hard monthly query counter.** Free usage is limited to exactly 20 queries per calendar month, counted transactionally at send time and resetting the 1st at 00:00 UTC. No dollar metering applies to the free tier.
 3. **Metering unit is dollar cost (paid) or query count (free).** Paid usage is tracked as actual API spend against the weekly budget; the UI surfaces the percentage used and a countdown to Monday reset. Free users see a query counter (e.g., "0 / 20"). Users never see raw dollars or token counts. The per-query estimates above remain the sizing and marketing vocabulary.
 4. **Deep-study sessions metered separately** (or at a 3× query multiplier) so a Debate Prep marathon doesn't silently exhaust a Ministry user's standard allowance.
