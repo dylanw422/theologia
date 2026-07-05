@@ -50,63 +50,20 @@ function sub(id: string, label: string): SubTradition {
 }
 
 /**
- * The theological traditions Theologia supports at launch, from docs/GOAL.md.
- * Labels use the short display form ("Reformed", not "Reformed / Calvinist") —
- * this audience knows the pairings. Sub-traditions are the optional
- * refinements offered when a user starts a new conversation.
+ * The theological traditions Theologia supports at launch, from docs/GOAL.md,
+ * ordered alphabetically by label. Labels use the short display form
+ * ("Reformed", not "Reformed / Calvinist") — this audience knows the
+ * pairings. Sub-traditions are the optional refinements offered when a user
+ * starts a new conversation.
  */
 export const FRAMEWORKS: Framework[] = [
   {
-    id: "reformed",
-    label: "Reformed",
+    id: "anabaptist-mennonite",
+    label: "Anabaptist",
     subTraditions: [
-      sub("presbyterian", "Presbyterian"),
-      sub("dutch-reformed", "Dutch Reformed"),
-      sub("reformed-baptist", "Reformed Baptist"),
-      sub("continental-reformed", "Continental Reformed"),
-    ],
-  },
-  {
-    id: "lutheran",
-    label: "Lutheran",
-    subTraditions: [
-      sub("confessional-lutheran", "Confessional Lutheran (LCMS)"),
-      sub("evangelical-lutheran", "Evangelical Lutheran (ELCA-leaning)"),
-    ],
-  },
-  {
-    id: "arminian-wesleyan",
-    label: "Arminian",
-    subTraditions: [
-      sub("classical-arminian", "Classical Arminian"),
-      sub("wesleyan-holiness", "Wesleyan-Holiness"),
-      sub("open-theism", "Open Theism (flagged)"),
-    ],
-  },
-  {
-    id: "roman-catholic",
-    label: "Roman Catholic",
-    subTraditions: [
-      sub("pre-vatican-ii", "Pre-Vatican II Traditionalist"),
-      sub("post-vatican-ii", "Post-Vatican II"),
-    ],
-  },
-  {
-    id: "eastern-orthodox",
-    label: "Eastern Orthodox",
-    subTraditions: [
-      sub("greek-orthodox", "Greek Orthodox"),
-      sub("russian-orthodox", "Russian Orthodox"),
-      sub("antiochian", "Antiochian"),
-    ],
-  },
-  {
-    id: "baptist",
-    label: "Baptist",
-    subTraditions: [
-      sub("particular-baptist", "Particular Baptist (Reformed)"),
-      sub("general-baptist", "General Baptist"),
-      sub("southern-baptist", "Southern Baptist"),
+      sub("conservative-mennonite", "Conservative Mennonite"),
+      sub("amish-adjacent", "Amish-adjacent"),
+      sub("modern-anabaptist", "Modern Anabaptist"),
     ],
   },
   {
@@ -119,11 +76,51 @@ export const FRAMEWORKS: Framework[] = [
     ],
   },
   {
-    id: "pentecostal-charismatic",
-    label: "Pentecostal",
+    id: "arminian-wesleyan",
+    label: "Arminian",
     subTraditions: [
-      sub("trinitarian-pentecostal", "Trinitarian Pentecostal"),
-      sub("charismatic-evangelical", "Charismatic Evangelical"),
+      sub("classical-arminian", "Classical Arminian"),
+      sub("wesleyan-holiness", "Wesleyan-Holiness"),
+      sub("open-theism", "Open Theism (flagged)"),
+    ],
+  },
+  {
+    id: "baptist",
+    label: "Baptist",
+    subTraditions: [
+      sub("particular-baptist", "Particular Baptist (Reformed)"),
+      sub("general-baptist", "General Baptist"),
+      sub("southern-baptist", "Southern Baptist"),
+    ],
+  },
+  {
+    id: "covenant-theology",
+    label: "Covenant Theology (non-Reformed)",
+    subTraditions: [sub("new-covenant-theology", "New Covenant Theology")],
+  },
+  {
+    id: "dispensationalist-evangelical",
+    label: "Dispensationalist Evangelical",
+    subTraditions: [
+      sub("classic-dispensationalism", "Classic Dispensationalism"),
+      sub("progressive-dispensationalism", "Progressive Dispensationalism"),
+    ],
+  },
+  {
+    id: "eastern-orthodox",
+    label: "Eastern Orthodox",
+    subTraditions: [
+      sub("greek-orthodox", "Greek Orthodox"),
+      sub("russian-orthodox", "Russian Orthodox"),
+      sub("antiochian", "Antiochian"),
+    ],
+  },
+  {
+    id: "lutheran",
+    label: "Lutheran",
+    subTraditions: [
+      sub("confessional-lutheran", "Confessional Lutheran (LCMS)"),
+      sub("evangelical-lutheran", "Evangelical Lutheran (ELCA-leaning)"),
     ],
   },
   {
@@ -135,26 +132,30 @@ export const FRAMEWORKS: Framework[] = [
     ],
   },
   {
-    id: "anabaptist-mennonite",
-    label: "Anabaptist",
+    id: "pentecostal-charismatic",
+    label: "Pentecostal",
     subTraditions: [
-      sub("conservative-mennonite", "Conservative Mennonite"),
-      sub("amish-adjacent", "Amish-adjacent"),
-      sub("modern-anabaptist", "Modern Anabaptist"),
+      sub("trinitarian-pentecostal", "Trinitarian Pentecostal"),
+      sub("charismatic-evangelical", "Charismatic Evangelical"),
     ],
   },
   {
-    id: "dispensationalist-evangelical",
-    label: "Dispensationalist Evangelical",
+    id: "reformed",
+    label: "Reformed",
     subTraditions: [
-      sub("classic-dispensationalism", "Classic Dispensationalism"),
-      sub("progressive-dispensationalism", "Progressive Dispensationalism"),
+      sub("presbyterian", "Presbyterian"),
+      sub("dutch-reformed", "Dutch Reformed"),
+      sub("reformed-baptist", "Reformed Baptist"),
+      sub("continental-reformed", "Continental Reformed"),
     ],
   },
   {
-    id: "covenant-theology",
-    label: "Covenant Theology (non-Reformed)",
-    subTraditions: [sub("new-covenant-theology", "New Covenant Theology")],
+    id: "roman-catholic",
+    label: "Roman Catholic",
+    subTraditions: [
+      sub("pre-vatican-ii", "Pre-Vatican II Traditionalist"),
+      sub("post-vatican-ii", "Post-Vatican II"),
+    ],
   },
 ];
 

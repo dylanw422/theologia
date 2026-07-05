@@ -3,22 +3,24 @@ import { describe, expect, it } from "vitest";
 import { FRAMEWORKS, getFramework } from "./frameworks";
 
 describe("frameworks", () => {
-  it("lists the 12 GOAL.md traditions with short display labels", () => {
+  it("lists the 12 GOAL.md traditions alphabetically with short display labels", () => {
     expect(FRAMEWORKS).toHaveLength(12);
-    expect(FRAMEWORKS.map((f) => f.label)).toEqual([
-      "Reformed",
-      "Lutheran",
-      "Arminian",
-      "Roman Catholic",
-      "Eastern Orthodox",
-      "Baptist",
-      "Anglican",
-      "Pentecostal",
-      "Oneness Pentecostal",
+    const labels = FRAMEWORKS.map((f) => f.label);
+    expect(labels).toEqual([
       "Anabaptist",
-      "Dispensationalist Evangelical",
+      "Anglican",
+      "Arminian",
+      "Baptist",
       "Covenant Theology (non-Reformed)",
+      "Dispensationalist Evangelical",
+      "Eastern Orthodox",
+      "Lutheran",
+      "Oneness Pentecostal",
+      "Pentecostal",
+      "Reformed",
+      "Roman Catholic",
     ]);
+    expect(labels).toEqual([...labels].sort((a, b) => a.localeCompare(b)));
   });
 
   it("gives every framework a stable, unique id", () => {

@@ -70,11 +70,9 @@ export default function SetupPicker({
   const traditionPicker = (
     <FrameworkPicker
       framework={setup.framework ?? ""}
-      subTradition={setup.subTradition ?? ""}
       onFrameworkChange={(id) =>
         patch({ framework: id, subTradition: undefined })
       }
-      onSubTraditionChange={(id) => patch({ subTradition: id || undefined })}
     />
   );
 
