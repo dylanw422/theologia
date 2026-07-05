@@ -7,7 +7,20 @@ import { api } from "@theologia/backend/convex/_generated/api";
 
 import styles from "./hero.module.css";
 
-type ActiveSection = "frameworks" | "library" | "pricing" | null;
+type ActiveSection = "why" | "frameworks" | "library" | "pricing" | null;
+
+const NAV_SECTIONS = [
+  { id: "why", label: "Why Theologia?" },
+  { id: "frameworks", label: "Frameworks" },
+  { id: "library", label: "Library" },
+  { id: "pricing", label: "Pricing" },
+] as const;
+
+const WHY_POINTS = [
+  "Conviction, not consensus — every answer stands inside a real tradition and says so",
+  "Steel-man discipline — the strongest form of the opposing argument, never a strawman",
+  "Built for the work — sermon prep, debate prep, catechesis, and close reading of the text",
+] as const;
 
 const CITATIONS = [
   { ref: "2 Tim 2:15", note: "rightly dividing" },
@@ -106,13 +119,13 @@ export default function Hero() {
             Theologia
           </button>
           <div className={styles.navLinks}>
-            {(["frameworks", "library", "pricing"] as const).map((sec) => (
+            {NAV_SECTIONS.map((sec) => (
               <button
-                key={sec}
-                onClick={() => toggle(sec)}
-                className={`${styles.navBtn}${active === sec ? ` ${styles.navBtnActive}` : ""}`}
+                key={sec.id}
+                onClick={() => toggle(sec.id)}
+                className={`${styles.navBtn}${active === sec.id ? ` ${styles.navBtnActive}` : ""}`}
               >
-                {sec.charAt(0).toUpperCase() + sec.slice(1)}
+                {sec.label}
               </button>
             ))}
             <Link href="/sign-in" className={styles.navSignIn}>
@@ -189,6 +202,33 @@ export default function Hero() {
                               )}
                       </button>
                     </form>
+                  </>
+                )}
+
+                {active === "why" && (
+                  <>
+                    <p className={`${styles.eyebrow} ${styles.reveal} ${styles.d1}`}>
+                      Why Theologia
+                    </p>
+                    <h1 className={`${styles.headline} ${styles.reveal} ${styles.d2}`}>
+                      Most AI reads Scripture from <em>nowhere</em>.
+                    </h1>
+                    <p className={`${styles.lede} ${styles.reveal} ${styles.d3}`}>
+                      Ask a generic chatbot a doctrinal question and you get the
+                      average of the internet — tradition-less, source-less,
+                      allergic to conviction. Theologia is built differently:
+                      answers shaped by your confession, grounded in the primary
+                      sources, and stress-tested against the strongest objections
+                      the other side actually makes. Study you can take into the
+                      pulpit, the classroom, or the debate.
+                    </p>
+                    <ul className={`${styles.whyList} ${styles.reveal} ${styles.d4}`}>
+                      {WHY_POINTS.map((point) => (
+                        <li key={point} className={styles.whyItem}>
+                          {point}
+                        </li>
+                      ))}
+                    </ul>
                   </>
                 )}
 

@@ -435,6 +435,31 @@
   font-size: clamp(0.62rem, 0.9vw, 0.74rem);
 }
 
+/* ---- Section: why Theologia ---- */
+.whyList {
+  list-style: none;
+  margin: clamp(1.2rem, 2vw, 1.6rem) 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+  max-width: 560px;
+}
+.whyItem {
+  position: relative;
+  padding-left: 1.1rem;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.67rem;
+  letter-spacing: 0.06em;
+  line-height: 1.7;
+  color: var(--parchment-dim);
+}
+.whyItem::before {
+  content: "—";
+  position: absolute;
+  left: 0;
+  color: var(--gold);
+}
+
 /* ---- Section: pricing cards ---- */
 .pricingCards {
   display: grid;
