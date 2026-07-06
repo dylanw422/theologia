@@ -1,0 +1,103 @@
+/* Chip-styled select (mirrors the composer's tradition chip) with a
+   custom Base UI popup. The popup portals to document.body — outside
+   the chat .root that defines the palette — so the tokens used here
+   are re-declared locally on both the chip and the positioner. */
+
+.chip,
+.positioner {
+  --ink-deep: #0b0805;
+  --parchment: #f1e8d6;
+  --parchment-dim: #b9a886;
+  --stone: #8a7d68;
+  --gold: #c9a24e;
+  --gold-bright: #e6c984;
+  --hairline: rgba(201, 162, 78, 0.26);
+}
+
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  max-width: 100%;
+  background: transparent;
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  padding: 0.5rem 1.7rem 0.5rem 0.75rem;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--parchment-dim);
+  cursor: pointer;
+  transition: border-color 0.22s ease;
+}
+.chip:hover,
+.chip:focus-visible,
+.chip[data-popup-open] {
+  border-color: rgba(201, 162, 78, 0.55);
+  outline: none;
+}
+.chipSet {
+  color: var(--gold);
+}
+
+.label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.caret {
+  position: absolute;
+  right: 0.5rem;
+  color: var(--stone);
+  pointer-events: none;
+}
+
+.positioner {
+  z-index: 50;
+  outline: none;
+}
+
+.popup {
+  box-sizing: border-box;
+  max-height: min(20rem, var(--available-height));
+  overflow-y: auto;
+  padding: 0.25rem;
+  background: #120e08;
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+  scrollbar-color: var(--hairline) transparent;
+}
+
+.item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0.45rem 0.75rem 0.45rem 1.5rem;
+  border-radius: 2px;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--parchment);
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+}
+.item[data-highlighted] {
+  color: var(--gold-bright);
+  background: rgba(201, 162, 78, 0.09);
+}
+
+/* Renders only for the selected item — absolutely positioned so
+   unselected rows keep the same text alignment. */
+.indicator {
+  position: absolute;
+  left: 0.4rem;
+  display: inline-flex;
+  color: var(--gold);
+}
