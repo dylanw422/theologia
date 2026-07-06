@@ -1,6 +1,8 @@
 "use client";
 
-import { ChevronDown, X } from "lucide-react";
+import { X } from "lucide-react";
+
+import ChipSelect from "@/components/chip-select";
 
 import FrameworkPicker from "./framework-picker";
 import type { ConversationSetup, ModeId } from "./lib/chat-state";
@@ -9,44 +11,6 @@ import { COLLECTIONS, DOCUMENTS, PURPOSES, getMode } from "./lib/modes";
 import styles from "./setup-picker.module.css";
 
 const MAX_TRADITIONS = 4;
-
-/** A single select rendered as a composer-context chip. */
-function SelectChip({
-  value,
-  onChange,
-  ariaLabel,
-  placeholder,
-  options,
-  allowEmpty = false,
-}: {
-  value: string;
-  onChange: (value: string) => void;
-  ariaLabel: string;
-  placeholder: string;
-  options: { id: string; label: string }[];
-  allowEmpty?: boolean;
-}) {
-  return (
-    <span className={`${styles.chip} ${value ? styles.chipSet : ""}`}>
-      <select
-        className={styles.select}
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        aria-label={ariaLabel}
-      >
-        <option value="" disabled={!allowEmpty}>
-          {placeholder}
-        </option>
-        {options.map((option) => (
-          <option key={option.id} value={option.id}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-      <ChevronDown className={styles.caret} size={12} aria-hidden />
-    </span>
-  );
-}
 
 /**
  * The composer's per-mode setup controls — which traditions, documents, or
@@ -87,7 +51,7 @@ export default function SetupPicker({
           <span className={styles.versus} aria-hidden>
             vs
           </span>
-          <SelectChip
+          <ChipSelect
             value={setup.opposing ?? ""}
             onChange={(id) => patch({ opposing: id || undefined })}
             ariaLabel="Opposing tradition"
@@ -116,7 +80,7 @@ export default function SetupPicker({
             </button>
           ))}
           {traditions.length < MAX_TRADITIONS && (
-            <SelectChip
+            <ChipSelect
               value=""
               onChange={(id) =>
                 id && patch({ traditions: [...traditions, id] })
@@ -136,7 +100,7 @@ export default function SetupPicker({
 
     case "document":
       return (
-        <SelectChip
+        <ChipSelect
           value={setup.document ?? ""}
           onChange={(id) => patch({ document: id || undefined })}
           ariaLabel="Confessional document"
@@ -147,7 +111,7 @@ export default function SetupPicker({
 
     case "collection":
       return (
-        <SelectChip
+        <ChipSelect
           value={setup.collection ?? ""}
           onChange={(id) => patch({ collection: id || undefined })}
           ariaLabel="Library collection"
@@ -161,7 +125,7 @@ export default function SetupPicker({
       return (
         <>
           {traditionPicker}
-          <SelectChip
+          <ChipSelect
             value={setup.purpose ?? ""}
             onChange={(id) => patch({ purpose: id || undefined })}
             ariaLabel="Study purpose"
