@@ -1,0 +1,240 @@
+/* Inherits the chat palette custom properties from .root in
+   chat-app.module.css (the panel renders inside that tree). */
+
+.panel {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100svh;
+  background: #120e08; /* a step above --ink-deep so it reads as its own surface */
+  border-left: 1px solid var(--hairline);
+}
+
+/* ── Header ── */
+.head {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.85rem 0.9rem;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.select {
+  min-width: 0;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--parchment);
+  background: rgba(201, 162, 78, 0.06);
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  padding: 0.4rem 0.3rem;
+  cursor: pointer;
+}
+.select:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 2px;
+}
+.select option {
+  background: #120e08;
+  color: var(--parchment);
+}
+
+.bookSelect {
+  flex: 1;
+}
+
+.close {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.8rem;
+  height: 1.8rem;
+  margin-left: 0.1rem;
+  background: transparent;
+  border: none;
+  border-radius: 2px;
+  color: var(--stone);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.close:hover {
+  color: var(--gold-bright);
+}
+.close:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* ── Body ── */
+.body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 1.4rem 1.25rem 2rem;
+  scrollbar-color: var(--hairline) transparent;
+}
+
+.reference {
+  margin: 0 0 1rem;
+  font-family: var(--font-fraunces), serif;
+  font-optical-sizing: auto;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1rem;
+  color: var(--parchment);
+}
+
+.verse {
+  margin: 0 0 0.55rem;
+  font-family: var(--font-fraunces), serif;
+  font-optical-sizing: auto;
+  font-weight: 380;
+  font-size: 0.98rem;
+  line-height: 1.75;
+  color: color-mix(in srgb, var(--parchment) 88%, var(--parchment-dim));
+}
+
+.verseNum {
+  margin-right: 0.4rem;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.58rem;
+  color: var(--gold);
+}
+
+/* ── Loading (pulsing lines, same idiom as .typing in chat-thread) ── */
+.loading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+.loading span {
+  height: 0.7rem;
+  border-radius: 2px;
+  background: rgba(201, 162, 78, 0.09);
+}
+.loading span:nth-child(2) {
+  width: 92%;
+}
+.loading span:nth-child(3) {
+  width: 80%;
+}
+.loading span:nth-child(4) {
+  width: 88%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .loading span {
+    animation: pulse 1.3s ease-in-out infinite;
+  }
+  .loading span:nth-child(2) {
+    animation-delay: 0.15s;
+  }
+  .loading span:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+  .loading span:nth-child(4) {
+    animation-delay: 0.45s;
+  }
+}
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ── Error ── */
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.8rem;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.88rem;
+  color: var(--parchment-dim);
+}
+.error p {
+  margin: 0;
+}
+
+.retry {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--parchment-dim);
+  background: transparent;
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  padding: 0.45rem 0.8rem;
+  cursor: pointer;
+  transition:
+    color 0.22s ease,
+    border-color 0.22s ease;
+}
+.retry:hover {
+  color: var(--gold);
+  border-color: rgba(201, 162, 78, 0.55);
+}
+.retry:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* ── Footer ── */
+.foot {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0.7rem 0.9rem;
+  border-top: 1px solid var(--hairline);
+}
+
+.nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--parchment-dim);
+  background: transparent;
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  padding: 0.45rem 0.8rem;
+  cursor: pointer;
+  transition:
+    color 0.22s ease,
+    border-color 0.22s ease;
+}
+.nav:hover:not(:disabled) {
+  color: var(--gold);
+  border-color: rgba(201, 162, 78, 0.55);
+}
+.nav:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 2px;
+}
+.nav:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* ── Mobile: full-screen overlay instead of a grid column ── */
+@media (max-width: 760px) {
+  .panel {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    border-left: none;
+  }
+}
