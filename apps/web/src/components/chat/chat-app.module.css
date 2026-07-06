@@ -8,6 +8,8 @@
   --gold-bright: #e6c984;
   --hairline: rgba(201, 162, 78, 0.26);
   --error: #c0392b;
+  /* Shared by the thread header and the Bible panel header so they align */
+  --chat-header-h: 3.5rem;
 
   height: 100svh;
   overflow: hidden;

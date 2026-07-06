@@ -13,9 +13,9 @@
   align-items: center;
   justify-content: space-between;
   gap: 1.25rem;
+  height: var(--chat-header-h);
   /* Right side clears the floating Bible toggle (offset + width + gap) */
-  padding: 0.95rem calc(0.9rem + 2rem + 0.75rem) 0.95rem
-    clamp(1.25rem, 4vw, 2.4rem);
+  padding: 0 calc(0.9rem + 2rem + 0.75rem) 0 clamp(1.25rem, 4vw, 2.4rem);
   border-bottom: 1px solid var(--hairline);
 }
 
