@@ -1,10 +1,13 @@
 "use client";
 
+import { BookOpen } from "lucide-react";
 import { useState } from "react";
 
 import { api } from "@theologia/backend/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
 import { toast } from "sonner";
+
+import BiblePanel from "@/components/bible/bible-panel";
 
 import ChatEmpty from "./chat-empty";
 import ChatSidebar from "./chat-sidebar";
@@ -17,6 +20,7 @@ import styles from "./chat-app.module.css";
 
 export default function ChatApp() {
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [bibleOpen, setBibleOpen] = useState(false);
 
   const liveRows = useQuery(api.chat.listConversations);
   const createConversation = useMutation(api.chat.createConversation);
@@ -61,7 +65,9 @@ export default function ChatApp() {
 
   return (
     <div className={styles.root}>
-      <div className={styles.shell}>
+      <div
+        className={`${styles.shell}${bibleOpen ? ` ${styles.shellBible}` : ""}`}
+      >
         <ChatSidebar
           conversations={conversations}
           activeId={activeId}
@@ -80,8 +86,18 @@ export default function ChatApp() {
               <ChatEmpty onStart={handleStart} />
             )}
           </div>
+          <button
+            type="button"
+            className={`${styles.bibleToggle}${bibleOpen ? ` ${styles.bibleToggleActive}` : ""}`}
+            aria-label={bibleOpen ? "Close Bible reader" : "Open Bible reader"}
+            aria-pressed={bibleOpen}
+            onClick={() => setBibleOpen((open) => !open)}
+          >
+            <BookOpen size={16} strokeWidth={2} />
+          </button>
           <ChatUsageMeter />
         </main>
+        {bibleOpen ? <BiblePanel onClose={() => setBibleOpen(false)} /> : null}
       </div>
     </div>
   );

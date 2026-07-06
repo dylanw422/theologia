@@ -87,11 +87,57 @@
   height: 100%;
 }
 
+/* Third column while the Bible reader is open */
+.shellBible {
+  grid-template-columns:
+    clamp(240px, 22vw, 288px) minmax(0, 1fr)
+    clamp(320px, 26vw, 400px);
+}
+
+.bibleToggle {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.9rem;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  background: transparent;
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  color: var(--parchment-dim);
+  cursor: pointer;
+  transition:
+    color 0.22s ease,
+    border-color 0.22s ease,
+    background-color 0.22s ease;
+}
+.bibleToggle:hover {
+  color: var(--gold);
+  border-color: rgba(201, 162, 78, 0.55);
+  background: rgba(201, 162, 78, 0.06);
+}
+.bibleToggle:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 2px;
+}
+.bibleToggleActive {
+  color: var(--gold);
+  border-color: rgba(201, 162, 78, 0.55);
+}
+
 @media (max-width: 760px) {
   .shell {
     grid-template-columns: 1fr;
   }
-  .shell > aside {
+  /* The panel takes itself out of the grid via position: fixed */
+  .shellBible {
+    grid-template-columns: 1fr;
+  }
+  /* first-child: hide only the conversation sidebar, not the Bible panel */
+  .shell > aside:first-child {
     display: none;
   }
 }
