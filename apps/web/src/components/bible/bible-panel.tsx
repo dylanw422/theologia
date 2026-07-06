@@ -1,7 +1,9 @@
 "use client";
 
-import { ChevronDown, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useEffect, useState } from "react";
+
+import ChipSelect from "@/components/chip-select";
 
 import { BOOKS, getBook, nextChapter, prevChapter } from "./lib/books";
 import {
@@ -46,62 +48,32 @@ export default function BiblePanel({ onClose }: { onClose: () => void }) {
   return (
     <aside className={styles.panel} aria-label="Bible reader">
       <header className={styles.head}>
-        <span className={`${styles.chip} ${styles.bookChip}`}>
-          <select
-            className={styles.select}
-            value={reader.book}
-            aria-label="Book"
-            onChange={(e) =>
-              setReader((r) => ({ ...r, book: e.target.value, chapter: 1 }))
-            }
-          >
-            {BOOKS.map((b) => (
-              <option key={b.name} value={b.name}>
-                {b.name}
-              </option>
-            ))}
-          </select>
-          <ChevronDown className={styles.caret} size={12} aria-hidden />
-        </span>
-        <span className={styles.chip}>
-          <select
-            className={styles.select}
-            value={reader.chapter}
-            aria-label="Chapter"
-            onChange={(e) =>
-              setReader((r) => ({ ...r, chapter: Number(e.target.value) }))
-            }
-          >
-            {Array.from({ length: book.chapters }, (_, i) => i + 1).map(
-              (n) => (
-                <option key={n} value={n}>
-                  {n}
-                </option>
-              ),
-            )}
-          </select>
-          <ChevronDown className={styles.caret} size={12} aria-hidden />
-        </span>
-        <span className={styles.chip}>
-          <select
-            className={styles.select}
-            value={reader.translation}
-            aria-label="Translation"
-            onChange={(e) =>
-              setReader((r) => ({
-                ...r,
-                translation: e.target.value as TranslationId,
-              }))
-            }
-          >
-            {TRANSLATIONS.map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.label}
-              </option>
-            ))}
-          </select>
-          <ChevronDown className={styles.caret} size={12} aria-hidden />
-        </span>
+        <ChipSelect
+          className={styles.bookChip}
+          value={reader.book}
+          onChange={(id) =>
+            setReader((r) => ({ ...r, book: id, chapter: 1 }))
+          }
+          ariaLabel="Book"
+          options={BOOKS.map((b) => ({ id: b.name, label: b.name }))}
+        />
+        <ChipSelect
+          value={String(reader.chapter)}
+          onChange={(id) => setReader((r) => ({ ...r, chapter: Number(id) }))}
+          ariaLabel="Chapter"
+          options={Array.from({ length: book.chapters }, (_, i) => ({
+            id: String(i + 1),
+            label: String(i + 1),
+          }))}
+        />
+        <ChipSelect
+          value={reader.translation}
+          onChange={(id) =>
+            setReader((r) => ({ ...r, translation: id as TranslationId }))
+          }
+          ariaLabel="Translation"
+          options={[...TRANSLATIONS]}
+        />
         <button
           type="button"
           className={styles.close}
