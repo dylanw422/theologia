@@ -1,5 +1,12 @@
 .row {
   display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
+.tabs {
+  display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 0.45rem;
