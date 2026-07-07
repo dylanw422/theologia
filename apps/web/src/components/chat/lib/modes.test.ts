@@ -11,10 +11,16 @@ import {
 } from "./modes";
 
 describe("MODES", () => {
-  it("defines the eight modes with qa first and unique ids", () => {
-    expect(MODES).toHaveLength(8);
-    expect(MODES[0].id).toBe("qa");
-    expect(new Set(MODES.map((m) => m.id)).size).toBe(8);
+  it("defines the seven active modes with qa first and sermon-prep last", () => {
+    expect(MODES.map((m) => m.id)).toEqual([
+      "qa",
+      "devils-advocate",
+      "comparison",
+      "catechism",
+      "library",
+      "scripture-study",
+      "sermon-prep",
+    ]);
   });
 
   it("gives every mode three sample prompts and full copy", () => {
@@ -24,11 +30,17 @@ describe("MODES", () => {
       expect(mode.heading.em.length).toBeGreaterThan(0);
       expect(mode.lede.length).toBeGreaterThan(0);
       expect(mode.placeholder.length).toBeGreaterThan(0);
+      expect(mode.useCases.length).toBeGreaterThanOrEqual(2);
+      for (const useCase of mode.useCases) {
+        expect(useCase.length).toBeGreaterThan(0);
+      }
     }
   });
 
-  it("getMode returns the matching definition", () => {
-    expect(getMode("debate-prep").setup).toBe("versus");
+  it("getMode aliases legacy modes to their successors", () => {
+    expect(getMode("debate-prep").id).toBe("devils-advocate");
+    expect(getMode("resources").id).toBe("qa");
+    expect(getMode("sermon-prep").setup).toBe("tradition");
   });
 });
 
@@ -51,6 +63,7 @@ describe("isSetupValid", () => {
     expect(isSetupValid("scripture-study", { framework: "lutheran" })).toBe(
       true,
     );
+    expect(isSetupValid("sermon-prep", { framework: "baptist" })).toBe(true);
   });
 
   it("versus modes need two different traditions", () => {
@@ -147,12 +160,14 @@ describe("describeSetup", () => {
       describeSetup({ mode: "library", collection: "ante-nicene" }),
     ).toContain("Ante-Nicene");
     expect(describeSetup({ mode: "library" })).toBe("");
+    // Legacy resources conversations alias to qa's tradition setup; the
+    // purpose suffix is dropped (accepted cosmetic change).
     expect(
       describeSetup({
         mode: "resources",
         framework: "reformed",
         purpose: "sermon-prep",
       }),
-    ).toBe("Reformed · Sermon prep");
+    ).toBe("Reformed");
   });
 });

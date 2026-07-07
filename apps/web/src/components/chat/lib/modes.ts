@@ -26,12 +26,14 @@ export interface Mode {
   placeholder: string;
   setup: SetupKind;
   samplePrompts: { topic: string; prompt: string }[];
+  useCases: string[];
 }
 
 /**
- * The eight study modes — GOAL.md's features rendered as one chat surface.
- * Church History Surfacing is not a mode; it appears as `history` blocks
- * woven into answers across modes.
+ * The seven study modes — GOAL.md's features rendered as one chat surface,
+ * trimmed of overlap (debate-prep merged into devils-advocate, resources
+ * folded into qa). Church History Surfacing is not a mode; it appears as
+ * `history` blocks woven into answers across modes.
  */
 export const MODES: Mode[] = [
   {
@@ -49,12 +51,17 @@ export const MODES: Mode[] = [
         prompt: "How do faith and works relate in salvation?",
       },
     ],
+    useCases: [
+      "Quick doctrine checks — “what does my church teach about this?”",
+      "Working through a hard passage or objection inside your own tradition",
+      "Asking what to read on a topic",
+    ],
   },
   {
     id: "devils-advocate",
     label: "Devil's Advocate",
     heading: { pre: "Face the ", em: "strongest", post: " objections." },
-    lede: "Lock in your tradition, choose a rival, and hear its best case — argued seriously, never as a strawman.",
+    lede: "Lock in your tradition, choose a rival, and hear its best case — argued seriously, never as a strawman — then drill your answers until they hold.",
     placeholder: "Name the doctrine or passage to put under pressure…",
     setup: MODE_SETUP["devils-advocate"],
     samplePrompts: [
@@ -70,6 +77,10 @@ export const MODES: Mode[] = [
         topic: "Sacraments",
         prompt: "Press my view of the Lord's Supper on John 6.",
       },
+    ],
+    useCases: [
+      "Stress-testing a doctrine against a rival tradition's best arguments",
+      "Preparing to defend a thesis — ranked objections, then drilling your answers",
     ],
   },
   {
@@ -87,24 +98,9 @@ export const MODES: Mode[] = [
       { topic: "Eucharist", prompt: "What happens at the Lord's Supper?" },
       { topic: "Baptism", prompt: "Who should be baptized, and why?" },
     ],
-  },
-  {
-    id: "debate-prep",
-    label: "Debate Prep",
-    heading: { pre: "Defend your ", em: "thesis", post: "." },
-    lede: "State what you are defending. Theologia ranks the objections you will face and drills you until you can answer them.",
-    placeholder: "State the thesis you are defending…",
-    setup: MODE_SETUP["debate-prep"],
-    samplePrompts: [
-      { topic: "Ordo salutis", prompt: "Regeneration precedes faith." },
-      {
-        topic: "Justification",
-        prompt: "Justification is by faith alone.",
-      },
-      {
-        topic: "Baptism",
-        prompt: "Baptism is for professing believers only.",
-      },
+    useCases: [
+      "Seeing where the traditions actually divide on a doctrine",
+      "Preparing to teach a fair survey of views",
     ],
   },
   {
@@ -122,18 +118,9 @@ export const MODES: Mode[] = [
       },
       { topic: "Quiz", prompt: "Quiz me on what I have read so far." },
     ],
-  },
-  {
-    id: "resources",
-    label: "Resources",
-    heading: { pre: "Build your ", em: "shelf", post: "." },
-    lede: "Tradition-aware recommendations — primary sources first, tiered from introductory to scholarly, matched to your purpose.",
-    placeholder: "Name the topic you are studying…",
-    setup: MODE_SETUP.resources,
-    samplePrompts: [
-      { topic: "Covenant", prompt: "Covenant theology" },
-      { topic: "Commentary", prompt: "A commentary on Romans" },
-      { topic: "Doctrine", prompt: "The doctrine of the atonement" },
+    useCases: [
+      "Working through a confession or catechism with a tutor",
+      "Being quizzed on the articles you have read",
     ],
   },
   {
@@ -157,6 +144,10 @@ export const MODES: Mode[] = [
         prompt: "How did the Fathers speak of the Son before Nicaea?",
       },
     ],
+    useCases: [
+      "Finding what the Fathers and councils actually said",
+      "Tracing a doctrine through the primary sources",
+    ],
   },
   {
     id: "scripture-study",
@@ -170,13 +161,43 @@ export const MODES: Mode[] = [
       { topic: "Romans", prompt: "Romans 9:14–24" },
       { topic: "John", prompt: "John 6:35–58" },
     ],
+    useCases: [
+      "Deep study of one passage — language, context, interpreters",
+      "Understanding how your tradition reads a disputed text",
+    ],
+  },
+  {
+    id: "sermon-prep",
+    label: "Sermon Prep",
+    heading: { pre: "Prepare to ", em: "preach", post: " the text." },
+    lede: "Bring Sunday's passage or theme. Exegesis, historical context, your tradition's reading, and the church's voice on the text — the study behind the sermon.",
+    placeholder: "Enter your sermon passage or theme…",
+    setup: MODE_SETUP["sermon-prep"],
+    samplePrompts: [
+      { topic: "Passage", prompt: "I'm preaching John 6:35–58 this Sunday." },
+      { topic: "Theme", prompt: "A sermon on assurance from Romans 8." },
+      { topic: "Series", prompt: "Beginning a series on the Lord's Prayer." },
+    ],
+    useCases: [
+      "You're preaching soon and need the study behind the text",
+      "Gathering exegesis, illustrations, and application angles",
+      "Checking your reading against the tradition before you preach",
+    ],
   },
 ];
 
+/** Modes removed from the picker but still present on old conversations. */
+const LEGACY_MODE_ALIASES: Partial<Record<ModeId, ModeId>> = {
+  "debate-prep": "devils-advocate",
+  resources: "qa",
+};
+
 export function getMode(id: ModeId): Mode {
   const mode = MODES.find((m) => m.id === id);
-  if (!mode) throw new Error(`Unknown mode: ${id}`);
-  return mode;
+  if (mode) return mode;
+  const alias = LEGACY_MODE_ALIASES[id];
+  if (alias) return getMode(alias);
+  throw new Error(`Unknown mode: ${id}`);
 }
 
 function frameworkLabel(id?: string): string {
