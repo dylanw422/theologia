@@ -1,15 +1,16 @@
 .row {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: 0.45rem;
 }
 
+/* The tablist wraps only the tab chips for ARIA; display: contents lets
+   the chips and the info trigger flow in the same wrapping row, so the
+   trigger sits immediately after the last chip. */
 .tabs {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.45rem;
+  display: contents;
 }
 
 .chip {
