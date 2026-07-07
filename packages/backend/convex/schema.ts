@@ -5,11 +5,13 @@ export const vMode = v.union(
   v.literal("qa"),
   v.literal("devils-advocate"),
   v.literal("comparison"),
-  v.literal("debate-prep"),
   v.literal("catechism"),
-  v.literal("resources"),
   v.literal("library"),
   v.literal("scripture-study"),
+  v.literal("sermon-prep"),
+  // Legacy modes — kept so existing conversations remain valid.
+  v.literal("debate-prep"),
+  v.literal("resources"),
 );
 
 /** Mirrors ConversationSetup from lib/studyData.ts. */

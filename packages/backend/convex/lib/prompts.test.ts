@@ -13,6 +13,7 @@ describe("buildSystemPrompt", () => {
       "resources",
       "library",
       "scripture-study",
+      "sermon-prep",
     ] as const;
     for (const mode of modes) {
       const prompt = buildSystemPrompt(mode, {
@@ -39,7 +40,7 @@ describe("buildSystemPrompt", () => {
     expect(prompt).toContain("Presbyterian");
   });
 
-  it("devils-advocate names both traditions and demands objection points", () => {
+  it("devils-advocate names both traditions, ranks objections, and drills responses", () => {
     const prompt = buildSystemPrompt("devils-advocate", {
       framework: "reformed",
       opposing: "arminian-wesleyan",
@@ -48,6 +49,22 @@ describe("buildSystemPrompt", () => {
     expect(prompt).toContain("Arminian");
     expect(prompt).toContain('kind="objection"');
     expect(prompt).toContain("strawman");
+    expect(prompt).toContain("weight");
+    expect(prompt).toContain("assess the answer candidly");
+  });
+
+  it("qa offers reading recommendations via the resources tag", () => {
+    const prompt = buildSystemPrompt("qa", { framework: "reformed" });
+    expect(prompt).toContain("<resources>");
+  });
+
+  it("sermon-prep equips the preacher without writing the sermon", () => {
+    const prompt = buildSystemPrompt("sermon-prep", { framework: "baptist" });
+    expect(prompt).toContain("Baptist");
+    expect(prompt).toContain("preach");
+    expect(prompt).toContain("illustration");
+    expect(prompt).toContain("application");
+    expect(prompt).toContain("do not write the sermon");
   });
 
   it("comparison lists every selected tradition", () => {

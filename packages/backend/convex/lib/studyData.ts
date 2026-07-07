@@ -8,11 +8,15 @@ export type ModeId =
   | "qa"
   | "devils-advocate"
   | "comparison"
-  | "debate-prep"
   | "catechism"
-  | "resources"
   | "library"
-  | "scripture-study";
+  | "scripture-study"
+  | "sermon-prep"
+  // Legacy — no longer offered in the UI; kept so existing conversations
+  // remain valid. debate-prep merged into devils-advocate; resources
+  // folded into qa.
+  | "debate-prep"
+  | "resources";
 
 /** Which setup controls the composer shows for a mode. */
 export type SetupKind =
@@ -207,11 +211,13 @@ export const MODE_SETUP: Record<ModeId, SetupKind> = {
   qa: "tradition",
   "devils-advocate": "versus",
   comparison: "multi-tradition",
-  "debate-prep": "versus",
   catechism: "document",
-  resources: "tradition-purpose",
   library: "collection",
   "scripture-study": "tradition",
+  "sermon-prep": "tradition",
+  // Legacy modes (see ModeId).
+  "debate-prep": "versus",
+  resources: "tradition-purpose",
 };
 
 /** Whether the new-study setup is complete enough to send the first message. */
