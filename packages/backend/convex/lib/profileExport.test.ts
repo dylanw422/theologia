@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { buildProfileMarkdown, type ExportPosition } from "./profile-export";
+import { buildProfileMarkdown, type ExportPosition } from "./profileExport";
 
 const at = Date.UTC(2026, 2, 14); // 2026-03-14
 

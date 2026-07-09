@@ -22,7 +22,7 @@ import {
 } from "./lib/extraction";
 import type { PlanId } from "./lib/plans";
 import { latestPerTopic, vLocus, vStance, vStrength } from "./lib/profile";
-import { buildProfileMarkdown, type ExportPosition } from "./lib/profile-export";
+import { buildProfileMarkdown, type ExportPosition } from "./lib/profileExport";
 import { getFramework } from "./lib/studyData";
 import { getPlanIdForUser } from "./polar";
 
