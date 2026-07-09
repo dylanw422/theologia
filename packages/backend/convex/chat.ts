@@ -24,6 +24,7 @@ import { PLANS } from "./lib/plans";
 import { buildSystemPrompt } from "./lib/prompts";
 import { deriveTitle, isSetupValid } from "./lib/studyData";
 import { getPlanIdForUser } from "./polar";
+import { scheduleExtraction } from "./profile";
 import { vMode, vSetup } from "./schema";
 import { assertUnderLimitAndCount, usageHandler } from "./usage";
 
@@ -79,6 +80,11 @@ export const createConversation = mutation({
       threadId,
       promptMessageId: messageId,
     });
+    await scheduleExtraction(ctx, {
+      conversationId,
+      userId: user._id,
+      planId,
+    });
     return conversationId;
   },
 });
@@ -108,6 +114,11 @@ export const sendMessage = mutation({
       conversationId: args.conversationId,
       threadId: conversation.threadId,
       promptMessageId: messageId,
+    });
+    await scheduleExtraction(ctx, {
+      conversationId: args.conversationId,
+      userId: user._id,
+      planId,
     });
   },
 });

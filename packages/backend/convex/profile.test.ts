@@ -2,8 +2,9 @@
 import { convexTest } from "convex-test";
 import { describe, expect, test } from "vitest";
 
+import { internal } from "./_generated/api";
 import { latestPerTopic } from "./lib/profile";
-import { settingsForUser, upsertSettings } from "./profile";
+import { scheduleExtraction, settingsForUser, upsertSettings } from "./profile";
 import schema from "./schema";
 
 const modules = import.meta.glob("./**/*.ts");
@@ -109,6 +110,109 @@ describe("position selection", () => {
       );
       expect(visible).toHaveLength(1);
       expect(visible[0].statement).toBe("new");
+    });
+  });
+});
+
+describe("scheduleExtraction", () => {
+  async function seed(t: ReturnType<typeof convexTest>) {
+    return await t.run(async (ctx) => {
+      const conversationId = await ctx.db.insert("conversations", {
+        userId: "u1",
+        threadId: "t1",
+        mode: "qa",
+        title: "Study",
+      });
+      return conversationId;
+    });
+  }
+
+  test("does nothing for free plan or when not opted in or paused", async () => {
+    const t = convexTest(schema, modules);
+    const conversationId = await seed(t);
+    await t.run(async (ctx) => {
+      // Never opted in.
+      await scheduleExtraction(ctx as never, { conversationId, userId: "u1", planId: "scholar" });
+      expect((await ctx.db.get(conversationId))?.pendingExtractionId).toBeUndefined();
+
+      await upsertSettings(ctx as never, "u1", { optedIn: true });
+
+      // Free plan.
+      await scheduleExtraction(ctx as never, { conversationId, userId: "u1", planId: "free" });
+      expect((await ctx.db.get(conversationId))?.pendingExtractionId).toBeUndefined();
+
+      // Paused.
+      await upsertSettings(ctx as never, "u1", { paused: true });
+      await scheduleExtraction(ctx as never, { conversationId, userId: "u1", planId: "scholar" });
+      expect((await ctx.db.get(conversationId))?.pendingExtractionId).toBeUndefined();
+    });
+  });
+
+  test("schedules a job, and reschedules (cancelling the prior job) on the next message", async () => {
+    const t = convexTest(schema, modules);
+    const conversationId = await seed(t);
+    await t.run(async (ctx) => {
+      await upsertSettings(ctx as never, "u1", { optedIn: true });
+
+      await scheduleExtraction(ctx as never, { conversationId, userId: "u1", planId: "scholar" });
+      const first = (await ctx.db.get(conversationId))?.pendingExtractionId;
+      expect(first).toBeDefined();
+
+      await scheduleExtraction(ctx as never, { conversationId, userId: "u1", planId: "scholar" });
+      const second = (await ctx.db.get(conversationId))?.pendingExtractionId;
+      expect(second).toBeDefined();
+      expect(second).not.toEqual(first);
+
+      const firstJob = await ctx.db.system.get(first!);
+      expect(firstJob?.state.kind).toBe("canceled");
+      expect((await ctx.db.get(conversationId))?.lastMessageAt).toBeTypeOf("number");
+    });
+  });
+});
+
+describe("recordExtraction", () => {
+  test("inserts claims, advances the high-water mark, clears the pending id", async () => {
+    const t = convexTest(schema, modules);
+    const conversationId = await t.run(async (ctx) =>
+      ctx.db.insert("conversations", {
+        userId: "u1",
+        threadId: "t1",
+        mode: "qa",
+        title: "Study",
+        framework: "reformed",
+      }),
+    );
+
+    await t.mutation(internal.profile.recordExtraction, {
+      conversationId,
+      userId: "u1",
+      lastExtractedOrder: 4,
+      claims: [
+        {
+          locus: "soteriology",
+          topic: "election",
+          statement: "Regeneration precedes faith.",
+          stance: "affirmed",
+          strength: "leaning",
+        },
+      ],
+    });
+
+    await t.run(async (ctx) => {
+      const positions = await ctx.db.query("positions").collect();
+      expect(positions).toHaveLength(1);
+      expect(positions[0]).toMatchObject({
+        userId: "u1",
+        locus: "soteriology",
+        topic: "election",
+        frameworkAtTime: "reformed",
+        excluded: false,
+        userEdited: false,
+        sourceConversationId: conversationId,
+      });
+      const conversation = await ctx.db.get(conversationId);
+      expect(conversation?.lastExtractedOrder).toBe(4);
+      expect(conversation?.pendingExtractionId).toBeUndefined();
     });
   });
 });
