@@ -1,6 +1,8 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
+import { vLocus, vStance, vStrength } from "./lib/profile";
+
 export const vMode = v.union(
   v.literal("qa"),
   v.literal("devils-advocate"),
@@ -36,6 +38,12 @@ export default defineSchema({
     mode: vMode,
     title: v.string(),
     ...vSetup,
+    // Theological Profile extraction bookkeeping (all optional — pre-profile
+    // conversations have none of these).
+    lastMessageAt: v.optional(v.number()),
+    pendingExtractionId: v.optional(v.id("_scheduled_functions")),
+    // Delta high-water mark: agent-component message `order` already extracted.
+    lastExtractedOrder: v.optional(v.number()),
   })
     .index("by_user", ["userId"])
     .index("by_thread", ["threadId"]),
@@ -55,4 +63,30 @@ export default defineSchema({
     monthStart: v.number(), // ms epoch of the 1st, 00:00 UTC
     queries: v.number(), // free-tier query counter
   }).index("by_user_month", ["userId", "monthStart"]),
+
+  // Theological Profile — append-only ledger of positions the user has
+  // affirmed in their own voice. New claims on a topic append; they never
+  // overwrite. docs/THEOLOGICAL_PROFILE.md.
+  positions: defineTable({
+    userId: v.string(),
+    locus: vLocus,
+    topic: v.string(), // slug, e.g. "election", "baptismal-efficacy"
+    statement: v.string(), // one sentence, user's voice
+    stance: vStance,
+    strength: vStrength,
+    sourceConversationId: v.id("conversations"),
+    frameworkAtTime: v.optional(v.string()),
+    excluded: v.boolean(), // user hid it from the profile
+    userEdited: v.boolean(), // statement hand-edited by the user
+  })
+    .index("by_user", ["userId"])
+    .index("by_user_locus", ["userId", "locus"])
+    .index("by_user_topic", ["userId", "topic"]),
+
+  profileSettings: defineTable({
+    userId: v.string(),
+    optedIn: v.boolean(), // off by default; nothing extracts until true
+    paused: v.boolean(), // stops extraction without deleting anything
+    decidedAt: v.number(), // ms epoch of the last opt-in/out decision
+  }).index("by_user", ["userId"]),
 });
