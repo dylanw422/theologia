@@ -19,7 +19,11 @@ import { usageLimitMessage } from "./lib/usage-limit";
 import styles from "./chat-app.module.css";
 
 export default function ChatApp() {
-  const [activeId, setActiveId] = useState<string | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(() =>
+    typeof window === "undefined"
+      ? null
+      : new URLSearchParams(window.location.search).get("c"),
+  );
   const [bibleOpen, setBibleOpen] = useState(false);
 
   const liveRows = useQuery(api.chat.listConversations);
