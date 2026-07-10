@@ -12,10 +12,15 @@
   --hairline: rgba(201, 162, 78, 0.26);
   --error: #c0392b;
 
-  min-height: 100vh;
+  /* Full-bleed ink; the width constraint lives on .inner so the background
+     covers the whole viewport, not just the reading column. */
+  min-height: 100dvh;
   background: var(--ink-deep);
   color: var(--parchment);
   padding: clamp(2rem, 5vw, 4.5rem) clamp(1.25rem, 6vw, 5rem);
+}
+
+.inner {
   max-width: 60rem;
   margin: 0 auto;
 }
@@ -34,7 +39,9 @@
   color: var(--stone);
   text-decoration: none;
 }
-.backLink:hover { color: var(--gold); }
+.backLink:hover {
+  color: var(--gold);
+}
 
 .eyebrow {
   font-family: var(--font-geist-mono), monospace;
@@ -97,7 +104,9 @@
   color: var(--parchment-dim);
   cursor: pointer;
 }
-.pauseControl input { accent-color: var(--gold); }
+.pauseControl input {
+  accent-color: var(--gold);
+}
 
 .controlButton,
 .quietButton,
@@ -117,7 +126,10 @@
   color: var(--parchment-dim);
   padding: 0.45rem 0.8rem;
 }
-.controlButton:hover { color: var(--gold-bright); border-color: var(--gold); }
+.controlButton:hover {
+  color: var(--gold-bright);
+  border-color: var(--gold);
+}
 
 .dangerButton {
   font-size: 0.68rem;
@@ -126,15 +138,22 @@
   padding: 0.45rem 0.8rem;
   margin-left: auto;
 }
-.dangerButton:hover { border-color: var(--error); }
+.dangerButton:hover {
+  border-color: var(--error);
+}
 
-.loci { display: flex; flex-direction: column; }
+.loci {
+  display: flex;
+  flex-direction: column;
+}
 
 .locus {
   border-bottom: 1px solid var(--hairline);
   padding: 1.6rem 0;
 }
-.locus:last-child { border-bottom: none; }
+.locus:last-child {
+  border-bottom: none;
+}
 
 .locusLabel,
 .locusLabelEmpty {
@@ -145,8 +164,13 @@
   text-transform: uppercase;
   margin: 0 0 1rem;
 }
-.locusLabel { color: var(--gold); }
-.locusLabelEmpty { color: var(--stone); opacity: 0.7; }
+.locusLabel {
+  color: var(--gold);
+}
+.locusLabelEmpty {
+  color: var(--stone);
+  opacity: 0.7;
+}
 
 .emptyLocus {
   font-family: var(--font-inter), sans-serif;
@@ -156,8 +180,12 @@
   margin: 0;
 }
 
-.position { margin-bottom: 1.5rem; }
-.position:last-child { margin-bottom: 0; }
+.position {
+  margin-bottom: 1.5rem;
+}
+.position:last-child {
+  margin-bottom: 0;
+}
 
 .statement {
   font-family: var(--font-fraunces), serif;
@@ -177,10 +205,19 @@
   margin: 0 0 0.45rem;
 }
 
-.sourceLink { color: var(--gold); text-decoration: none; }
-.sourceLink:hover { color: var(--gold-bright); text-decoration: underline; }
+.sourceLink {
+  color: var(--gold);
+  text-decoration: none;
+}
+.sourceLink:hover {
+  color: var(--gold-bright);
+  text-decoration: underline;
+}
 
-.positionActions { display: flex; gap: 0.5rem; }
+.positionActions {
+  display: flex;
+  gap: 0.5rem;
+}
 
 .quietButton {
   font-size: 0.62rem;
@@ -188,9 +225,14 @@
   border-color: transparent;
   padding: 0.25rem 0.4rem;
 }
-.quietButton:hover { color: var(--gold-bright); border-color: var(--hairline); }
+.quietButton:hover {
+  color: var(--gold-bright);
+  border-color: var(--hairline);
+}
 
-.editRow { margin-bottom: 0.5rem; }
+.editRow {
+  margin-bottom: 0.5rem;
+}
 .editArea {
   width: 100%;
   font-family: var(--font-fraunces), serif;
@@ -204,7 +246,9 @@
   resize: vertical;
 }
 
-.lockedWrap { position: relative; }
+.lockedWrap {
+  position: relative;
+}
 .lockedCopy {
   font-family: var(--font-inter), sans-serif;
   font-size: 1rem;
@@ -216,7 +260,10 @@
   margin-bottom: 2.5rem;
   max-width: 44rem;
 }
-.lociLocked { opacity: 0.45; pointer-events: none; }
+.lociLocked {
+  opacity: 0.45;
+  pointer-events: none;
+}
 
 .optInCard {
   border: 1px solid var(--hairline);
@@ -245,7 +292,9 @@
   border-color: var(--gold);
   padding: 0.7rem 1.2rem;
 }
-.optInButton:hover { background: var(--gold-bright); }
+.optInButton:hover {
+  background: var(--gold-bright);
+}
 .optInFootnote {
   font-family: var(--font-geist-mono), monospace;
   font-size: 0.65rem;
