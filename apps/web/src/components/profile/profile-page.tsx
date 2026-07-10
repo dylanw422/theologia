@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import Loader from "@/components/loader";
 
 import styles from "./profile-page.module.css";
+import TensionsSection from "./tensions-section";
 
 function formatDate(ms: number): string {
   return new Date(ms).toLocaleDateString("en-US", {
@@ -109,6 +110,8 @@ export default function ProfilePage() {
                 Delete everything
               </button>
             </div>
+
+            <TensionsSection />
 
             <main className={styles.loci}>
               {LOCI.map((locus) => {

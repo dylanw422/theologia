@@ -1,0 +1,164 @@
+/* Tensions — the mirror. Same critical-edition register as the profile:
+   Fraunces quotes, Geist Mono apparatus. A study partner, never a verdict. */
+
+.section {
+  border-bottom: 1px solid var(--hairline);
+  padding-bottom: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+.sectionLabel {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 0 0 0.4rem;
+}
+
+.sectionLede {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--stone);
+  margin: 0 0 1.4rem;
+}
+
+.card {
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  padding: 1.25rem 1.4rem;
+  margin-bottom: 1.25rem;
+}
+.card:last-of-type {
+  margin-bottom: 0;
+}
+
+.quote {
+  border-left: 2px solid var(--hairline);
+  margin: 0 0 0.9rem;
+  padding-left: 0.9rem;
+}
+
+.statement {
+  font-family: var(--font-fraunces), serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+  line-height: 1.35;
+  color: var(--parchment);
+  margin: 0 0 0.25rem;
+}
+
+.apparatus {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  color: var(--stone);
+  margin: 0;
+}
+
+.sourceLink {
+  color: var(--gold);
+  text-decoration: none;
+}
+.sourceLink:hover {
+  color: var(--gold-bright);
+  text-decoration: underline;
+}
+
+.description {
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--parchment-dim);
+  margin: 0 0 0.5rem;
+}
+
+.historicalNote {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.7rem;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+  color: var(--stone);
+  margin: 0 0 0.75rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.actionButton {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--stone);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  padding: 0.25rem 0.4rem;
+  cursor: pointer;
+}
+.actionButton:hover {
+  color: var(--gold-bright);
+  border-color: var(--hairline);
+}
+.actionButton:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.resolveRow {
+  margin-top: 0.5rem;
+}
+.resolveArea {
+  width: 100%;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.9rem;
+  color: var(--parchment);
+  background: rgba(11, 8, 5, 0.6);
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  padding: 0.6rem;
+  margin-bottom: 0.5rem;
+  resize: vertical;
+}
+
+.resolvedBlock {
+  margin-top: 1.75rem;
+}
+
+.resolvedLabel {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.68rem;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--stone);
+  margin: 0 0 0.75rem;
+}
+
+.resolvedItem {
+  margin-bottom: 1rem;
+}
+
+.resolvedPair {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: var(--stone);
+  margin: 0 0 0.25rem;
+}
+
+.resolution {
+  font-family: var(--font-fraunces), serif;
+  font-size: 1rem;
+  font-style: italic;
+  line-height: 1.4;
+  color: var(--parchment-dim);
+  margin: 0;
+}
