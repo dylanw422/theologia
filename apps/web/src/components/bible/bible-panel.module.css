@@ -71,14 +71,35 @@
   color: var(--parchment);
 }
 
+/* Verses are buttons so selection is keyboard-accessible; styled as prose. */
 .verse {
+  display: block;
+  width: 100%;
   margin: 0 0 0.55rem;
+  padding: 0 0.35rem;
+  background: transparent;
+  border: none;
+  border-radius: 2px;
+  text-align: left;
+  cursor: pointer;
   font-family: var(--font-fraunces), serif;
   font-optical-sizing: auto;
   font-weight: 380;
   font-size: 0.98rem;
   line-height: 1.75;
   color: color-mix(in srgb, var(--parchment) 88%, var(--parchment-dim));
+  transition: background-color 0.18s ease;
+}
+.verse:hover {
+  background: rgba(201, 162, 78, 0.07);
+}
+.verse:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 1px;
+}
+.verseSelected,
+.verseSelected:hover {
+  background: rgba(201, 162, 78, 0.14);
 }
 
 .verseNum {
@@ -166,6 +187,78 @@
   border-color: rgba(201, 162, 78, 0.55);
 }
 .retry:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* ── Selection bar (shown while verses are selected) ── */
+.selectionBar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.9rem;
+  border-top: 1px solid var(--hairline);
+}
+
+.selectionRef {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+  color: var(--gold-bright);
+}
+
+.sendToChat {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: transparent;
+  border: 1px solid rgba(201, 162, 78, 0.55);
+  border-radius: 2px;
+  padding: 0.45rem 0.8rem;
+  cursor: pointer;
+  transition:
+    color 0.22s ease,
+    border-color 0.22s ease;
+}
+.sendToChat:hover {
+  color: var(--gold-bright);
+  border-color: var(--gold);
+}
+.sendToChat:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.clearSelection {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.8rem;
+  height: 1.8rem;
+  background: transparent;
+  border: none;
+  border-radius: 2px;
+  color: var(--stone);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.clearSelection:hover {
+  color: var(--gold-bright);
+}
+.clearSelection:focus-visible {
   outline: 1px solid var(--gold);
   outline-offset: 2px;
 }

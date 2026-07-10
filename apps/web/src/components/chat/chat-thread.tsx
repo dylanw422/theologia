@@ -12,7 +12,7 @@ import {
   MessageScrollerViewport,
 } from "@theologia/ui/components/message-scroller";
 
-import ChatComposer from "./chat-composer";
+import ChatComposer, { type ComposerInsert } from "./chat-composer";
 import ChatNavTrail from "./chat-nav-trail";
 import ChatUpgradeBanner from "./chat-upgrade-banner";
 import type { Action, Conversation } from "./lib/chat-state";
@@ -48,12 +48,14 @@ export default function ChatThread({
   isStreaming = false,
   onSend,
   onAction,
+  insert = null,
 }: {
   conversation: Conversation;
   isReplying: boolean;
   isStreaming?: boolean;
   onSend: (text: string) => void;
   onAction: (action: Action) => void;
+  insert?: ComposerInsert | null;
 }) {
   const modeLabel = getMode(conversation.mode).label;
   const setupLabel = describeSetup(conversation);
@@ -154,7 +156,10 @@ export default function ChatThread({
             </MessageScrollerContent>
           </MessageScrollerViewport>
 
-          <MessageScrollerButton direction="end" />
+          <MessageScrollerButton
+            direction="end"
+            className={styles.scrollDown}
+          />
           <ChatNavTrail exchanges={exchanges} />
         </MessageScroller>
 
@@ -163,6 +168,7 @@ export default function ChatThread({
             <ChatComposer
               onSend={onSend}
               disabled={isReplying || isStreaming}
+              insert={insert}
               context={
                 <span className={styles.lockChip}>{contextLabel}</span>
               }

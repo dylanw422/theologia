@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import ChatComposer from "./chat-composer";
+import ChatComposer, { type ComposerInsert } from "./chat-composer";
 import type { ConversationSetup, ModeId } from "./lib/chat-state";
 import { getMode, isSetupValid } from "./lib/modes";
 import ModePicker from "./mode-picker";
@@ -11,12 +11,14 @@ import styles from "./chat-empty.module.css";
 
 export default function ChatEmpty({
   onStart,
+  insert = null,
 }: {
   onStart: (input: {
     mode: ModeId;
     setup: ConversationSetup;
     firstMessage: string;
   }) => void;
+  insert?: ComposerInsert | null;
 }) {
   const [mode, setMode] = useState<ModeId>("qa");
   const [setup, setSetup] = useState<ConversationSetup>({});
@@ -61,6 +63,7 @@ export default function ChatEmpty({
               disabled={!canSend}
               autoFocus
               contextFirst
+              insert={insert}
               placeholder={
                 canSend ? modeDef.placeholder : "Complete the setup to begin…"
               }

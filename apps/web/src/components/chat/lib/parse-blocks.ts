@@ -5,7 +5,10 @@ import type { Action, Block } from "./chat-state";
  * vocabulary in packages/backend/convex/lib/prompts.ts). Untagged text
  * becomes prose blocks; each known tag maps 1:1 onto a Block variant;
  * <followups> maps to Action chips. Malformed or unknown tags degrade to
- * prose — this parser never throws on model output.
+ * prose, except at the very end of the text: a trailing unclosed tag is
+ * treated as truncation (or mid-stream) and salvaged as a partial block
+ * rather than shown as raw tag syntax. This parser never throws on model
+ * output.
  */
 
 export interface ParsedMessage {
@@ -29,6 +32,7 @@ const TAG_NAMES = [
 type TagName = (typeof TAG_NAMES)[number];
 
 const OPEN_TAG = new RegExp(`<(${TAG_NAMES.join("|")})(\\s[^>]*)?>`, "g");
+const KNOWN_CLOSE = new RegExp(`</(${TAG_NAMES.join("|")})>`);
 
 function unescapeEntities(s: string): string {
   return s
@@ -296,25 +300,27 @@ export function parseBlocks(
     const closeIndex = text.indexOf(closeTag, openEnd);
 
     if (closeIndex === -1) {
-      if (opts?.partial) {
-        // Unclosed tag while streaming: emit the prose before it, then a
-        // partial block that fills in as its content arrives. followups and
-        // unsupported partials stay withheld.
-        pushProse(blocks, text.slice(cursor, match.index));
-        if (tag !== "followups") {
-          const block = toPartialBlock(
-            tag,
-            parseAttrs(match[2]),
-            text.slice(openEnd),
-          );
-          if (block) blocks.push(block);
-        }
-        cursor = text.length;
-        pending = true;
-        break;
+      // A different tag closing later means this one is malformed mid-message,
+      // not truncated at the end — degrade it to the prose tail so nothing
+      // after it is swallowed. (Its own close tag can't be what matches: we
+      // just established it doesn't exist.)
+      if (!opts?.partial && KNOWN_CLOSE.test(text.slice(openEnd))) continue;
+
+      // Unclosed tag at the end — mid-stream or a truncated final message.
+      // Emit the prose before it, then salvage a partial block from whatever
+      // content arrived. followups and unsupported partials stay withheld.
+      pushProse(blocks, text.slice(cursor, match.index));
+      if (tag !== "followups") {
+        const block = toPartialBlock(
+          tag,
+          parseAttrs(match[2]),
+          text.slice(openEnd),
+        );
+        if (block) blocks.push(block);
       }
-      // Final text with an unclosed tag: leave it for the prose tail (degrade).
-      continue;
+      cursor = text.length;
+      if (opts?.partial) pending = true;
+      break;
     }
 
     pushProse(blocks, text.slice(cursor, match.index));
@@ -348,13 +354,12 @@ export function parseBlocks(
 
   if (!pending) {
     let tail = text.slice(cursor);
-    if (opts?.partial) {
-      // A partially typed opening tag at the very end — hold it back.
-      const partialOpen = tail.match(/<[a-z][^>]*$/i);
-      if (partialOpen) {
-        tail = tail.slice(0, partialOpen.index);
-        pending = true;
-      }
+    // A partially typed opening tag at the very end — mid-stream it's about
+    // to complete (hold it back); in final text it's truncation debris (drop).
+    const partialOpen = tail.match(/<[a-z][^>]*$/i);
+    if (partialOpen) {
+      tail = tail.slice(0, partialOpen.index);
+      if (opts?.partial) pending = true;
     }
     pushProse(blocks, tail);
   }

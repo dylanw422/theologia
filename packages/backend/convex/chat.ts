@@ -193,7 +193,14 @@ export const streamReply = internalAction({
       const result = await theologiaAgent.streamText(
         ctx,
         { threadId: args.threadId },
-        { promptMessageId: args.promptMessageId, system, model },
+        {
+          promptMessageId: args.promptMessageId,
+          system,
+          model,
+          // @ai-sdk/anthropic doesn't recognize claude-sonnet-5 and falls back
+          // to max_tokens 4096, which truncates long replies mid-tag.
+          maxOutputTokens: 64000,
+        },
         { saveStreamDeltas: { chunking: "word" } },
       );
       await result.consumeStream();

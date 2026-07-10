@@ -398,14 +398,60 @@ describe("parseBlocks — streaming partials", () => {
 });
 
 describe("parseBlocks — malformed input degrades to prose", () => {
-  it("an unclosed tag in final text becomes prose", () => {
+  it("a trailing unclosed tag in final text is salvaged as its block", () => {
     const { blocks, pending } = parseBlocks(
       '<scripture ref="John 1:1">Never closed.',
     );
     expect(blocks).toEqual([
-      { type: "prose", text: '<scripture ref="John 1:1">Never closed.' },
+      { type: "scripture", reference: "John 1:1", text: "Never closed." },
     ]);
     expect(pending).toBe(false);
+  });
+
+  it("a truncated followups tag at the end of final text is dropped", () => {
+    const { blocks, actions } = parseBlocks(
+      'Where would you like to start?\n\n<followups>\n<q label="Work through Matthew 6',
+    );
+    expect(blocks).toEqual([
+      { type: "prose", text: "Where would you like to start?" },
+    ]);
+    expect(actions).toEqual([]);
+  });
+
+  it("a truncated comparison keeps its complete columns", () => {
+    const { blocks } = parseBlocks(
+      '<comparison><column tradition="Reformed"><position>Assurance is attainable.</position></column><column tradition="Wesleyan"><position>This assurance conc',
+    );
+    expect(blocks).toEqual([
+      {
+        type: "comparison",
+        columns: [
+          {
+            tradition: "Reformed",
+            position: "Assurance is attainable.",
+            texts: "",
+            theologians: "",
+          },
+        ],
+      },
+    ]);
+  });
+
+  it("an unclosed tag followed by a complete tag still degrades to prose", () => {
+    const { blocks } = parseBlocks(
+      '<scripture ref="John 1:1">Never closed. <history heading="Later">Fine.</history>',
+    );
+    expect(blocks).toEqual([
+      { type: "prose", text: '<scripture ref="John 1:1">Never closed.' },
+      { type: "history", heading: "Later", text: "Fine." },
+    ]);
+  });
+
+  it("a partially typed opening tag at the end of final text is stripped", () => {
+    const { blocks } = parseBlocks("The prose ends here. <compa");
+    expect(blocks).toEqual([
+      { type: "prose", text: "The prose ends here." },
+    ]);
   });
 
   it("a structured tag with missing required parts becomes prose", () => {

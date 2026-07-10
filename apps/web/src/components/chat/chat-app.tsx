@@ -9,6 +9,7 @@ import { toast } from "sonner";
 
 import BiblePanel from "@/components/bible/bible-panel";
 
+import type { ComposerInsert } from "./chat-composer";
 import ChatEmpty from "./chat-empty";
 import ChatSidebar from "./chat-sidebar";
 import ChatUpgradeBanner from "./chat-upgrade-banner";
@@ -25,6 +26,12 @@ export default function ChatApp() {
       : new URLSearchParams(window.location.search).get("c"),
   );
   const [bibleOpen, setBibleOpen] = useState(false);
+  const [verseInsert, setVerseInsert] = useState<ComposerInsert | null>(null);
+
+  function handleSendToChat(insert: { token: string; context: string }) {
+    // A fresh id per send so the composer applies repeat selections too.
+    setVerseInsert((prev) => ({ id: (prev?.id ?? 0) + 1, ...insert }));
+  }
 
   const liveRows = useQuery(api.chat.listConversations);
   const createConversation = useMutation(api.chat.createConversation);
@@ -85,9 +92,13 @@ export default function ChatApp() {
           {active === null ? <ChatUpgradeBanner /> : null}
           <div className={styles.content}>
             {active ? (
-              <LiveThread key={active.id} conversation={active} />
+              <LiveThread
+                key={active.id}
+                conversation={active}
+                insert={verseInsert}
+              />
             ) : (
-              <ChatEmpty onStart={handleStart} />
+              <ChatEmpty onStart={handleStart} insert={verseInsert} />
             )}
           </div>
           <button
@@ -101,7 +112,12 @@ export default function ChatApp() {
           </button>
           <ChatUsageMeter />
         </main>
-        {bibleOpen ? <BiblePanel onClose={() => setBibleOpen(false)} /> : null}
+        {bibleOpen ? (
+          <BiblePanel
+            onClose={() => setBibleOpen(false)}
+            onSendToChat={handleSendToChat}
+          />
+        ) : null}
       </div>
     </div>
   );

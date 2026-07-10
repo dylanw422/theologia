@@ -65,6 +65,9 @@ describe("buildSystemPrompt", () => {
     expect(prompt).toContain("illustration");
     expect(prompt).toContain("application");
     expect(prompt).toContain("do not write the sermon");
+    expect(prompt).toContain("Never write the sermon or any part of it");
+    expect(prompt).toContain("even when asked directly");
+    expect(prompt).toContain("decline");
   });
 
   it("comparison lists every selected tradition", () => {

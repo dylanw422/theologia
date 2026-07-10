@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, MessageSquarePlus, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import ChipSelect from "@/components/chip-select";
@@ -15,9 +15,16 @@ import {
   type TranslationId,
 } from "./lib/reader-state";
 import { useChapter } from "./lib/use-chapter";
+import { buildVerseContext, buildVerseToken } from "./lib/verse-context";
 import styles from "./bible-panel.module.css";
 
-export default function BiblePanel({ onClose }: { onClose: () => void }) {
+export default function BiblePanel({
+  onClose,
+  onSendToChat,
+}: {
+  onClose: () => void;
+  onSendToChat: (insert: { token: string; context: string }) => void;
+}) {
   // The panel only mounts on user interaction (post-hydration), so reading
   // localStorage in the initializer is safe; the guard covers SSR just in case.
   const [reader, setReader] = useState<ReaderState>(() =>
@@ -36,6 +43,12 @@ export default function BiblePanel({ onClose }: { onClose: () => void }) {
     reader.chapter,
   );
 
+  const [selected, setSelected] = useState<ReadonlySet<number>>(new Set());
+  const chapterKey = `${reader.translation}/${reader.book}/${reader.chapter}`;
+  useEffect(() => {
+    setSelected(new Set());
+  }, [chapterKey]);
+
   const book = getBook(reader.book) ?? BOOKS[0];
   const prev = prevChapter({ book: reader.book, chapter: reader.chapter });
   const next = nextChapter({ book: reader.book, chapter: reader.chapter });
@@ -43,6 +56,44 @@ export default function BiblePanel({ onClose }: { onClose: () => void }) {
   function goTo(ref: { book: string; chapter: number } | null) {
     if (ref === null) return;
     setReader((r) => ({ ...r, book: ref.book, chapter: ref.chapter }));
+  }
+
+  function toggleVerse(n: number) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(n)) {
+        next.delete(n);
+      } else {
+        next.add(n);
+      }
+      return next;
+    });
+  }
+
+  const selectedNums = [...selected].sort((a, b) => a - b);
+  const selectionToken =
+    selectedNums.length > 0
+      ? buildVerseToken(reader.book, reader.chapter, selectedNums)
+      : null;
+
+  function sendSelection() {
+    if (selectedNums.length === 0) return;
+    const translation =
+      TRANSLATIONS.find((t) => t.id === reader.translation)?.label ??
+      reader.translation;
+    onSendToChat({
+      token: buildVerseToken(reader.book, reader.chapter, selectedNums),
+      context: buildVerseContext({
+        book: reader.book,
+        chapter: reader.chapter,
+        verses: verses.filter((v) => selected.has(v.verse)),
+        translation,
+      }),
+    });
+    setSelected(new Set());
+    // On small screens the panel is a fullscreen overlay (see module CSS
+    // breakpoint) that hides the composer — close it to reveal the token.
+    if (window.matchMedia("(max-width: 760px)").matches) onClose();
   }
 
   return (
@@ -110,14 +161,42 @@ export default function BiblePanel({ onClose }: { onClose: () => void }) {
               {reader.book} {reader.chapter}
             </h2>
             {verses.map((v) => (
-              <p key={v.verse} className={styles.verse}>
+              <button
+                key={v.verse}
+                type="button"
+                className={`${styles.verse}${selected.has(v.verse) ? ` ${styles.verseSelected}` : ""}`}
+                aria-pressed={selected.has(v.verse)}
+                onClick={() => toggleVerse(v.verse)}
+              >
                 <sup className={styles.verseNum}>{v.verse}</sup>
                 {v.text}
-              </p>
+              </button>
             ))}
           </>
         ) : null}
       </div>
+
+      {selectionToken !== null ? (
+        <div className={styles.selectionBar}>
+          <span className={styles.selectionRef}>{selectionToken}</span>
+          <button
+            type="button"
+            className={styles.sendToChat}
+            onClick={sendSelection}
+          >
+            <MessageSquarePlus size={13} />
+            Send to chat
+          </button>
+          <button
+            type="button"
+            className={styles.clearSelection}
+            onClick={() => setSelected(new Set())}
+            aria-label="Clear verse selection"
+          >
+            <X size={13} />
+          </button>
+        </div>
+      ) : null}
 
       <footer className={styles.foot}>
         <button

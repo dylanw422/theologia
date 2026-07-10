@@ -6,6 +6,9 @@ import type { Id } from "@theologia/backend/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import { toast } from "sonner";
 
+import { stripVerseContexts } from "@/components/bible/lib/verse-context";
+
+import type { ComposerInsert } from "./chat-composer";
 import ChatThread from "./chat-thread";
 import {
   blocksToText,
@@ -29,7 +32,8 @@ function toMessage(
   partial: boolean,
 ): Message | null {
   if (m.role === "user") {
-    return { id: m.key, role: "user", content: m.text };
+    // Appended verse context is for the model; show only what was typed.
+    return { id: m.key, role: "user", content: stripVerseContexts(m.text) };
   }
   if (m.role !== "assistant") return null;
   const parsed = parseBlocks(text, { partial });
@@ -45,8 +49,10 @@ function toMessage(
 
 export default function LiveThread({
   conversation,
+  insert = null,
 }: {
   conversation: LiveConversation;
+  insert?: ComposerInsert | null;
 }) {
   const { results } = useUIMessages(
     api.chat.listThreadMessages,
@@ -101,6 +107,7 @@ export default function LiveThread({
       isStreaming={isStreaming}
       onSend={send}
       onAction={(action: Action) => send(action.prefill)}
+      insert={insert}
     />
   );
 }
