@@ -173,6 +173,30 @@ describe("recordTensions", () => {
       expect(rows[0]).toMatchObject({ userId: "u1", status: "open", salience: 2 });
     });
   });
+
+  test("dedupes duplicate pairs within a single call", async () => {
+    const t = convexTest(schema, modules);
+    const { positionAId, positionBId } = await seedPositions(t);
+    const claim = {
+      positionAId,
+      positionBId,
+      description: "d",
+      salience: 1,
+    };
+
+    await t.mutation(internal.tensions.recordTensions, {
+      userId: "u1",
+      tensions: [
+        claim,
+        { ...claim, positionAId: positionBId, positionBId: positionAId },
+      ],
+    });
+
+    await t.run(async (ctx) => {
+      const rows = await ctx.db.query("tensions").collect();
+      expect(rows).toHaveLength(1);
+    });
+  });
 });
 
 describe("decideTension", () => {
@@ -292,6 +316,7 @@ describe("visibleTensionsForUser", () => {
       expect(open).toHaveLength(1);
       expect(open[0].description).toBe("visible open");
       expect(open[0].positionA.statement).toBe("Regeneration precedes faith.");
+      // Both open-tension positions carry frameworkAtTime — the newer-position branch.
       expect(open[0].studyFramework).toBe("reformed");
       expect(resolved).toHaveLength(1);
       expect(resolved[0].resolution).toBe("Held together in hope.");

@@ -115,17 +115,19 @@ describe("parseTensionResponse", () => {
   it("drops invalid items but keeps valid ones", () => {
     const out = parseTensionResponse(
       wrap([
-        valid,
-        { ...valid, a: 5 }, // out of range
-        { ...valid, b: 0 }, // self-pair
-        { ...valid, a: "0" }, // non-number index
-        { ...valid, salience: 4 }, // out of bounds
-        { ...valid, salience: 1.5 }, // non-integer
-        { ...valid, description: "" },
-        { ...valid, description: "x".repeat(700) },
+        valid, // pair (0,1)
+        // Each invalid case gets its own pair so none is shadowed by the
+        // in-payload dedup, which runs before field validation.
+        { ...valid, a: 11, b: 2 }, // out of range
+        { ...valid, a: 2, b: 2 }, // self-pair
+        { ...valid, a: "0", b: 3 }, // non-number index
+        { ...valid, a: 2, b: 3, salience: 4 }, // salience out of bounds
+        { ...valid, a: 2, b: 4, salience: 1.5 }, // non-integer salience
+        { ...valid, a: 3, b: 4, description: "" },
+        { ...valid, a: 3, b: 5, description: "x".repeat(700) },
         "not an object",
       ]),
-      2,
+      11,
       [],
     );
     expect(out).toEqual([valid]);
