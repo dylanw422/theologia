@@ -3,6 +3,9 @@
 import { Plus } from "lucide-react";
 import Link from "next/link";
 
+import { api } from "@theologia/backend/convex/_generated/api";
+import { useQuery } from "convex/react";
+
 import UserMenu from "@/components/user-menu";
 
 import type { Conversation } from "./lib/chat-state";
@@ -20,6 +23,8 @@ export default function ChatSidebar({
   onSelect: (id: string) => void;
   onNewChat: () => void;
 }) {
+  const openTensions = useQuery(api.tensions.openCount);
+
   return (
     <aside className={styles.sidebar}>
       <div className={styles.head}>
@@ -57,6 +62,9 @@ export default function ChatSidebar({
       <div className={styles.footer}>
         <Link href="/profile" className={styles.profileLink}>
           Your Theology
+          {openTensions ? (
+            <span className={styles.tensionCount}> · {openTensions}</span>
+          ) : null}
         </Link>
         <UserMenu />
       </div>

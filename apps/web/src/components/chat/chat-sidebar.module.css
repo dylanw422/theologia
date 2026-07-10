@@ -167,6 +167,10 @@
   outline-offset: 3px;
 }
 
+.tensionCount {
+  color: var(--gold, #c9a24e);
+}
+
 /* Blend the shared UserMenu trigger (a shadcn outline button) into the
    apparatus so the rail stays typographically consistent. */
 .footer button {
