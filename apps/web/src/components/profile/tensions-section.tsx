@@ -68,6 +68,14 @@ export default function TensionsSection() {
     }
   }
 
+  async function handleDismiss(tension: Tension) {
+    try {
+      await dismissTension({ tensionId: tension.id });
+    } catch {
+      toast.error("Couldn't dismiss this tension. Please try again.");
+    }
+  }
+
   return (
     <section className={styles.section}>
       <h2 className={styles.sectionLabel}>Tensions</h2>
@@ -108,6 +116,7 @@ export default function TensionsSection() {
           {resolvingId === tension.id ? (
             <div className={styles.resolveRow}>
               <textarea
+                aria-label="Resolution"
                 className={styles.resolveArea}
                 placeholder="In your own words, how did you resolve this?"
                 value={resolutionDraft}
@@ -160,7 +169,7 @@ export default function TensionsSection() {
               <button
                 type="button"
                 className={styles.actionButton}
-                onClick={() => dismissTension({ tensionId: tension.id })}
+                onClick={() => handleDismiss(tension)}
               >
                 Dismiss
               </button>
@@ -174,10 +183,8 @@ export default function TensionsSection() {
           <h3 className={styles.resolvedLabel}>Resolved</h3>
           {tensions.resolved.map((tension) => (
             <article key={tension.id} className={styles.resolvedItem}>
-              <p className={styles.resolvedPair}>
-                "{tension.positionA.statement}" · "{tension.positionB.statement}
-                "
-              </p>
+              {/* prettier-ignore */}
+              <p className={styles.resolvedPair}>“{tension.positionA.statement}” · “{tension.positionB.statement}”</p>
               <p className={styles.resolution}>{tension.resolution}</p>
             </article>
           ))}
