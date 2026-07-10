@@ -89,4 +89,25 @@ export default defineSchema({
     paused: v.boolean(), // stops extraction without deleting anything
     decidedAt: v.number(), // ms epoch of the last opt-in/out decision
   }).index("by_user", ["userId"]),
+
+  // Theological Profile Phase 2 — detected tensions between affirmed
+  // positions. One tension per position pair, ever: dismissed and resolved
+  // pairs never resurface. docs/THEOLOGICAL_PROFILE.md §Tensions.
+  tensions: defineTable({
+    userId: v.string(),
+    positionAId: v.id("positions"),
+    positionBId: v.id("positions"),
+    description: v.string(), // neutral, 1–2 sentences; what sits uneasily
+    historicalNote: v.optional(v.string()), // how the tradition has handled it
+    salience: v.number(), // 1–3, judge-assigned; drives "strongest first"
+    status: v.union(
+      v.literal("open"),
+      v.literal("resolved"),
+      v.literal("dismissed"),
+    ),
+    resolution: v.optional(v.string()), // user's own words, when resolved
+    decidedAt: v.optional(v.number()), // ms epoch of resolve/dismiss
+  })
+    .index("by_user", ["userId"])
+    .index("by_user_status", ["userId", "status"]),
 });
