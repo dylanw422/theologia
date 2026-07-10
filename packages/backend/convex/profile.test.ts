@@ -4,7 +4,7 @@ import { describe, expect, test } from "vitest";
 
 import { internal } from "./_generated/api";
 import { latestPerTopic } from "./lib/profile";
-import { scheduleExtraction, settingsForUser, upsertSettings } from "./profile";
+import { deleteTensionsReferencing, scheduleExtraction, settingsForUser, upsertSettings } from "./profile";
 import schema from "./schema";
 
 const modules = import.meta.glob("./**/*.ts");
@@ -213,6 +213,43 @@ describe("recordExtraction", () => {
       const conversation = await ctx.db.get(conversationId);
       expect(conversation?.lastExtractedOrder).toBe(4);
       expect(conversation?.pendingExtractionId).toBeUndefined();
+    });
+  });
+});
+
+describe("deleteTensionsReferencing", () => {
+  test("removes every tension touching the position, leaves the rest", async () => {
+    const t = convexTest(schema, modules);
+    await t.run(async (ctx) => {
+      const conversationId = await ctx.db.insert("conversations", {
+        userId: "u1",
+        threadId: "t1",
+        mode: "qa",
+        title: "Study",
+      });
+      const base = {
+        userId: "u1",
+        locus: "soteriology" as const,
+        stance: "affirmed" as const,
+        strength: "settled" as const,
+        sourceConversationId: conversationId,
+        excluded: false,
+        userEdited: false,
+      };
+      const pA = await ctx.db.insert("positions", { ...base, topic: "a", statement: "a" });
+      const pB = await ctx.db.insert("positions", { ...base, topic: "b", statement: "b" });
+      const pC = await ctx.db.insert("positions", { ...base, topic: "c", statement: "c" });
+      const tension = { userId: "u1", description: "d", salience: 1, status: "open" as const };
+      await ctx.db.insert("tensions", { ...tension, positionAId: pA, positionBId: pB });
+      await ctx.db.insert("tensions", { ...tension, positionAId: pB, positionBId: pC });
+      await ctx.db.insert("tensions", { ...tension, positionAId: pA, positionBId: pC });
+
+      await deleteTensionsReferencing(ctx as never, "u1", pA);
+
+      const remaining = await ctx.db.query("tensions").collect();
+      expect(remaining).toHaveLength(1);
+      expect(remaining[0].positionAId).toBe(pB);
+      expect(remaining[0].positionBId).toBe(pC);
     });
   });
 });

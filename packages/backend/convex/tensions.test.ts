@@ -4,6 +4,7 @@ import { describe, expect, test } from "vitest";
 
 import { internal } from "./_generated/api";
 import { upsertSettings } from "./profile";
+import { decideTension, visibleTensionsForUser } from "./tensions";
 import schema from "./schema";
 
 const modules = import.meta.glob("./**/*.ts");
@@ -171,5 +172,164 @@ describe("recordTensions", () => {
       expect(rows).toHaveLength(1);
       expect(rows[0]).toMatchObject({ userId: "u1", status: "open", salience: 2 });
     });
+  });
+});
+
+describe("decideTension", () => {
+  test("resolves with text, dismisses without, rejects re-deciding and foreign users", async () => {
+    const t = convexTest(schema, modules);
+    const { positionAId, positionBId } = await seedPositions(t);
+    const tensionId = await t.run(async (ctx) =>
+      ctx.db.insert("tensions", {
+        userId: "u1",
+        positionAId,
+        positionBId,
+        description: "d",
+        salience: 2,
+        status: "open",
+      }),
+    );
+
+    await t.run(async (ctx) => {
+      await expect(
+        decideTension(ctx as never, "intruder", tensionId, {
+          status: "dismissed",
+        }),
+      ).rejects.toThrow("Tension not found");
+
+      await expect(
+        decideTension(ctx as never, "u1", tensionId, {
+          status: "resolved",
+          resolution: "   ",
+        }),
+      ).rejects.toThrow("Resolution is empty");
+
+      await decideTension(ctx as never, "u1", tensionId, {
+        status: "resolved",
+        resolution: "Dort distinguishes ground from evidence; I hold both.",
+      });
+      const row = await ctx.db.get(tensionId);
+      expect(row?.status).toBe("resolved");
+      expect(row?.resolution).toContain("Dort");
+      expect(row?.decidedAt).toBeTypeOf("number");
+
+      await expect(
+        decideTension(ctx as never, "u1", tensionId, { status: "dismissed" }),
+      ).rejects.toThrow("already decided");
+    });
+  });
+});
+
+describe("visibleTensionsForUser", () => {
+  test("hides dismissed tensions and tensions with excluded or deleted positions; resolves studyFramework", async () => {
+    const t = convexTest(schema, modules);
+    const { conversationId, positionAId, positionBId } = await seedPositions(t);
+
+    await t.run(async (ctx) => {
+      const base = {
+        userId: "u1",
+        stance: "affirmed" as const,
+        strength: "settled" as const,
+        sourceConversationId: conversationId,
+        excluded: false,
+        userEdited: false,
+      };
+      const positionCId = await ctx.db.insert("positions", {
+        ...base,
+        locus: "soteriology",
+        topic: "assurance",
+        statement: "Assurance is of the essence of faith.",
+        excluded: true, // hides any tension touching it
+      });
+      const positionDId = await ctx.db.insert("positions", {
+        ...base,
+        locus: "eschatology",
+        topic: "millennium",
+        statement: "The millennium is the present reign of Christ.",
+        // no frameworkAtTime → studyFramework falls back to the conversation's
+      });
+
+      await ctx.db.insert("tensions", {
+        userId: "u1",
+        positionAId,
+        positionBId,
+        description: "visible open",
+        salience: 3,
+        status: "open",
+      });
+      await ctx.db.insert("tensions", {
+        userId: "u1",
+        positionAId,
+        positionBId: positionCId,
+        description: "hidden — excluded position",
+        salience: 2,
+        status: "open",
+      });
+      await ctx.db.insert("tensions", {
+        userId: "u1",
+        positionAId: positionBId,
+        positionBId: positionDId,
+        description: "resolved one",
+        salience: 1,
+        status: "resolved",
+        resolution: "Held together in hope.",
+        decidedAt: Date.now(),
+      });
+      await ctx.db.insert("tensions", {
+        userId: "u1",
+        positionAId,
+        positionBId: positionDId,
+        description: "dismissed — never renders",
+        salience: 3,
+        status: "dismissed",
+        decidedAt: Date.now(),
+      });
+
+      const { open, resolved } = await visibleTensionsForUser(
+        ctx as never,
+        "u1",
+      );
+      expect(open).toHaveLength(1);
+      expect(open[0].description).toBe("visible open");
+      expect(open[0].positionA.statement).toBe("Regeneration precedes faith.");
+      expect(open[0].studyFramework).toBe("reformed");
+      expect(resolved).toHaveLength(1);
+      expect(resolved[0].resolution).toBe("Held together in hope.");
+    });
+  });
+});
+
+describe("qualityStats", () => {
+  test("counts by status and computes the dismissal rate over decided tensions", async () => {
+    const t = convexTest(schema, modules);
+    const { positionAId, positionBId } = await seedPositions(t);
+
+    let stats = await t.query(internal.tensions.qualityStats, {});
+    expect(stats).toEqual({
+      open: 0,
+      resolved: 0,
+      dismissed: 0,
+      dismissalRate: null,
+    });
+
+    await t.run(async (ctx) => {
+      const base = {
+        userId: "u1",
+        positionAId,
+        positionBId,
+        description: "d",
+        salience: 1,
+      };
+      await ctx.db.insert("tensions", { ...base, status: "open" });
+      await ctx.db.insert("tensions", { ...base, status: "resolved" });
+      await ctx.db.insert("tensions", { ...base, status: "resolved" });
+      await ctx.db.insert("tensions", { ...base, status: "dismissed" });
+    });
+
+    stats = await t.query(internal.tensions.qualityStats, {});
+    expect(stats.open).toBe(1);
+    expect(stats.resolved).toBe(2);
+    expect(stats.dismissed).toBe(1);
+    expect(stats.dismissalRate).toBeCloseTo(1 / 3);
   });
 });

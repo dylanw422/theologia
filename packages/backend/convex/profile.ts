@@ -72,6 +72,26 @@ async function assertOwnPosition(
   return position;
 }
 
+/** Cascade: a deleted position takes every tension referencing it along. */
+export async function deleteTensionsReferencing(
+  ctx: MutationCtx,
+  userId: string,
+  positionId: Id<"positions">,
+): Promise<void> {
+  const tensions = await ctx.db
+    .query("tensions")
+    .withIndex("by_user", (q) => q.eq("userId", userId))
+    .collect();
+  for (const tension of tensions) {
+    if (
+      tension.positionAId === positionId ||
+      tension.positionBId === positionId
+    ) {
+      await ctx.db.delete(tension._id);
+    }
+  }
+}
+
 function toPositionView(doc: Doc<"positions">) {
   return {
     id: doc._id,
@@ -158,6 +178,7 @@ export const deletePosition = mutation({
   handler: async (ctx, args) => {
     const user = await requireUser(ctx);
     await assertOwnPosition(ctx, user._id, args.positionId);
+    await deleteTensionsReferencing(ctx, user._id, args.positionId);
     await ctx.db.delete(args.positionId);
   },
 });
@@ -173,6 +194,13 @@ export const deleteAllProfileData = mutation({
       .collect();
     for (const position of positions) {
       await ctx.db.delete(position._id);
+    }
+    const tensions = await ctx.db
+      .query("tensions")
+      .withIndex("by_user", (q) => q.eq("userId", user._id))
+      .collect();
+    for (const tension of tensions) {
+      await ctx.db.delete(tension._id);
     }
     const settings = await settingsForUser(ctx, user._id);
     if (settings) await ctx.db.delete(settings._id);
