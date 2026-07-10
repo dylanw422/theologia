@@ -151,6 +151,22 @@
   border-top: 1px solid var(--hairline);
 }
 
+.profileLink {
+  display: block;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone, #8a7d68);
+  text-decoration: none;
+  padding: 0.5rem 0;
+}
+.profileLink:hover { color: var(--gold, #c9a24e); }
+.profileLink:focus-visible {
+  outline: 1px solid var(--gold, #c9a24e);
+  outline-offset: 3px;
+}
+
 /* Blend the shared UserMenu trigger (a shadcn outline button) into the
    apparatus so the rail stays typographically consistent. */
 .footer button {

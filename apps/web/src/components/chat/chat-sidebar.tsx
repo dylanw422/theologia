@@ -55,6 +55,9 @@ export default function ChatSidebar({
       </nav>
 
       <div className={styles.footer}>
+        <Link href="/profile" className={styles.profileLink}>
+          Your Theology
+        </Link>
         <UserMenu />
       </div>
     </aside>
