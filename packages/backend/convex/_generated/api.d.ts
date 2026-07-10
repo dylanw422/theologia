@@ -18,10 +18,12 @@ import type * as lib_profile from "../lib/profile.js";
 import type * as lib_profileExport from "../lib/profileExport.js";
 import type * as lib_prompts from "../lib/prompts.js";
 import type * as lib_studyData from "../lib/studyData.js";
+import type * as lib_tensions from "../lib/tensions.js";
 import type * as lib_usageMath from "../lib/usageMath.js";
 import type * as polar from "../polar.js";
 import type * as privateData from "../privateData.js";
 import type * as profile from "../profile.js";
+import type * as tensions from "../tensions.js";
 import type * as usage from "../usage.js";
 import type * as waitlist from "../waitlist.js";
 
@@ -42,10 +44,12 @@ declare const fullApi: ApiFromModules<{
   "lib/profileExport": typeof lib_profileExport;
   "lib/prompts": typeof lib_prompts;
   "lib/studyData": typeof lib_studyData;
+  "lib/tensions": typeof lib_tensions;
   "lib/usageMath": typeof lib_usageMath;
   polar: typeof polar;
   privateData: typeof privateData;
   profile: typeof profile;
+  tensions: typeof tensions;
   usage: typeof usage;
   waitlist: typeof waitlist;
 }>;

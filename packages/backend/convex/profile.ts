@@ -284,6 +284,13 @@ export const recordExtraction = internalMutation({
       lastExtractedOrder: args.lastExtractedOrder,
       pendingExtractionId: undefined,
     });
+    if (args.claims.length > 0) {
+      await ctx.scheduler.runAfter(0, internal.tensions.detectTensions, {
+        userId: args.userId,
+        claimLoci: [...new Set(args.claims.map((claim) => claim.locus))],
+        framework: conversation.framework,
+      });
+    }
   },
 });
 

@@ -216,3 +216,54 @@ describe("recordExtraction", () => {
     });
   });
 });
+
+describe("recordExtraction → tension detection", () => {
+  test("schedules detectTensions when claims land, not on empty passes", async () => {
+    const t = convexTest(schema, modules);
+    const conversationId = await t.run(async (ctx) =>
+      ctx.db.insert("conversations", {
+        userId: "u1",
+        threadId: "t1",
+        mode: "qa",
+        title: "Study",
+        framework: "reformed",
+      }),
+    );
+
+    await t.mutation(internal.profile.recordExtraction, {
+      conversationId,
+      userId: "u1",
+      lastExtractedOrder: 2,
+      claims: [],
+    });
+    await t.run(async (ctx) => {
+      const jobs = await ctx.db.system.query("_scheduled_functions").collect();
+      expect(jobs.filter((j) => j.name.includes("detectTensions"))).toHaveLength(0);
+    });
+
+    await t.mutation(internal.profile.recordExtraction, {
+      conversationId,
+      userId: "u1",
+      lastExtractedOrder: 4,
+      claims: [
+        {
+          locus: "soteriology",
+          topic: "election",
+          statement: "Regeneration precedes faith.",
+          stance: "affirmed",
+          strength: "leaning",
+        },
+      ],
+    });
+    await t.run(async (ctx) => {
+      const jobs = await ctx.db.system.query("_scheduled_functions").collect();
+      const detection = jobs.filter((j) => j.name.includes("detectTensions"));
+      expect(detection).toHaveLength(1);
+      expect(detection[0].args[0]).toMatchObject({
+        userId: "u1",
+        claimLoci: ["soteriology"],
+        framework: "reformed",
+      });
+    });
+  });
+});
