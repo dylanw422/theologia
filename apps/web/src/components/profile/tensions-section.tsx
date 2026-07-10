@@ -56,12 +56,16 @@ export default function TensionsSection() {
   }
 
   async function handleResolve(tension: Tension) {
-    await resolveTension({
-      tensionId: tension.id,
-      resolution: resolutionDraft,
-    });
-    setResolvingId(null);
-    setResolutionDraft("");
+    try {
+      await resolveTension({
+        tensionId: tension.id,
+        resolution: resolutionDraft,
+      });
+      setResolvingId(null);
+      setResolutionDraft("");
+    } catch {
+      toast.error("Couldn't save your resolution. Please try again.");
+    }
   }
 
   return (
