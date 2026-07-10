@@ -295,6 +295,50 @@ describe("visibleTensionsForUser", () => {
       expect(open[0].studyFramework).toBe("reformed");
       expect(resolved).toHaveLength(1);
       expect(resolved[0].resolution).toBe("Held together in hope.");
+      // D (newer) has no frameworkAtTime, so the older position B's applies.
+      expect(resolved[0].studyFramework).toBe("reformed");
+    });
+  });
+
+  test("falls back to the most recent conversation's framework when neither position has one", async () => {
+    const t = convexTest(schema, modules);
+    const { conversationId } = await seedPositions(t);
+
+    await t.run(async (ctx) => {
+      const base = {
+        userId: "u1",
+        stance: "affirmed" as const,
+        strength: "settled" as const,
+        sourceConversationId: conversationId,
+        excluded: false,
+        userEdited: false,
+      };
+      const bareA = await ctx.db.insert("positions", {
+        ...base,
+        locus: "eschatology",
+        topic: "millennium",
+        statement: "The millennium is the present reign of Christ.",
+      });
+      const bareB = await ctx.db.insert("positions", {
+        ...base,
+        locus: "eschatology",
+        topic: "second-coming",
+        statement: "Christ will return bodily.",
+      });
+      await ctx.db.insert("tensions", {
+        userId: "u1",
+        positionAId: bareA,
+        positionBId: bareB,
+        description: "d",
+        salience: 1,
+        status: "open",
+      });
+
+      const { open } = await visibleTensionsForUser(ctx as never, "u1");
+      expect(open).toHaveLength(1);
+      // Neither position carries frameworkAtTime; the seeded conversation
+      // (framework: "reformed") supplies the fallback.
+      expect(open[0].studyFramework).toBe("reformed");
     });
   });
 });
