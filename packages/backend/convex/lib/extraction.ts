@@ -18,7 +18,7 @@ export type ExtractedClaim = {
 };
 
 export const MAX_CLAIMS_PER_PASS = 10;
-const MAX_STATEMENT_CHARS = 300;
+export const MAX_STATEMENT_CHARS = 300;
 const MAX_MESSAGE_CHARS = 4000;
 
 /** Modes where the user deliberately voices positions they do not hold. */
@@ -60,6 +60,11 @@ Respond with STRICT JSON only, no prose, no markdown fence:
 {"claims": [{"locus": "...", "topic": "...", "statement": "...", "stance": "...", "strength": "..."}]}
 
 If nothing qualifies, respond exactly: {"claims": []}`;
+}
+
+/** Shared by extraction parsing and user edits: one sentence, bounded. */
+export function isValidStatementLength(statement: string): boolean {
+  return statement.length <= MAX_STATEMENT_CHARS;
 }
 
 export function normalizeTopic(raw: string): string {

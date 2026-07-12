@@ -18,6 +18,7 @@ import { authComponent } from "./auth";
 import {
   buildExtractionPrompt,
   buildTranscript,
+  isValidStatementLength,
   parseExtractionResponse,
 } from "./lib/extraction";
 import type { PlanId } from "./lib/plans";
@@ -168,6 +169,9 @@ export const editPosition = mutation({
     await assertOwnPosition(ctx, user._id, args.positionId);
     const statement = args.statement.trim();
     if (!statement) throw new Error("Statement is empty");
+    if (!isValidStatementLength(statement)) {
+      throw new Error("Statement is too long — one sentence, please");
+    }
     await ctx.db.patch(args.positionId, { statement, userEdited: true });
   },
 });

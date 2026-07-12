@@ -3,7 +3,9 @@ import { describe, expect, it } from "vitest";
 import {
   buildExtractionPrompt,
   buildTranscript,
+  isValidStatementLength,
   MAX_CLAIMS_PER_PASS,
+  MAX_STATEMENT_CHARS,
   normalizeTopic,
   parseExtractionResponse,
 } from "./extraction";
@@ -86,6 +88,15 @@ describe("parseExtractionResponse", () => {
     }));
     const out = parseExtractionResponse(JSON.stringify({ claims: many }));
     expect(out).toHaveLength(MAX_CLAIMS_PER_PASS);
+  });
+});
+
+describe("isValidStatementLength", () => {
+  it("passes at exactly the cap and fails one over", () => {
+    expect(isValidStatementLength("x".repeat(MAX_STATEMENT_CHARS))).toBe(true);
+    expect(isValidStatementLength("x".repeat(MAX_STATEMENT_CHARS + 1))).toBe(
+      false,
+    );
   });
 });
 
