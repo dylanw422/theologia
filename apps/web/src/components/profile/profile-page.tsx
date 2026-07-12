@@ -78,8 +78,10 @@ export default function ProfilePage() {
           <p className={styles.lede}>
             Positions you have affirmed across your conversations, organized by
             the classical loci and sourced back to the study where you took
-            them. Yours to edit, export, or erase — never shared, never used in
-            marketing, never used to train models.
+            them. Your studies read these positions too, so answers build on
+            what you have already worked through. Yours to edit, export, or
+            erase — never shared, never used in marketing, never used to train
+            models.
           </p>
         </header>
 
@@ -326,6 +328,8 @@ function OptInCard({ onOptIn }: { onOptIn: () => void }) {
         sentence each, dated, and linked to the conversation where you took
         them. Only what you yourself affirm is recorded; never the
         assistant&apos;s views, never positions you argue against for practice.
+        Your recorded positions are also read by your study companion when it
+        answers you, so new study builds on ground you have already covered.
         Everything is editable and deletable, you can pause or export at any
         time, and your profile is never shared with anyone, never used in
         marketing, and never used to train models.
