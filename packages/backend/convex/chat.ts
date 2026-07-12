@@ -186,10 +186,24 @@ export const streamReply = internalAction({
     );
     if (!conversation) return;
 
-    const system = buildSystemPrompt(conversation.mode, conversation);
+    let system = buildSystemPrompt(conversation.mode, conversation);
     try {
       const planId = await getPlanIdForUser(ctx, conversation.userId);
       const model = anthropic(PLANS[planId].model);
+      // Profile-aware answers (Phase 3): opted-in paid users get their
+      // affirmed positions appended to the system prompt. Never blocks the
+      // reply — any failure degrades to an un-augmented answer.
+      if (planId !== "free") {
+        try {
+          const profileSection: string | null = await ctx.runQuery(
+            internal.profile.getPromptProfile,
+            { userId: conversation.userId },
+          );
+          if (profileSection) system = `${system}\n\n${profileSection}`;
+        } catch (error) {
+          console.error("getPromptProfile failed", error);
+        }
+      }
       const result = await theologiaAgent.streamText(
         ctx,
         { threadId: args.threadId },

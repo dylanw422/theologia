@@ -3,6 +3,7 @@ import { convexTest } from "convex-test";
 import { describe, expect, test } from "vitest";
 
 import { internal } from "./_generated/api";
+import type { Id } from "./_generated/dataModel";
 import { latestPerTopic } from "./lib/profile";
 import { deleteTensionsReferencing, scheduleExtraction, settingsForUser, upsertSettings } from "./profile";
 import schema from "./schema";
@@ -302,5 +303,64 @@ describe("recordExtraction → tension detection", () => {
         framework: "reformed",
       });
     });
+  });
+});
+
+describe("getPromptProfile", () => {
+  const position = (conversationId: Id<"conversations">, excluded: boolean) => ({
+    userId: "u1",
+    locus: "soteriology" as const,
+    topic: "election",
+    statement: "Regeneration precedes faith.",
+    stance: "affirmed" as const,
+    strength: "settled" as const,
+    sourceConversationId: conversationId,
+    excluded,
+    userEdited: false,
+  });
+
+  test("null before opt-in, and null when nothing is visible", async () => {
+    const t = convexTest(schema, modules);
+    expect(
+      await t.query(internal.profile.getPromptProfile, { userId: "u1" }),
+    ).toBeNull();
+
+    await t.run(async (ctx) => {
+      await upsertSettings(ctx as never, "u1", { optedIn: true });
+      const conversationId = await ctx.db.insert("conversations", {
+        userId: "u1",
+        threadId: "t1",
+        mode: "qa",
+        title: "Study",
+      });
+      await ctx.db.insert("positions", position(conversationId, true));
+    });
+    // Opted in, but the only position is excluded.
+    expect(
+      await t.query(internal.profile.getPromptProfile, { userId: "u1" }),
+    ).toBeNull();
+  });
+
+  test("returns the section when opted in — paused still injects", async () => {
+    const t = convexTest(schema, modules);
+    await t.run(async (ctx) => {
+      await upsertSettings(ctx as never, "u1", { optedIn: true, paused: true });
+      const conversationId = await ctx.db.insert("conversations", {
+        userId: "u1",
+        threadId: "t1",
+        mode: "qa",
+        title: "Study",
+      });
+      await ctx.db.insert("positions", position(conversationId, false));
+    });
+    const section = await t.query(internal.profile.getPromptProfile, {
+      userId: "u1",
+    });
+    expect(section).toContain("## The user's theological profile");
+    expect(section).toContain("Regeneration precedes faith.");
+    // Someone else's profile never leaks.
+    expect(
+      await t.query(internal.profile.getPromptProfile, { userId: "u2" }),
+    ).toBeNull();
   });
 });

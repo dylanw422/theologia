@@ -16,6 +16,7 @@ import type * as lib_extraction from "../lib/extraction.js";
 import type * as lib_plans from "../lib/plans.js";
 import type * as lib_profile from "../lib/profile.js";
 import type * as lib_profileExport from "../lib/profileExport.js";
+import type * as lib_profileSummary from "../lib/profileSummary.js";
 import type * as lib_prompts from "../lib/prompts.js";
 import type * as lib_studyData from "../lib/studyData.js";
 import type * as lib_tensions from "../lib/tensions.js";
@@ -42,6 +43,7 @@ declare const fullApi: ApiFromModules<{
   "lib/plans": typeof lib_plans;
   "lib/profile": typeof lib_profile;
   "lib/profileExport": typeof lib_profileExport;
+  "lib/profileSummary": typeof lib_profileSummary;
   "lib/prompts": typeof lib_prompts;
   "lib/studyData": typeof lib_studyData;
   "lib/tensions": typeof lib_tensions;

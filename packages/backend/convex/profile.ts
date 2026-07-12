@@ -23,6 +23,7 @@ import {
 import type { PlanId } from "./lib/plans";
 import { latestPerTopic, vLocus, vStance, vStrength } from "./lib/profile";
 import { buildProfileMarkdown, type ExportPosition } from "./lib/profileExport";
+import { buildProfileSection, buildProfileSummary } from "./lib/profileSummary";
 import { getFramework } from "./lib/studyData";
 import { getPlanIdForUser } from "./polar";
 
@@ -224,6 +225,38 @@ export const exportProfile = query({
       createdAt: p.createdAt,
     }));
     return buildProfileMarkdown(exportPositions, Date.now());
+  },
+});
+
+/**
+ * Phase 3 prompt injection: the profile section appended to the chat system
+ * prompt. Plan gating (free tier gets nothing) lives at the call site in
+ * chat.streamReply, which has already resolved the plan — the polar
+ * component isn't available under convex-test. Gates on opt-in only;
+ * paused still injects, because pause stops extraction, not use.
+ */
+export const getPromptProfile = internalQuery({
+  args: { userId: v.string() },
+  returns: v.union(v.string(), v.null()),
+  handler: async (ctx, args) => {
+    const settings = await settingsForUser(ctx, args.userId);
+    if (!settings?.optedIn) return null;
+    const docs = await ctx.db
+      .query("positions")
+      .withIndex("by_user", (q) => q.eq("userId", args.userId))
+      .collect();
+    const summary = buildProfileSummary(
+      docs.map((d) => ({
+        locus: d.locus,
+        topic: d.topic,
+        statement: d.statement,
+        stance: d.stance,
+        strength: d.strength,
+        createdAt: d._creationTime,
+        excluded: d.excluded,
+      })),
+    );
+    return summary === null ? null : buildProfileSection(summary);
   },
 });
 
