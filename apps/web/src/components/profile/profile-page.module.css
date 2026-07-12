@@ -302,3 +302,44 @@
   color: var(--stone);
   margin: 0.9rem 0 0;
 }
+
+.development {
+  margin-bottom: 0.45rem;
+}
+
+.devToggle {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: var(--stone);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+.devToggle:hover {
+  color: var(--gold-bright);
+}
+
+.devList {
+  list-style: none;
+  margin: 0.6rem 0 0;
+  padding: 0 0 0 0.9rem;
+  border-left: 1px solid var(--hairline);
+}
+
+.devItem {
+  margin-bottom: 0.9rem;
+}
+.devItem:last-child {
+  margin-bottom: 0;
+}
+
+.devStatement {
+  font-family: var(--font-fraunces), serif;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: var(--parchment);
+  opacity: 0.85;
+  margin: 0 0 0.3rem;
+}

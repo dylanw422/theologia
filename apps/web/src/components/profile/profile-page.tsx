@@ -12,6 +12,7 @@ import { toast } from "sonner";
 
 import Loader from "@/components/loader";
 
+import { developmentLabel, topicHistories } from "./lib/development";
 import styles from "./profile-page.module.css";
 import TensionsSection from "./tensions-section";
 
@@ -35,11 +36,13 @@ export default function ProfilePage() {
 
   const [editingId, setEditingId] = useState<Id<"positions"> | null>(null);
   const [draft, setDraft] = useState("");
+  const [devOpenTopic, setDevOpenTopic] = useState<string | null>(null);
 
   if (profile === undefined) return <Loader />;
   if (profile === null) return null;
 
   const isFree = profile.planId === "free";
+  const histories = topicHistories(profile.history);
 
   async function handleExport() {
     const markdown = await convex.query(api.profile.exportProfile, {});
@@ -191,6 +194,59 @@ export default function ProfilePage() {
                               source conversation
                             </Link>
                           </p>
+                          {(histories.get(position.topic)?.length ?? 0) > 1 && (
+                            <div className={styles.development}>
+                              <button
+                                type="button"
+                                className={styles.devToggle}
+                                aria-expanded={devOpenTopic === position.topic}
+                                onClick={() =>
+                                  setDevOpenTopic(
+                                    devOpenTopic === position.topic
+                                      ? null
+                                      : position.topic,
+                                  )
+                                }
+                              >
+                                development ·{" "}
+                                {developmentLabel(histories.get(position.topic)!)}
+                              </button>
+                              {devOpenTopic === position.topic && (
+                                <ol className={styles.devList}>
+                                  {histories
+                                    .get(position.topic)!
+                                    .slice(0, -1)
+                                    .map((entry) => (
+                                      <li key={entry.id} className={styles.devItem}>
+                                        <p className={styles.devStatement}>
+                                          {entry.statement}
+                                        </p>
+                                        <p className={styles.apparatus}>
+                                          {[
+                                            entry.stance,
+                                            entry.strength,
+                                            entry.frameworkAtTime
+                                              ? (getFramework(entry.frameworkAtTime)
+                                                  ?.label ?? entry.frameworkAtTime)
+                                              : null,
+                                            formatDate(entry.createdAt),
+                                          ]
+                                            .filter(Boolean)
+                                            .join(" · ")}
+                                          {" · "}
+                                          <Link
+                                            href={`/chat?c=${entry.sourceConversationId}`}
+                                            className={styles.sourceLink}
+                                          >
+                                            source conversation
+                                          </Link>
+                                        </p>
+                                      </li>
+                                    ))}
+                                </ol>
+                              )}
+                            </div>
+                          )}
                           {editingId !== position.id && (
                             <div className={styles.positionActions}>
                               <button
