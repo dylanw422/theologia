@@ -42,7 +42,7 @@ export default function ProfilePage() {
   if (profile === null) return null;
 
   const isFree = profile.planId === "free";
-  const histories = topicHistories(profile.history);
+  const histories = topicHistories(profile.history ?? []);
 
   async function handleExport() {
     const markdown = await convex.query(api.profile.exportProfile, {});
@@ -202,6 +202,7 @@ export default function ProfilePage() {
                                 type="button"
                                 className={styles.devToggle}
                                 aria-expanded={devOpenTopic === position.topic}
+                                aria-controls={`development-${position.topic}`}
                                 onClick={() =>
                                   setDevOpenTopic(
                                     devOpenTopic === position.topic
@@ -214,7 +215,10 @@ export default function ProfilePage() {
                                 {developmentLabel(histories.get(position.topic)!)}
                               </button>
                               {devOpenTopic === position.topic && (
-                                <ol className={styles.devList}>
+                                <ol
+                                  id={`development-${position.topic}`}
+                                  className={styles.devList}
+                                >
                                   {histories
                                     .get(position.topic)!
                                     .slice(0, -1)
@@ -232,6 +236,7 @@ export default function ProfilePage() {
                                                   ?.label ?? entry.frameworkAtTime)
                                               : null,
                                             formatDate(entry.createdAt),
+                                            entry.userEdited ? "edited" : null,
                                           ]
                                             .filter(Boolean)
                                             .join(" · ")}
