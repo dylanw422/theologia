@@ -5,7 +5,7 @@ import { describe, expect, test } from "vitest";
 import { internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
 import { latestPerTopic } from "./lib/profile";
-import { deleteTensionsReferencing, scheduleExtraction, settingsForUser, upsertSettings } from "./profile";
+import { allVisiblePositions, deleteTensionsReferencing, scheduleExtraction, settingsForUser, upsertSettings } from "./profile";
 import schema from "./schema";
 
 const modules = import.meta.glob("./**/*.ts");
@@ -362,5 +362,41 @@ describe("getPromptProfile", () => {
     expect(
       await t.query(internal.profile.getPromptProfile, { userId: "u2" }),
     ).toBeNull();
+  });
+});
+
+describe("allVisiblePositions", () => {
+  test("drops excluded rows, keeps full per-topic history", async () => {
+    const t = convexTest(schema, modules);
+    await t.run(async (ctx) => {
+      const conversationId = await ctx.db.insert("conversations", {
+        userId: "u1",
+        threadId: "t1",
+        mode: "qa",
+        title: "Study",
+      });
+      const base = {
+        userId: "u1",
+        locus: "soteriology" as const,
+        topic: "election",
+        stance: "affirmed" as const,
+        strength: "settled" as const,
+        sourceConversationId: conversationId,
+        excluded: false,
+        userEdited: false,
+      };
+      await ctx.db.insert("positions", { ...base, statement: "first" });
+      await ctx.db.insert("positions", { ...base, statement: "second" });
+      await ctx.db.insert("positions", {
+        ...base,
+        statement: "hidden",
+        excluded: true,
+      });
+
+      const all = await allVisiblePositions(ctx as never, "u1");
+      expect(all).toHaveLength(2);
+      const history = [...all].sort((a, b) => a.createdAt - b.createdAt);
+      expect(history.map((p) => p.statement)).toEqual(["first", "second"]);
+    });
   });
 });

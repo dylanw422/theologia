@@ -109,12 +109,16 @@ function toPositionView(doc: Doc<"positions">) {
   };
 }
 
-async function visiblePositions(ctx: QueryCtx, userId: string) {
+export async function allVisiblePositions(ctx: QueryCtx, userId: string) {
   const docs = await ctx.db
     .query("positions")
     .withIndex("by_user", (q) => q.eq("userId", userId))
     .collect();
-  return latestPerTopic(docs.map(toPositionView));
+  return docs.map(toPositionView).filter((p) => !p.excluded);
+}
+
+async function visiblePositions(ctx: QueryCtx, userId: string) {
+  return latestPerTopic(await allVisiblePositions(ctx, userId));
 }
 
 export const getProfile = query({
@@ -127,13 +131,16 @@ export const getProfile = query({
     const optedIn = settings?.optedIn ?? false;
     const paused = settings?.paused ?? false;
     if (planId === "free" || !optedIn) {
-      return { planId, optedIn, paused, positions: [] };
+      return { planId, optedIn, paused, positions: [], history: [] };
     }
+    const all = await allVisiblePositions(ctx, user._id);
     return {
       planId,
       optedIn,
       paused,
-      positions: await visiblePositions(ctx, user._id),
+      positions: latestPerTopic(all),
+      // Full per-topic history, oldest-first — Phase 3's development view.
+      history: [...all].sort((a, b) => a.createdAt - b.createdAt),
     };
   },
 });
