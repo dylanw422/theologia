@@ -15,6 +15,7 @@ import ChatSidebar from "./chat-sidebar";
 import ChatUpgradeBanner from "./chat-upgrade-banner";
 import ChatUsageMeter from "./chat-usage-meter";
 import LiveThread, { type LiveConversation } from "./live-thread";
+import ProfileOptInCard from "./profile-optin-card";
 import type { ConversationSetup, ModeId } from "./lib/chat-state";
 import { usageLimitMessage } from "./lib/usage-limit";
 import styles from "./chat-app.module.css";
@@ -91,6 +92,7 @@ export default function ChatApp() {
           <div className={styles.grain} aria-hidden />
           {active === null ? <ChatUpgradeBanner /> : null}
           <div className={styles.content}>
+            <ProfileOptInCard />
             {active ? (
               <LiveThread
                 key={active.id}
