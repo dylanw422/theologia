@@ -2,7 +2,7 @@
 import { convexTest } from "convex-test";
 import { describe, expect, test } from "vitest";
 
-import { internal } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
 import { latestPerTopic } from "./lib/profile";
 import { allVisiblePositions, deleteTensionsReferencing, scheduleExtraction, settingsForUser, upsertSettings } from "./profile";
@@ -397,6 +397,23 @@ describe("allVisiblePositions", () => {
       expect(all).toHaveLength(2);
       const history = [...all].sort((a, b) => a.createdAt - b.createdAt);
       expect(history.map((p) => p.statement)).toEqual(["first", "second"]);
+    });
+  });
+});
+
+describe("hasProfileDecision", () => {
+  test("true when unauthenticated — the card hides on doubt", async () => {
+    const t = convexTest(schema, modules);
+    expect(await t.query(api.profile.hasProfileDecision, {})).toBe(true);
+  });
+
+  test("a settings row from either decision counts as decided", async () => {
+    const t = convexTest(schema, modules);
+    await t.run(async (ctx) => {
+      expect(await settingsForUser(ctx as never, "u1")).toBeNull();
+      // Declining is a decision too — the row, not its value, is the signal.
+      await upsertSettings(ctx as never, "u1", { optedIn: false });
+      expect(await settingsForUser(ctx as never, "u1")).not.toBeNull();
     });
   });
 });

@@ -162,6 +162,23 @@ export const setPaused = mutation({
   },
 });
 
+/**
+ * Whether the user has ever made a profile decision — opting in OR declining
+ * both create a profileSettings row, so row-existence is the signal. The
+ * in-chat opt-in card shows only on an affirmative false, so unauthenticated
+ * returns true (hide on doubt). Plan gating lives client-side on getUsage —
+ * no polar logic here (it can't run under convex-test).
+ */
+export const hasProfileDecision = query({
+  args: {},
+  returns: v.boolean(),
+  handler: async (ctx) => {
+    const user = await authComponent.safeGetAuthUser(ctx);
+    if (!user) return true;
+    return (await settingsForUser(ctx, user._id)) !== null;
+  },
+});
+
 export const editPosition = mutation({
   args: { positionId: v.id("positions"), statement: v.string() },
   handler: async (ctx, args) => {
