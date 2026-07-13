@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 
 import { api } from "@theologia/backend/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
@@ -19,11 +20,14 @@ export default function ProfileOptInCard() {
   const usage = useQuery(api.usage.getUsage);
   const decided = useQuery(api.profile.hasProfileDecision);
   const setOptIn = useMutation(api.profile.setOptIn);
+  const [pending, setPending] = useState(false);
 
   // Hide on every doubt path: loading, signed out, free plan, or decided.
   if (!usage || usage.planId === "free" || decided !== false) return null;
 
   async function decide(optedIn: boolean) {
+    if (pending) return;
+    setPending(true);
     try {
       await setOptIn({ optedIn });
       if (optedIn) {
@@ -32,6 +36,8 @@ export default function ProfileOptInCard() {
     } catch (error) {
       console.error("profile opt-in decision failed", error);
       toast.error("Could not save your choice. Please try again.");
+    } finally {
+      setPending(false);
     }
   }
 
@@ -41,9 +47,9 @@ export default function ProfileOptInCard() {
       <p className={styles.copy}>
         With your permission, Theologia records the positions you affirm in
         your own words — one sentence each, linked to the study where you took
-        them — and your answers draw on them, so each study builds on the
-        last. Everything is editable, exportable, and deletable; never shared,
-        never used in marketing, never used to train models.{" "}
+        them — and the answers you receive draw on them, so each study builds
+        on the last. Everything is editable, exportable, and deletable; never
+        shared, never used in marketing, never used to train models.{" "}
         <Link href="/profile" className={styles.learnMore}>
           Learn more
         </Link>
@@ -53,6 +59,7 @@ export default function ProfileOptInCard() {
           type="button"
           className={styles.primary}
           onClick={() => decide(true)}
+          disabled={pending}
         >
           Begin my profile
         </button>
@@ -60,6 +67,7 @@ export default function ProfileOptInCard() {
           type="button"
           className={styles.quiet}
           onClick={() => decide(false)}
+          disabled={pending}
         >
           Not now
         </button>
