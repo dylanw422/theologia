@@ -12,6 +12,7 @@ import { toast } from "sonner";
 
 import Loader from "@/components/loader";
 
+import FrameworkPicker from "../chat/framework-picker";
 import { developmentLabel, topicHistories } from "./lib/development";
 import styles from "./profile-page.module.css";
 import TensionsSection from "./tensions-section";
@@ -32,6 +33,10 @@ export default function ProfilePage() {
   const excludePosition = useMutation(api.profile.excludePosition);
   const deletePosition = useMutation(api.profile.deletePosition);
   const deleteAll = useMutation(api.profile.deleteAllProfileData);
+  const defaultFramework = useQuery(api.userPreferences.getDefaultFramework);
+  const setDefaultFramework = useMutation(
+    api.userPreferences.setDefaultFramework,
+  );
   const convex = useConvex();
 
   const [editingId, setEditingId] = useState<Id<"positions"> | null>(null);
@@ -83,6 +88,17 @@ export default function ProfilePage() {
             erase — never shared, never used in marketing, never used to train
             models.
           </p>
+          <div className={styles.pauseControl}>
+            <span>Default tradition</span>
+            <FrameworkPicker
+              framework={defaultFramework ?? ""}
+              onFrameworkChange={(id) => {
+                setDefaultFramework({ framework: id }).catch(() => {
+                  toast.error("Could not save your default tradition.");
+                });
+              }}
+            />
+          </div>
         </header>
 
         {isFree ? (
