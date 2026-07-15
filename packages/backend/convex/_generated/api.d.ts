@@ -26,6 +26,7 @@ import type * as privateData from "../privateData.js";
 import type * as profile from "../profile.js";
 import type * as tensions from "../tensions.js";
 import type * as usage from "../usage.js";
+import type * as userPreferences from "../userPreferences.js";
 import type * as waitlist from "../waitlist.js";
 
 import type {
@@ -53,6 +54,7 @@ declare const fullApi: ApiFromModules<{
   profile: typeof profile;
   tensions: typeof tensions;
   usage: typeof usage;
+  userPreferences: typeof userPreferences;
   waitlist: typeof waitlist;
 }>;
 

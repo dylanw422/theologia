@@ -2,24 +2,44 @@
 import { useForm } from "@tanstack/react-form";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import z from "zod";
 
 import { authClient } from "@/lib/auth-client";
+import { api } from "@theologia/backend/convex/_generated/api";
+import { useConvexAuth, useMutation } from "convex/react";
+
+import FrameworkPicker from "./chat/framework-picker";
 import styles from "./auth-form.module.css";
 
 export default function SignUpForm() {
   const router = useRouter();
+  const { isAuthenticated } = useConvexAuth();
+  const setDefaultFramework = useMutation(api.userPreferences.setDefaultFramework);
+  const [pendingFramework, setPendingFramework] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isAuthenticated || !pendingFramework) return;
+    const framework = pendingFramework;
+    setPendingFramework(null);
+    setDefaultFramework({ framework }).catch(() => {
+      toast.warning(
+        "Account created, but we couldn't save your tradition — set it on your profile page.",
+      );
+    });
+    router.push("/chat");
+    toast.success("Account created");
+  }, [isAuthenticated, pendingFramework, setDefaultFramework, router]);
 
   const form = useForm({
-    defaultValues: { name: "", email: "", password: "" },
+    defaultValues: { name: "", email: "", password: "", tradition: "" },
     onSubmit: async ({ value }) => {
       await authClient.signUp.email(
         { email: value.email, password: value.password, name: value.name },
         {
           onSuccess: () => {
-            router.push("/chat");
-            toast.success("Account created");
+            setPendingFramework(value.tradition);
           },
           onError: (error) => {
             toast.error(error.error.message || error.error.statusText);
@@ -32,6 +52,7 @@ export default function SignUpForm() {
         name: z.string().min(2, "Name must be at least 2 characters"),
         email: z.email("Invalid email address"),
         password: z.string().min(8, "Password must be at least 8 characters"),
+        tradition: z.string().min(1, "Choose a tradition"),
       }),
     },
   });
@@ -103,6 +124,21 @@ export default function SignUpForm() {
               onChange={(e) => field.handleChange(e.target.value)}
               className={styles.input}
               placeholder="••••••••"
+            />
+            {field.state.meta.errors.map((error) => (
+              <p key={error?.message} className={styles.error}>{error?.message}</p>
+            ))}
+          </div>
+        )}
+      </form.Field>
+
+      <form.Field name="tradition">
+        {(field) => (
+          <div className={styles.field}>
+            <label htmlFor={field.name} className={styles.label}>Tradition</label>
+            <FrameworkPicker
+              framework={field.state.value}
+              onFrameworkChange={(id) => field.handleChange(id)}
             />
             {field.state.meta.errors.map((error) => (
               <p key={error?.message} className={styles.error}>{error?.message}</p>
