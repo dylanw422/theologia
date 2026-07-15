@@ -73,9 +73,22 @@ export default function ProfilePage() {
     <div className={styles.root}>
       <div className={styles.inner}>
         <header className={styles.header}>
-          <Link href="/chat" className={styles.backLink}>
-            ← Back to study
-          </Link>
+          <div className={styles.headerTop}>
+            <Link href="/chat" className={styles.backLink}>
+              ← Back to study
+            </Link>
+            <div className={styles.pauseControl}>
+              <span>Default tradition</span>
+              <FrameworkPicker
+                framework={defaultFramework ?? ""}
+                onFrameworkChange={(id) => {
+                  setDefaultFramework({ framework: id }).catch(() => {
+                    toast.error("Could not save your default tradition.");
+                  });
+                }}
+              />
+            </div>
+          </div>
           <p className={styles.eyebrow}>Your Theology</p>
           <h1 className={styles.title}>
             A confession, <em>written by your own study</em>
@@ -88,17 +101,6 @@ export default function ProfilePage() {
             erase — never shared, never used in marketing, never used to train
             models.
           </p>
-          <div className={styles.pauseControl}>
-            <span>Default tradition</span>
-            <FrameworkPicker
-              framework={defaultFramework ?? ""}
-              onFrameworkChange={(id) => {
-                setDefaultFramework({ framework: id }).catch(() => {
-                  toast.error("Could not save your default tradition.");
-                });
-              }}
-            />
-          </div>
         </header>
 
         {isFree ? (

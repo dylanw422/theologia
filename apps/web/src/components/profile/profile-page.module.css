@@ -31,6 +31,14 @@
   margin-bottom: 2.5rem;
 }
 
+.headerTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
 .backLink {
   font-family: var(--font-geist-mono), monospace;
   font-size: 0.7rem;
