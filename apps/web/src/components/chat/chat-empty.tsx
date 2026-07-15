@@ -1,13 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+import { api } from "@theologia/backend/convex/_generated/api";
+import { useQuery } from "convex/react";
 
 import ChatComposer, { type ComposerInsert } from "./chat-composer";
 import type { ConversationSetup, ModeId } from "./lib/chat-state";
-import { getMode, isSetupValid } from "./lib/modes";
+import { getMode, isSetupValid, type SetupKind } from "./lib/modes";
 import ModePicker from "./mode-picker";
 import SetupPicker from "./setup-picker";
 import styles from "./chat-empty.module.css";
+
+/** Setup kinds whose `framework` field the default tradition can pre-fill.
+ *  "multi-tradition" (Comparison) and "document"/"collection" (Catechism/
+ *  Library) don't have a single framework field, so they're excluded. */
+const FRAMEWORK_SETUP_KINDS: SetupKind[] = [
+  "tradition",
+  "versus",
+  "tradition-purpose",
+];
 
 export default function ChatEmpty({
   onStart,
@@ -22,9 +34,17 @@ export default function ChatEmpty({
 }) {
   const [mode, setMode] = useState<ModeId>("qa");
   const [setup, setSetup] = useState<ConversationSetup>({});
+  const defaultFramework = useQuery(api.userPreferences.getDefaultFramework);
 
   const modeDef = getMode(mode);
   const canSend = isSetupValid(mode, setup);
+
+  useEffect(() => {
+    if (!defaultFramework) return;
+    if (!FRAMEWORK_SETUP_KINDS.includes(modeDef.setup)) return;
+    if (setup.framework) return;
+    setSetup((prev) => ({ ...prev, framework: defaultFramework }));
+  }, [defaultFramework, modeDef.setup, setup.framework]);
 
   function handleModeChange(next: ModeId) {
     setMode(next);
