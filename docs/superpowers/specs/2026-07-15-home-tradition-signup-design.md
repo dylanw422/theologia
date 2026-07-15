@@ -43,7 +43,8 @@ Both live under the authed-user pattern already established in `profile.ts` (`ct
 - Existing users with no `userPreferences` row see today's empty-setup behavior, unchanged.
 
 **Edit surface (`apps/web/src/components/profile/profile-page.tsx`)**
-- Add a "Default tradition" control to the existing Controls row (alongside Pause/Export/Delete), a `<select>` bound to `getDefaultFramework` / `setDefaultFramework`, following the same immediate-save-on-change pattern as the Pause checkbox.
+- The existing Controls row (Pause/Export/Delete) only renders for paid users who have opted into the Theological Profile feature (`!isFree && profile.optedIn`) — free users see `LockedPreview`, undecided paid users see `OptInCard`. The default tradition is unrelated to that opt-in or plan tier, so it cannot live inside that gate.
+- Add a "Default tradition" control in the page header (`<header className={styles.header}>`, after the `lede` paragraph), outside the `isFree` / `optedIn` branching, so it renders for every authenticated user. A `<select>` bound to `getDefaultFramework` / `setDefaultFramework`, following the same immediate-save-on-change pattern as the Pause checkbox.
 
 ## Error handling
 
