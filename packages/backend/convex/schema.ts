@@ -90,6 +90,14 @@ export default defineSchema({
     decidedAt: v.number(), // ms epoch of the last opt-in/out decision
   }).index("by_user", ["userId"]),
 
+  // Per-user default tradition, set at signup and editable on /profile.
+  // Pre-fills new conversations' setup; per-conversation overrides via
+  // SetupPicker never write back here.
+  userPreferences: defineTable({
+    userId: v.string(),
+    defaultFramework: v.string(), // Framework.id from lib/studyData.ts FRAMEWORKS
+  }).index("by_user", ["userId"]),
+
   // Theological Profile Phase 2 — detected tensions between affirmed
   // positions. One tension per position pair, ever: dismissed and resolved
   // pairs never resurface. docs/THEOLOGICAL_PROFILE.md §Tensions.
