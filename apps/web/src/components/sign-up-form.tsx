@@ -19,6 +19,10 @@ export default function SignUpForm() {
   const setDefaultFramework = useMutation(api.userPreferences.setDefaultFramework);
   const [pendingFramework, setPendingFramework] = useState<string | null>(null);
 
+  // Fired from an isAuthenticated-gated effect, not authClient.signUp.email's
+  // onSuccess, because Convex's own auth state can still be catching up to
+  // better-auth's session when onSuccess fires — calling the mutation there
+  // races and can throw "Not authenticated".
   useEffect(() => {
     if (!isAuthenticated || !pendingFramework) return;
     const framework = pendingFramework;
