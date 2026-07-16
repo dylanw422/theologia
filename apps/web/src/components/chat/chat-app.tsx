@@ -12,7 +12,6 @@ import BiblePanel from "@/components/bible/bible-panel";
 import type { ComposerInsert } from "./chat-composer";
 import ChatEmpty from "./chat-empty";
 import ChatSidebar from "./chat-sidebar";
-import ChatUpgradeBanner from "./chat-upgrade-banner";
 import ChatUsageMeter from "./chat-usage-meter";
 import LiveThread, { type LiveConversation } from "./live-thread";
 import ProfileOptInCard from "./profile-optin-card";
@@ -107,7 +106,6 @@ export default function ChatApp() {
           <div className={styles.fresco} aria-hidden />
           <div className={styles.overlay} aria-hidden />
           <div className={styles.grain} aria-hidden />
-          {active === null ? <ChatUpgradeBanner /> : null}
           <div className={styles.content}>
             <ProfileOptInCard />
             {active ? (
