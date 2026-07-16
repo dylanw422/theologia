@@ -30,7 +30,14 @@ export const vSetup = {
 export default defineSchema({
   waitlist: defineTable({
     email: v.string(),
-  }).index("by_email", ["email"]),
+    // Beta access: an approved waitlist row carries a random, reusable token.
+    // The token is the secret in a personal magic link; redeeming it opens the
+    // site before the global SITE_LIVE launch. Revoke by clearing both fields.
+    betaApproved: v.optional(v.boolean()),
+    betaToken: v.optional(v.string()),
+  })
+    .index("by_email", ["email"])
+    .index("by_token", ["betaToken"]),
 
   conversations: defineTable({
     userId: v.string(),

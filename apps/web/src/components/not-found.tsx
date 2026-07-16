@@ -5,15 +5,16 @@ import Link from "next/link";
 import { api } from "@theologia/backend/convex/_generated/api";
 import { useQuery } from "convex/react";
 
-import { SITE_LIVE } from "@/lib/site-live";
+import { useSiteAccess } from "@/lib/use-site-access";
 import styles from "./not-found.module.css";
 
 export default function NotFound() {
+  const access = useSiteAccess();
   const user = useQuery(
     api.auth.getCurrentUser,
-    SITE_LIVE ? undefined : "skip",
+    access ? undefined : "skip",
   );
-  const signedIn = SITE_LIVE && !!user;
+  const signedIn = access && !!user;
   const ctaHref = signedIn ? "/chat" : "/";
   const ctaLabel = signedIn
     ? "Return to your studies"

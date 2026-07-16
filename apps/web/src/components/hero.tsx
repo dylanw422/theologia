@@ -5,7 +5,7 @@ import { CheckoutLink } from "@convex-dev/polar/react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@theologia/backend/convex/_generated/api";
 
-import { SITE_LIVE } from "@/lib/site-live";
+import { useSiteAccess } from "@/lib/use-site-access";
 import styles from "./hero.module.css";
 
 type ActiveSection = "why" | "library" | "pricing" | null;
@@ -107,12 +107,13 @@ export default function Hero() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const access = useSiteAccess();
 
   const joinWaitlist = useMutation(api.waitlist.join);
-  const user = useQuery(api.auth.getCurrentUser, SITE_LIVE ? undefined : "skip");
+  const user = useQuery(api.auth.getCurrentUser, access ? undefined : "skip");
   const products = useQuery(
     api.polar.getConfiguredProducts,
-    SITE_LIVE ? undefined : "skip",
+    access ? undefined : "skip",
   );
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const alreadyRegistered = useQuery(
@@ -159,7 +160,7 @@ export default function Hero() {
                 {sec.label}
               </button>
             ))}
-            {SITE_LIVE ? (
+            {access ? (
               <Link href="/sign-in" className={styles.navSignIn}>
                 Sign in
               </Link>
@@ -308,7 +309,7 @@ export default function Hero() {
                             <p className={styles.pricingDesc}>{p.desc}</p>
                           </>
                         );
-                        if (!SITE_LIVE) {
+                        if (!access) {
                           // Waitlist launch: pricing cards are display-only.
                           // Same className as the link so styling is
                           // untouched, but there's nothing to click into.

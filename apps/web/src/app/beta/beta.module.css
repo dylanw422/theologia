@@ -1,0 +1,86 @@
+.root {
+  --ink-deep: #0b0805;
+  --parchment: #f1e8d6;
+  --parchment-dim: #b9a886;
+  --gold: #c9a24e;
+  --gold-bright: #e6c984;
+
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--ink-deep);
+  color: var(--parchment);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  text-align: center;
+  padding: clamp(1.5rem, 6vw, 4rem);
+}
+
+.glow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    60% 50% at 50% 42%,
+    rgba(201, 162, 78, 0.16) 0%,
+    rgba(201, 162, 78, 0.05) 45%,
+    rgba(11, 8, 5, 0) 75%
+  );
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 46ch;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: clamp(1.1rem, 2.4vw, 1.7rem);
+}
+.eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 2.2rem;
+  height: 1px;
+  margin-right: 0.9rem;
+  vertical-align: middle;
+  background: var(--gold);
+  opacity: 0.7;
+}
+
+.headline {
+  font-family: var(--font-fraunces), serif;
+  font-optical-sizing: auto;
+  font-weight: 370;
+  font-size: clamp(2.2rem, 5.4vw, 3.6rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--parchment);
+  text-wrap: balance;
+}
+.headline em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--gold-bright);
+}
+
+.lede {
+  margin-top: clamp(1.1rem, 2.4vw, 1.6rem);
+  font-size: clamp(0.95rem, 1.2vw, 1.05rem);
+  line-height: 1.6;
+  color: var(--parchment-dim);
+}
