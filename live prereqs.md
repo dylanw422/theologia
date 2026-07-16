@@ -66,10 +66,15 @@ Added `@vercel/analytics` and mounted `<Analytics />` in
 at runtime, so it only reports data once deployed on Vercel with Web
 Analytics enabled for the project (dev/local traffic isn't sent).
 
-### 8. Hero image weight
-`school-of-athens.jpg` is 1.4 MB loaded as a CSS background (no
-`next/image` optimization) — it's the mobile LCP. Compressing to a
-~300 KB AVIF/WebP would meaningfully speed first paint.
+### 8. Hero image weight — DONE
+Added `apps/web/public/school-of-athens.avif` (1920px wide, 203 KB —
+down from the original 1.4 MB JPEG) and repointed all three CSS
+background-image usages in `hero.module.css` (the fresco, the email
+input's blurred backdrop, the pricing card's blurred backdrop) at it.
+The original `school-of-athens.jpg` is left in place, since
+`apps/web/src/lib/og-image.tsx` reads it server-side to composite the
+OG/Twitter share image — a different consumer, unrelated to page-load
+weight — no reason to touch it.
 
 ### 9. Email enumeration (minor)
 `waitlist.isRegistered` lets anyone probe whether an email is on the

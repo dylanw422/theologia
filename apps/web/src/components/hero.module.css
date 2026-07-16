@@ -36,7 +36,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: url("/school-of-athens.jpg") center 20% / cover no-repeat;
+  background: url("/school-of-athens.avif") center 20% / cover no-repeat;
   filter: saturate(1.14) contrast(1.07) brightness(0.5);
   transform: scale(1.05);
 }
@@ -345,7 +345,7 @@
   content: "";
   position: absolute;
   inset: -30px;
-  background: url("/school-of-athens.jpg") center 20% / cover no-repeat;
+  background: url("/school-of-athens.avif") center 20% / cover no-repeat;
   filter: blur(18px) brightness(0.46) saturate(1.14) contrast(1.07);
   z-index: -2;
 }
@@ -518,7 +518,7 @@
   content: "";
   position: absolute;
   inset: -30px;
-  background: url("/school-of-athens.jpg") center 20% / cover no-repeat;
+  background: url("/school-of-athens.avif") center 20% / cover no-repeat;
   filter: blur(18px) brightness(0.46) saturate(1.14) contrast(1.07);
   z-index: -2;
 }
