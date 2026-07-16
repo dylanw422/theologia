@@ -8,6 +8,8 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!$|_next/static|_next/image|api/|favicon.ico).*)",
+    // Exclude anything with a file extension so static assets under
+    // /public (images, etc.) aren't redirected along with real pages.
+    "/((?!$|_next/static|_next/image|api/|.*\\..*).*)",
   ],
 };
