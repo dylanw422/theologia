@@ -1,8 +1,13 @@
 import { NextResponse, type NextRequest } from "next/server";
 
+import { SITE_LIVE } from "@/lib/site-live";
+
 // Waitlist launch: only the home route is reachable. Everything else
 // (chat, profile, sign-in, sign-up, ...) bounces back to "/".
 export function proxy(request: NextRequest) {
+  if (SITE_LIVE) {
+    return NextResponse.next();
+  }
   return NextResponse.redirect(new URL("/", request.url));
 }
 
