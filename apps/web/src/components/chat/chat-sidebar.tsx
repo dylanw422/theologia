@@ -6,6 +6,7 @@ import Link from "next/link";
 import { api } from "@theologia/backend/convex/_generated/api";
 import { useQuery } from "convex/react";
 
+import BetaBadge from "@/components/beta-badge";
 import UserMenu from "@/components/user-menu";
 
 import type { Conversation } from "./lib/chat-state";
@@ -30,6 +31,7 @@ export default function ChatSidebar({
       <div className={styles.head}>
         <Link href="/" className={styles.wordmark}>
           Theologia
+          <BetaBadge />
         </Link>
         <button type="button" className={styles.newChat} onClick={onNewChat}>
           <Plus size={15} strokeWidth={2.25} />

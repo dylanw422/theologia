@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { api } from "@theologia/backend/convex/_generated/api";
 import { useQuery } from "convex/react";
 
+import BetaBadge from "@/components/beta-badge";
+
 import ChatComposer, { type ComposerInsert } from "./chat-composer";
 import type { ConversationSetup, ModeId } from "./lib/chat-state";
 import {
@@ -71,6 +73,7 @@ export default function ChatEmpty({
       <div className={styles.inner}>
         <p className={`${styles.mark} ${styles.reveal} ${styles.d1}`}>
           Theologia
+          <BetaBadge />
         </p>
 
         <div className={`${styles.modes} ${styles.reveal} ${styles.d2}`}>

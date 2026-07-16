@@ -6,6 +6,7 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "@theologia/backend/convex/_generated/api";
 
 import { useSiteAccess } from "@/lib/use-site-access";
+import BetaBadge from "./beta-badge";
 import styles from "./hero.module.css";
 
 type ActiveSection = "why" | "library" | "pricing" | null;
@@ -149,6 +150,7 @@ export default function Hero() {
             className={styles.wordmark}
           >
             Theologia
+            <BetaBadge />
           </button>
           <div className={styles.navLinks}>
             {NAV_SECTIONS.map((sec) => (
