@@ -132,6 +132,13 @@
   border-color: rgba(201, 162, 78, 0.55);
 }
 
+/* Threads toggle + scrim exist only on mobile, where the sidebar leaves
+   the grid and becomes a drawer. */
+.threadsToggle,
+.threadsScrim {
+  display: none;
+}
+
 @media (max-width: 760px) {
   .shell {
     grid-template-columns: 1fr;
@@ -143,5 +150,62 @@
   /* first-child: hide only the conversation sidebar, not the Bible panel */
   .shell > aside:first-child {
     display: none;
+  }
+
+  /* Mirrors .bibleToggle on the opposite corner */
+  .threadsToggle {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.9rem;
+    z-index: 10;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background: transparent;
+    border: 1px solid var(--hairline);
+    border-radius: 2px;
+    color: var(--parchment-dim);
+    cursor: pointer;
+  }
+  .threadsToggle:focus-visible {
+    outline: 1px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  .threadsScrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    background: rgba(11, 8, 5, 0.55);
+    border: none;
+    padding: 0;
+  }
+
+  /* The sidebar as a left drawer (mirrors the Bible panel overlay).
+     Must follow the display: none rule above so it wins the cascade. */
+  .shellThreads > aside:first-child {
+    display: flex;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: min(84vw, 320px);
+    z-index: 31;
+    /* Fully opaque: the frosted-glass look is desktop-only */
+    background: var(--ink-deep);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .shellThreads > aside:first-child {
+      animation: threads-in 0.22s ease;
+    }
+  }
+}
+
+@keyframes threads-in {
+  from {
+    transform: translateX(-100%);
   }
 }

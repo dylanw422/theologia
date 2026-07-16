@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpen } from "lucide-react";
+import { BookOpen, PanelLeft } from "lucide-react";
 import { useState } from "react";
 
 import { api } from "@theologia/backend/convex/_generated/api";
@@ -27,6 +27,8 @@ export default function ChatApp() {
       : new URLSearchParams(window.location.search).get("c"),
   );
   const [bibleOpen, setBibleOpen] = useState(false);
+  // Mobile-only drawer state; on desktop the sidebar is always in the grid.
+  const [threadsOpen, setThreadsOpen] = useState(false);
   const [verseInsert, setVerseInsert] = useState<ComposerInsert | null>(null);
 
   function handleSendToChat(insert: { token: string; context: string }) {
@@ -55,8 +57,14 @@ export default function ChatApp() {
 
   const active = conversations.find((c) => c.id === activeId) ?? null;
 
+  function handleSelect(id: string) {
+    setActiveId(id);
+    setThreadsOpen(false);
+  }
+
   function handleNewChat() {
     setActiveId(null);
+    setThreadsOpen(false);
   }
 
   async function handleStart(input: {
@@ -78,14 +86,22 @@ export default function ChatApp() {
   return (
     <div className={styles.root}>
       <div
-        className={`${styles.shell}${bibleOpen ? ` ${styles.shellBible}` : ""}`}
+        className={`${styles.shell}${bibleOpen ? ` ${styles.shellBible}` : ""}${threadsOpen ? ` ${styles.shellThreads}` : ""}`}
       >
         <ChatSidebar
           conversations={conversations}
           activeId={activeId}
-          onSelect={setActiveId}
+          onSelect={handleSelect}
           onNewChat={handleNewChat}
         />
+        {threadsOpen ? (
+          <button
+            type="button"
+            className={styles.threadsScrim}
+            aria-label="Close studies list"
+            onClick={() => setThreadsOpen(false)}
+          />
+        ) : null}
         <main className={styles.main}>
           <div className={styles.fresco} aria-hidden />
           <div className={styles.overlay} aria-hidden />
@@ -103,6 +119,15 @@ export default function ChatApp() {
               <ChatEmpty onStart={handleStart} insert={verseInsert} />
             )}
           </div>
+          <button
+            type="button"
+            className={styles.threadsToggle}
+            aria-label="Open studies list"
+            aria-expanded={threadsOpen}
+            onClick={() => setThreadsOpen(true)}
+          >
+            <PanelLeft size={16} strokeWidth={2} />
+          </button>
           <button
             type="button"
             className={`${styles.bibleToggle}${bibleOpen ? ` ${styles.bibleToggleActive}` : ""}`}

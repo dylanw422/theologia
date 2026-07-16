@@ -259,6 +259,14 @@
   white-space: nowrap;
 }
 
+@media (max-width: 760px) {
+  /* Left side clears the floating threads toggle, same as the right
+     side clears the Bible toggle (offset + width + gap) */
+  .header {
+    padding-left: calc(0.9rem + 2rem + 0.75rem);
+  }
+}
+
 @media (max-width: 640px) {
   .headerTitle {
     display: none;
