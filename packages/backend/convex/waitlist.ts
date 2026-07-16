@@ -2,11 +2,14 @@ import { internal } from "./_generated/api";
 import {
   internalAction,
   internalMutation,
+  internalQuery,
   mutation,
   query,
+  type QueryCtx,
 } from "./_generated/server";
 import { v } from "convex/values";
 
+import { authComponent } from "./auth";
 import { sendEmail } from "./lib/email";
 import { renderEmail } from "./lib/emailTemplate";
 
@@ -81,6 +84,33 @@ export const setBetaToken = internalMutation({
     const siteUrl = (process.env.SITE_URL ?? "").replace(/\/+$/, "");
     const url = `${siteUrl}/api/beta?token=${token}`;
     return { email: normalized, url };
+  },
+});
+
+// Is this email a currently-approved beta tester? Shared by the plan
+// resolution seam (getPlanIdForUser) to grant Ministry-level access. Plain
+// helper (not a Convex function) so it's unit-testable via t.run.
+export async function emailHasBeta(
+  ctx: QueryCtx,
+  email: string,
+): Promise<boolean> {
+  const normalized = email.trim().toLowerCase();
+  if (!EMAIL_RE.test(normalized)) return false;
+  const row = await ctx.db
+    .query("waitlist")
+    .withIndex("by_email", (q) => q.eq("email", normalized))
+    .first();
+  return !!row?.betaApproved;
+}
+
+// Beta check by Convex user id: resolves the user's email via better-auth,
+// then defers to emailHasBeta. Internal — consumed by getPlanIdForUser.
+export const isBetaApprovedUser = internalQuery({
+  args: { userId: v.string() },
+  handler: async (ctx, { userId }): Promise<boolean> => {
+    const user = await authComponent.getAnyUserById(ctx, userId);
+    if (!user?.email) return false;
+    return emailHasBeta(ctx, user.email);
   },
 });
 

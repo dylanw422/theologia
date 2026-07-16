@@ -1,11 +1,30 @@
 import { describe, expect, test } from "vitest";
 
 import {
+  effectivePlan,
   FREE_MONTHLY_QUERY_LIMIT,
   PLANS,
   planFromProductKey,
   planMeetsMinimum,
 } from "./plans";
+
+describe("effectivePlan", () => {
+  test("beta users get at least Ministry access", () => {
+    expect(effectivePlan("free", true)).toBe("ministry");
+    expect(effectivePlan("scholar", true)).toBe("ministry");
+    expect(effectivePlan("ministry", true)).toBe("ministry");
+  });
+
+  test("beta never downgrades a higher paid plan", () => {
+    expect(effectivePlan("churchTeam", true)).toBe("churchTeam");
+  });
+
+  test("non-beta users keep their subscription plan", () => {
+    expect(effectivePlan("free", false)).toBe("free");
+    expect(effectivePlan("scholar", false)).toBe("scholar");
+    expect(effectivePlan("churchTeam", false)).toBe("churchTeam");
+  });
+});
 
 describe("planFromProductKey", () => {
   test("maps Polar product keys to plans", () => {

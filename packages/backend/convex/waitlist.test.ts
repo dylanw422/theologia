@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 import { api, internal } from "./_generated/api";
 import schema from "./schema";
-import { sendBetaInvite } from "./waitlist";
+import { emailHasBeta, sendBetaInvite } from "./waitlist";
 
 const modules = import.meta.glob("./**/*.ts");
 
@@ -133,6 +133,40 @@ describe("revokeBeta", () => {
     expect(rows).toHaveLength(1);
     expect(rows[0].betaApproved).toBeUndefined();
     expect(rows[0].betaToken).toBeUndefined();
+  });
+});
+
+describe("emailHasBeta", () => {
+  test("true for an approved email, case-insensitively", async () => {
+    const t = convexTest(schema, modules);
+    process.env.SITE_URL = "https://theologia.app";
+    await t.mutation(internal.waitlist.setBetaToken, {
+      email: "Beta@Theologia.app",
+    });
+
+    expect(await t.run((ctx) => emailHasBeta(ctx, "beta@theologia.app"))).toBe(
+      true,
+    );
+    expect(await t.run((ctx) => emailHasBeta(ctx, "BETA@THEOLOGIA.APP"))).toBe(
+      true,
+    );
+  });
+
+  test("false for a waitlist row that isn't beta-approved", async () => {
+    const t = convexTest(schema, modules);
+    await t.mutation(api.waitlist.join, { email: "plain@theologia.app" });
+
+    expect(
+      await t.run((ctx) => emailHasBeta(ctx, "plain@theologia.app")),
+    ).toBe(false);
+  });
+
+  test("false for an unknown email", async () => {
+    const t = convexTest(schema, modules);
+
+    expect(
+      await t.run((ctx) => emailHasBeta(ctx, "nobody@theologia.app")),
+    ).toBe(false);
   });
 });
 

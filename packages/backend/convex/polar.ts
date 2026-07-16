@@ -1,9 +1,9 @@
 import { Polar } from "@convex-dev/polar";
 
-import { api, components } from "./_generated/api";
+import { api, components, internal } from "./_generated/api";
 import type { DataModel } from "./_generated/dataModel";
 import { action, internalAction, query } from "./_generated/server";
-import { planFromProductKey, type PlanId } from "./lib/plans";
+import { effectivePlan, planFromProductKey, type PlanId } from "./lib/plans";
 
 type CurrentSubscription = Awaited<ReturnType<Polar<DataModel>["getCurrentSubscription"]>>;
 
@@ -58,13 +58,22 @@ export const getCurrentSubscription = query({
 
 type RunQueryCtx = Parameters<Polar<DataModel>["getCurrentSubscription"]>[0];
 
-/** Resolve a user's plan from their Polar subscription. No sub → free. */
+/**
+ * Resolve a user's effective plan. Starts from their Polar subscription
+ * (no sub → free), then grants beta testers at least Ministry access. This is
+ * the single seam every consumer (mode gating, usage limits, tensions,
+ * profile) reads, so the beta bump applies everywhere.
+ */
 export async function getPlanIdForUser(
   ctx: RunQueryCtx,
   userId: string,
 ): Promise<PlanId> {
   const subscription = await polar.getCurrentSubscription(ctx, { userId });
-  return planFromProductKey(subscription?.productKey);
+  const subPlan = planFromProductKey(subscription?.productKey);
+  const isBeta = await ctx.runQuery(internal.waitlist.isBetaApprovedUser, {
+    userId,
+  });
+  return effectivePlan(subPlan, isBeta);
 }
 
 export const getPlanForCurrentUser = query({

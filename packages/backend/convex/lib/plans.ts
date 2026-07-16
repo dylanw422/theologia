@@ -57,6 +57,16 @@ export function planMeetsMinimum(planId: PlanId, minimum: PlanId): boolean {
   return PLAN_RANK[planId] >= PLAN_RANK[minimum];
 }
 
+// Beta testers get full Ministry-level access (all modes, Ministry usage
+// budget) regardless of subscription — but a higher paid plan is never
+// downgraded. This is the one place beta's access grant is expressed.
+export function effectivePlan(subscriptionPlan: PlanId, isBeta: boolean): PlanId {
+  if (isBeta && PLAN_RANK[subscriptionPlan] < PLAN_RANK.ministry) {
+    return "ministry";
+  }
+  return subscriptionPlan;
+}
+
 export function planFromProductKey(
   key: string | null | undefined,
 ): PlanId {
