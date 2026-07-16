@@ -2,7 +2,10 @@
 
 /* Mobile rubber-band overscroll paints the canvas behind the page.
    Every route is ink-dark, so keep the canvas dark too instead of the
-   default white. */
-html {
+   default white. The body also needs it: the UI globals paint body with
+   --background (a dark gray in dark mode), which iOS Safari samples for its
+   top/bottom chrome and reveals at the screen edges on routes like /chat. */
+html,
+body {
   background-color: #0b0805;
 }
