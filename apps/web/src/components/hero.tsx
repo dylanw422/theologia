@@ -155,13 +155,9 @@ export default function Hero() {
                 {sec.label}
               </button>
             ))}
-            <span
-              className={styles.navSignInDisabled}
-              aria-disabled="true"
-              title="Sign in is disabled while Theologia is in waitlist launch"
-            >
+            <Link href="/sign-in" className={styles.navSignIn}>
               Sign in
-            </span>
+            </Link>
           </div>
         </nav>
 
