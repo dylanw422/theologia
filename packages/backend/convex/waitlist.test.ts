@@ -30,6 +30,18 @@ describe("setBetaToken", () => {
     );
   });
 
+  test("builds a clean URL when SITE_URL has a trailing slash", async () => {
+    const t = convexTest(schema, modules);
+    process.env.SITE_URL = "https://theologia.app/";
+
+    const { url } = await t.mutation(internal.waitlist.setBetaToken, {
+      email: "slash@theologia.app",
+    });
+
+    expect(url).not.toContain("//api/beta");
+    expect(url).toMatch(/^https:\/\/theologia\.app\/api\/beta\?token=/);
+  });
+
   test("approves an existing row without duplicating it", async () => {
     const t = convexTest(schema, modules);
     await t.mutation(api.waitlist.join, { email: "existing@theologia.app" });

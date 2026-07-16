@@ -74,7 +74,9 @@ export const setBetaToken = internalMutation({
         betaToken: token,
       });
     }
-    const url = `${process.env.SITE_URL}/api/beta?token=${token}`;
+    // SITE_URL may carry a trailing slash; strip it so we don't emit `//api`.
+    const siteUrl = (process.env.SITE_URL ?? "").replace(/\/+$/, "");
+    const url = `${siteUrl}/api/beta?token=${token}`;
     return { email: normalized, url };
   },
 });
