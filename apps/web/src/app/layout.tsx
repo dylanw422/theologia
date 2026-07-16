@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Fraunces, Geist_Mono, Inter } from "next/font/google";
 
 import "../index.css";
@@ -35,6 +35,15 @@ const siteUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
   : process.env.VERCEL_URL
     ? `https://${process.env.VERCEL_URL}`
     : "http://localhost:3001";
+
+// maximum-scale=1 stops iOS Safari from auto-zooming the page when a
+// sub-16px input is focused. Safari still honors user pinch-zoom (it
+// ignores the cap for user gestures), so accessibility zoom is intact.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

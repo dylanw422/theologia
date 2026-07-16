@@ -20,16 +20,28 @@
 }
 
 /* ---- The fresco: darkened + saturated so the colors pop ---- */
+/* The image lives on a clipped ::before: the scale/drift transform makes
+   it paint past the viewport box, and on mobile the visual viewport slides
+   past the layout viewport during scroll (URL-bar collapse, rubber-band),
+   which exposed that un-overlaid bleed as bright bands above/below the
+   dark overlay. Clipping keeps the fresco inside the same box the overlay
+   covers. */
 .fresco {
   position: fixed;
   inset: 0;
   z-index: 0;
+  overflow: hidden;
+}
+.fresco::before {
+  content: "";
+  position: absolute;
+  inset: 0;
   background: url("/school-of-athens.jpg") center 20% / cover no-repeat;
   filter: saturate(1.14) contrast(1.07) brightness(0.5);
   transform: scale(1.05);
 }
 @media (prefers-reduced-motion: no-preference) {
-  .fresco {
+  .fresco::before {
     animation: drift 46s ease-in-out infinite alternate;
   }
 }

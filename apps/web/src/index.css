@@ -1,1 +1,8 @@
 @import "@theologia/ui/globals.css";
+
+/* Mobile rubber-band overscroll paints the canvas behind the page.
+   Every route is ink-dark, so keep the canvas dark too instead of the
+   default white. */
+html {
+  background-color: #0b0805;
+}
