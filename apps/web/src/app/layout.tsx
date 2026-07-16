@@ -5,6 +5,7 @@ import "../index.css";
 
 import Providers from "@/components/providers";
 import { getInitialToken } from "@/lib/auth-server";
+import { SITE_URL } from "@/lib/site-url";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -26,16 +27,6 @@ const title = "Theologia — Study theology with the whole church in the room";
 const description =
   "A framework-aware AI study environment for pastors, apologists, and serious students of biblical theology. Answers shaped by your tradition, grounded in church history, tested against the strongest opposing arguments.";
 
-// Vercel sets VERCEL_PROJECT_PRODUCTION_URL to the project's canonical
-// domain (custom domain if assigned, else *.vercel.app) in every
-// environment, so OG/Twitter image URLs resolve correctly even from
-// preview deployments.
-const siteUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
-  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-  : process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : "http://localhost:3001";
-
 // maximum-scale=1 stops iOS Safari from auto-zooming the page when a
 // sub-16px input is focused. Safari still honors user pinch-zoom (it
 // ignores the cap for user gestures), so accessibility zoom is intact.
@@ -46,7 +37,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(SITE_URL),
   title,
   description,
   openGraph: {

@@ -42,9 +42,12 @@ semantics). Client-component crashes still hit Next's stark default.
 
 ## Worth doing, not blocking
 
-### 5. No robots.txt or sitemap
-Add `robots.ts` / `sitemap.ts` in the app dir. Trivial, and worth it
-since the OG images were just polished for sharing.
+### 5. No robots.txt or sitemap — DONE
+Added `apps/web/src/app/robots.ts` and `sitemap.ts`. Robots disallows the
+private app views (`/chat`, `/profile`, `/sign-in`, `/sign-up`, `/api/`)
+and points at the sitemap; the sitemap lists just the public marketing
+page (`/`). Also extracted the Vercel-domain `siteUrl` logic out of
+`layout.tsx` into `src/lib/site-url.ts` since three files now need it.
 
 ### 6. Stray files in `public/` are publicly served
 None of these are referenced anywhere in `src/`:
