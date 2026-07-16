@@ -26,10 +26,11 @@
   inset: 0;
   z-index: 0;
   background: url("/creation-of-adam.jpg") center 40% / cover no-repeat;
-  /* blur(6px) matches the /chat fresco. The larger scale overscans the
-     viewport so the blur's soft edges never reveal the dark canvas behind. */
-  filter: blur(6px) saturate(1.1) contrast(1.08) brightness(0.38);
-  transform: scale(1.1);
+  /* Heavier blur than /chat for a softer, more abstract backdrop. The larger
+     scale overscans the viewport so the blur's soft edges never reveal the
+     dark canvas behind. */
+  filter: blur(16px) saturate(1.1) contrast(1.08) brightness(0.38);
+  transform: scale(1.16);
 }
 @media (prefers-reduced-motion: no-preference) {
   .fresco {
@@ -37,8 +38,8 @@
   }
 }
 @keyframes drift {
-  from { transform: scale(1.08) translate3d(0, 0, 0); }
-  to   { transform: scale(1.15) translate3d(-1.2%, -0.8%, 0); }
+  from { transform: scale(1.14) translate3d(0, 0, 0); }
+  to   { transform: scale(1.2) translate3d(-1.2%, -0.8%, 0); }
 }
 
 .overlay {
