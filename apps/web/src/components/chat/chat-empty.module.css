@@ -158,11 +158,11 @@
 }
 
 @media (max-width: 640px) {
+  /* The sample-prompt cards crowd the small-screen empty state; hide them and
+     let the centered column reflow to fill the space. The composer remains the
+     way in. */
   .cards {
-    grid-template-columns: 1fr;
-  }
-  .cardBtn:hover:not(:disabled) {
-    transform: none;
+    display: none;
   }
 }
 
