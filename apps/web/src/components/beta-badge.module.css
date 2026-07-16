@@ -1,13 +1,13 @@
 .badge {
   display: inline-flex;
   align-items: center;
-  margin-left: 0.5em;
-  padding: 0.2em 0.5em;
+  margin-left: 0.55em;
+  padding: 0.18em 0.42em;
   /* em-sized so the emblem scales to whatever wordmark it sits beside */
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.48em;
+  font-size: 0.38em;
   font-weight: 600;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.18em;
   line-height: 1;
   text-transform: uppercase;
   color: #c9a24e;
