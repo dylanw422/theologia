@@ -7,6 +7,9 @@ import {
 } from "./_generated/server";
 import { v } from "convex/values";
 
+import { sendEmail } from "./lib/email";
+import { renderEmail } from "./lib/emailTemplate";
+
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // Client input is untrusted: normalize case/whitespace so the same address
@@ -119,23 +122,21 @@ export const revokeBeta = internalMutation({
 // approveBeta is the normal entry point. Throws on a non-2xx so the caller
 // (and the dashboard) sees the failure and can fall back to the returned URL.
 export async function sendBetaInvite(email: string, url: string): Promise<void> {
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from: "Theologia <beta@theologia.app>",
-      to: email,
-      subject: "Your Theologia beta invitation",
-      text: `You're in. Open Theologia with your personal link:\n\n${url}\n\nThis link is tied to your email — please don't share it.`,
-      html: `<p>You're in. Open Theologia with your personal link:</p><p><a href="${url}">Enter Theologia</a></p><p style="color:#666;font-size:13px">This link is tied to your email — please don't share it.</p>`,
-    }),
+  const { html, text } = renderEmail({
+    preheader: "Your personal invitation to the Theologia beta.",
+    heading: "You're in.",
+    paragraphs: [
+      "Your access to the Theologia private beta is ready. Use the button below to open the app.",
+      "This link is tied to your email — please keep it to yourself.",
+    ],
+    button: { label: "Enter Theologia", url },
   });
-  if (!res.ok) {
-    throw new Error(`Resend failed: ${res.status} ${await res.text()}`);
-  }
+  await sendEmail({
+    to: email,
+    subject: "Your Theologia beta invitation",
+    html,
+    text,
+  });
 }
 
 // Dashboard entry point: approve an email, mint its link, and email it. Returns

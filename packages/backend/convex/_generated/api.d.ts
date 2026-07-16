@@ -12,6 +12,8 @@ import type * as auth from "../auth.js";
 import type * as chat from "../chat.js";
 import type * as healthCheck from "../healthCheck.js";
 import type * as http from "../http.js";
+import type * as lib_email from "../lib/email.js";
+import type * as lib_emailTemplate from "../lib/emailTemplate.js";
 import type * as lib_extraction from "../lib/extraction.js";
 import type * as lib_plans from "../lib/plans.js";
 import type * as lib_profile from "../lib/profile.js";
@@ -40,6 +42,8 @@ declare const fullApi: ApiFromModules<{
   chat: typeof chat;
   healthCheck: typeof healthCheck;
   http: typeof http;
+  "lib/email": typeof lib_email;
+  "lib/emailTemplate": typeof lib_emailTemplate;
   "lib/extraction": typeof lib_extraction;
   "lib/plans": typeof lib_plans;
   "lib/profile": typeof lib_profile;
