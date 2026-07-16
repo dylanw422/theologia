@@ -21,7 +21,7 @@
 
 /* ---- The fresco: darkened + saturated so the colors pop ---- */
 .fresco {
-  position: absolute;
+  position: fixed;
   inset: 0;
   z-index: 0;
   background: url("/school-of-athens.jpg") center 20% / cover no-repeat;
@@ -44,7 +44,7 @@
 
 /* ---- Vignette + directional darkening so text reads and center glows ---- */
 .overlay {
-  position: absolute;
+  position: fixed;
   inset: 0;
   z-index: 1;
   pointer-events: none;
@@ -68,7 +68,7 @@
 
 /* Faint film grain to unify the composite and add texture */
 .grain {
-  position: absolute;
+  position: fixed;
   inset: 0;
   z-index: 1;
   pointer-events: none;
@@ -148,6 +148,12 @@
 }
 .navSignIn:hover {
   color: var(--gold-bright) !important;
+}
+.navSignInDisabled {
+  color: var(--parchment-dim) !important;
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .main {
@@ -544,7 +550,35 @@
 }
 /* ---- Responsive ---- */
 @media (max-width: 760px) {
+  /* The desktop overlay darkens left-to-right (text sits in the dark
+     left two-thirds next to the image). On mobile everything is full
+     width, so the lighter right portion of that gradient sits under
+     small text too. Flatten it out with an even scrim. */
+  .overlay::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(11, 8, 5, 0.4);
+  }
+  .citeRef,
+  .citeNote,
+  .frameworkList {
+    text-shadow: 0 1px 3px rgba(11, 8, 5, 0.9);
+  }
+  .nav {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.85rem;
+  }
   .navLinks {
+    width: 100%;
+    flex-wrap: wrap;
+    row-gap: 0.6rem;
+  }
+  .navBtn {
+    padding: 0.3rem 0;
+  }
+  .navSignInDisabled {
     display: none;
   }
   .inner {
@@ -567,5 +601,12 @@
   }
   .headline {
     max-width: 100%;
+  }
+  .waitlistForm {
+    width: 100%;
+  }
+  .emailInputWrapper {
+    width: 100%;
+    max-width: 350px;
   }
 }
