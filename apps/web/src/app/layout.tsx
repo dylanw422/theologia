@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Geist_Mono, Inter } from "next/font/google";
 
@@ -66,6 +67,7 @@ export default async function RootLayout({
         suppressHydrationWarning
       >
         <Providers initialToken={token}>{children}</Providers>
+        <Analytics />
       </body>
     </html>
   );

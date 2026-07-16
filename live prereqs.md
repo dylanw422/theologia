@@ -60,9 +60,11 @@ None of these are referenced anywhere in `src/`:
 
 Delete them.
 
-### 7. No analytics
-No visibility into traffic or waitlist conversion on launch day.
-Vercel Analytics is a two-line add if wanted.
+### 7. No analytics — DONE
+Added `@vercel/analytics` and mounted `<Analytics />` in
+`apps/web/src/app/layout.tsx`. It injects its tracking script client-side
+at runtime, so it only reports data once deployed on Vercel with Web
+Analytics enabled for the project (dev/local traffic isn't sent).
 
 ### 8. Hero image weight
 `school-of-athens.jpg` is 1.4 MB loaded as a CSS background (no

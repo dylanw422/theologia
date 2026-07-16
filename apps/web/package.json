@@ -21,6 +21,7 @@
     "@theologia/backend": "workspace:*",
     "@theologia/env": "workspace:*",
     "@theologia/ui": "workspace:*",
+    "@vercel/analytics": "^2.0.1",
     "babel-plugin-react-compiler": "^1.0.0",
     "better-auth": "catalog:",
     "convex": "catalog:",
