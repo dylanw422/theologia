@@ -42,36 +42,44 @@ export default function ProfileOptInCard() {
   }
 
   return (
-    <aside className={styles.card} aria-label="Theological profile opt-in">
-      <h2 className={styles.title}>Keep a record of what you believe?</h2>
-      <p className={styles.copy}>
-        With your permission, Theologia records the positions you affirm in
-        your own words — one sentence each, linked to the study where you took
-        them — and the answers you receive draw on them, so each study builds
-        on the last. Everything is editable, exportable, and deletable; never
-        shared, never used in marketing, never used to train models.{" "}
-        <Link href="/profile" className={styles.learnMore}>
-          Learn more
-        </Link>
-      </p>
-      <div className={styles.actions}>
-        <button
-          type="button"
-          className={styles.primary}
-          onClick={() => decide(true)}
-          disabled={pending}
-        >
-          Begin my profile
-        </button>
-        <button
-          type="button"
-          className={styles.quiet}
-          onClick={() => decide(false)}
-          disabled={pending}
-        >
-          Not now
-        </button>
-      </div>
-    </aside>
+    <div className={styles.overlay}>
+      <aside
+        className={styles.card}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Theological profile opt-in"
+      >
+        <h2 className={styles.title}>Keep a record of what you believe?</h2>
+        <p className={styles.copy}>
+          With your permission, Theologia records the positions you affirm in
+          your own words — one sentence each, linked to the study where you
+          took them — and the answers you receive draw on them, so each study
+          builds on the last. Everything is editable, exportable, and
+          deletable; never shared, never used in marketing, never used to train
+          models.{" "}
+          <Link href="/profile" className={styles.learnMore}>
+            Learn more
+          </Link>
+        </p>
+        <div className={styles.actions}>
+          <button
+            type="button"
+            className={styles.primary}
+            onClick={() => decide(true)}
+            disabled={pending}
+          >
+            Begin my profile
+          </button>
+          <button
+            type="button"
+            className={styles.quiet}
+            onClick={() => decide(false)}
+            disabled={pending}
+          >
+            Not now
+          </button>
+        </div>
+      </aside>
+    </div>
   );
 }
