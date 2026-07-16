@@ -35,6 +35,9 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
+  // Tints the iOS Safari address bar / toolbar the ink canvas instead of the
+  // default gray, matching the page background (html bg in index.css).
+  themeColor: "#0b0805",
 };
 
 export const metadata: Metadata = {
