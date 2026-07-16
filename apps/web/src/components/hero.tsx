@@ -11,9 +11,9 @@ import styles from "./hero.module.css";
 type ActiveSection = "why" | "library" | "pricing" | null;
 
 const NAV_SECTIONS = [
-  { id: "why", label: "Why Theologia?" },
-  { id: "library", label: "Library" },
-  { id: "pricing", label: "Pricing" },
+  { id: "why", label: "Why Theologia?", mobileHidden: false },
+  { id: "library", label: "Library", mobileHidden: true },
+  { id: "pricing", label: "Pricing", mobileHidden: true },
 ] as const;
 
 const WHY_FACETS = [
@@ -155,7 +155,7 @@ export default function Hero() {
               <button
                 key={sec.id}
                 onClick={() => toggle(sec.id)}
-                className={`${styles.navBtn}${active === sec.id ? ` ${styles.navBtnActive}` : ""}`}
+                className={`${styles.navBtn}${active === sec.id ? ` ${styles.navBtnActive}` : ""}${sec.mobileHidden ? ` ${styles.navBtnMobileHide}` : ""}`}
               >
                 {sec.label}
               </button>
