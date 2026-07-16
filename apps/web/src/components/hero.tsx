@@ -1,7 +1,5 @@
 "use client";
 import { useState } from "react";
-import Link from "next/link";
-import { CheckoutLink } from "@convex-dev/polar/react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@theologia/backend/convex/_generated/api";
 
@@ -108,8 +106,6 @@ export default function Hero() {
   const [isLoading, setIsLoading] = useState(false);
 
   const joinWaitlist = useMutation(api.waitlist.join);
-  const user = useQuery(api.auth.getCurrentUser);
-  const products = useQuery(api.polar.getConfiguredProducts);
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const alreadyRegistered = useQuery(
     api.waitlist.isRegistered,
@@ -282,50 +278,21 @@ export default function Hero() {
                       Depth that scales with <em>your study</em>.
                     </h1>
                     <div className={`${styles.pricingCards} ${styles.reveal} ${styles.d3}`}>
-                      {PRICING.map((p) => {
-                        // The whole card is the link — no CTA row, so the
-                        // cards keep their original height (no scroll) and
-                        // the auth/product swap never changes the layout.
-                        const product = p.productKey
-                          ? products?.[p.productKey]
-                          : null;
-                        const card = (
-                          <>
-                            <p className={styles.pricingPlan}>{p.plan}</p>
-                            <p className={styles.pricingPrice}>
-                              {p.price}
-                              <span className={styles.pricingPeriod}>
-                                {p.period}
-                              </span>
-                            </p>
-                            <p className={styles.pricingDesc}>{p.desc}</p>
-                          </>
-                        );
-                        if (user && product) {
-                          return (
-                            <CheckoutLink
-                              key={p.plan}
-                              polarApi={api.polar}
-                              productIds={[product.id]}
-                              className={styles.pricingCard}
-                            >
-                              {card}
-                            </CheckoutLink>
-                          );
-                        }
-                        return (
-                          <Link
-                            key={p.plan}
-                            href={user ? "/chat" : "/sign-up"}
-                            className={styles.pricingCard}
-                            aria-label={
-                              p.productKey ? `Get ${p.plan}` : "Start free"
-                            }
-                          >
-                            {card}
-                          </Link>
-                        );
-                      })}
+                      {PRICING.map((p) => (
+                        // Waitlist launch: pricing cards are display-only.
+                        // Same className as the old link so styling is
+                        // untouched, but there's nothing to click into.
+                        <div key={p.plan} className={styles.pricingCard}>
+                          <p className={styles.pricingPlan}>{p.plan}</p>
+                          <p className={styles.pricingPrice}>
+                            {p.price}
+                            <span className={styles.pricingPeriod}>
+                              {p.period}
+                            </span>
+                          </p>
+                          <p className={styles.pricingDesc}>{p.desc}</p>
+                        </div>
+                      ))}
                     </div>
                   </>
                 )}
