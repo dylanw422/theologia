@@ -3,20 +3,29 @@ import { getFramework, getSubTradition } from "./frameworks";
 import {
   COLLECTIONS,
   DOCUMENTS,
+  MODE_MIN_PLAN,
   MODE_SETUP,
   PURPOSES,
   type ConversationSetup,
   type ModeId,
   type SetupKind,
 } from "@theologia/backend/convex/lib/studyData";
+import { PLANS } from "@theologia/backend/convex/lib/plans";
 
 export {
   DOCUMENTS,
   COLLECTIONS,
   PURPOSES,
+  MODE_MIN_PLAN,
+  isModeAllowedForPlan,
   isSetupValid,
   type SetupKind,
 } from "@theologia/backend/convex/lib/studyData";
+
+/** Human label for the plan a mode requires, e.g. "Ministry". */
+export function modeMinPlanLabel(id: ModeId): string {
+  return PLANS[MODE_MIN_PLAN[id]].label;
+}
 
 export interface Mode {
   id: ModeId;

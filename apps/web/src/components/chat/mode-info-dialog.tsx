@@ -3,7 +3,7 @@
 import { Dialog } from "@base-ui/react/dialog";
 import { Info, X } from "lucide-react";
 
-import { MODES } from "./lib/modes";
+import { MODES, modeMinPlanLabel } from "./lib/modes";
 import styles from "./mode-info-dialog.module.css";
 
 /** Info icon beside the mode picker; opens a modal explaining each mode. */
@@ -30,7 +30,12 @@ export default function ModeInfoDialog() {
           <div className={styles.list}>
             {MODES.map((mode) => (
               <section key={mode.id} className={styles.mode}>
-                <h3 className={styles.modeLabel}>{mode.label}</h3>
+                <h3 className={styles.modeLabel}>
+                  {mode.label}
+                  <span className={styles.modePlan}>
+                    {modeMinPlanLabel(mode.id)}
+                  </span>
+                </h3>
                 <p className={styles.modeLede}>{mode.lede}</p>
                 <ul className={styles.useCases}>
                   {mode.useCases.map((useCase) => (

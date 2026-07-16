@@ -17,7 +17,7 @@ import ChatUsageMeter from "./chat-usage-meter";
 import LiveThread, { type LiveConversation } from "./live-thread";
 import ProfileOptInCard from "./profile-optin-card";
 import type { ConversationSetup, ModeId } from "./lib/chat-state";
-import { usageLimitMessage } from "./lib/usage-limit";
+import { modeLockedMessage, usageLimitMessage } from "./lib/usage-limit";
 import styles from "./chat-app.module.css";
 
 export default function ChatApp() {
@@ -78,6 +78,7 @@ export default function ChatApp() {
     } catch (error) {
       toast.error(
         usageLimitMessage(error) ??
+          modeLockedMessage(error) ??
           "Could not start the study. Please try again.",
       );
     }

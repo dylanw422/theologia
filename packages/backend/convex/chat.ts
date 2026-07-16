@@ -8,7 +8,7 @@ import {
   vStreamArgs,
 } from "@convex-dev/agent";
 import { paginationOptsValidator } from "convex/server";
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 
 import { components, internal } from "./_generated/api";
 import {
@@ -22,7 +22,11 @@ import {
 import { authComponent } from "./auth";
 import { PLANS } from "./lib/plans";
 import { buildSystemPrompt } from "./lib/prompts";
-import { deriveTitle, isSetupValid } from "./lib/studyData";
+import {
+  deriveTitle,
+  isModeAllowedForPlan,
+  isSetupValid,
+} from "./lib/studyData";
 import { getPlanIdForUser } from "./polar";
 import { scheduleExtraction } from "./profile";
 import { vMode, vSetup } from "./schema";
@@ -59,6 +63,9 @@ export const createConversation = mutation({
     if (!text) throw new Error("Message is empty");
 
     const planId = await getPlanIdForUser(ctx, user._id);
+    if (!isModeAllowedForPlan(args.mode, planId)) {
+      throw new ConvexError({ code: "MODE_LOCKED", planId, mode: args.mode });
+    }
     await assertUnderLimitAndCount(ctx, user._id, planId);
 
     const threadId = await createThread(ctx, components.agent, {

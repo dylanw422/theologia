@@ -4,6 +4,8 @@
  * web chat UI both import from here.
  */
 
+import { planMeetsMinimum, type PlanId } from "./plans";
+
 export type ModeId =
   | "qa"
   | "devils-advocate"
@@ -219,6 +221,26 @@ export const MODE_SETUP: Record<ModeId, SetupKind> = {
   "debate-prep": "versus",
   resources: "tradition-purpose",
 };
+
+/** Minimum plan (per the pricing card on the marketing page) each mode
+ * requires. Legacy modes inherit the plan of the mode they were merged
+ * into, since a still-open old conversation shouldn't newly lock. */
+export const MODE_MIN_PLAN: Record<ModeId, PlanId> = {
+  qa: "free",
+  "devils-advocate": "scholar",
+  comparison: "scholar",
+  catechism: "ministry",
+  library: "ministry",
+  "scripture-study": "ministry",
+  "sermon-prep": "ministry",
+  // Legacy modes (see ModeId).
+  "debate-prep": "scholar",
+  resources: "free",
+};
+
+export function isModeAllowedForPlan(mode: ModeId, planId: PlanId): boolean {
+  return planMeetsMinimum(planId, MODE_MIN_PLAN[mode]);
+}
 
 /** Whether the new-study setup is complete enough to send the first message. */
 export function isSetupValid(mode: ModeId, setup: ConversationSetup): boolean {

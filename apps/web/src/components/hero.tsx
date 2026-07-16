@@ -83,14 +83,14 @@ const PRICING = [
     price: "$19",
     period: "/mo",
     productKey: "scholar",
-    desc: "Standard usage · Devil's Advocate · Comparison · Resource Engine",
+    desc: "Standard usage · Devil's Advocate · Comparison",
   },
   {
     plan: "Ministry",
     price: "$39",
     period: "/mo",
     productKey: "ministry",
-    desc: "Increased usage · All Scholar + Debate Prep · Catechism Tutor · Patristic Library · Scripture Study · Export",
+    desc: "Increased usage · All Scholar + Catechism Tutor · Patristic Library · Scripture Study · Sermon Prep · Export",
   },
   {
     plan: "Church Team",

@@ -1,6 +1,11 @@
 import { describe, expect, test } from "vitest";
 
-import { FREE_MONTHLY_QUERY_LIMIT, PLANS, planFromProductKey } from "./plans";
+import {
+  FREE_MONTHLY_QUERY_LIMIT,
+  PLANS,
+  planFromProductKey,
+  planMeetsMinimum,
+} from "./plans";
 
 describe("planFromProductKey", () => {
   test("maps Polar product keys to plans", () => {
@@ -30,5 +35,21 @@ describe("PLANS", () => {
     expect(PLANS.scholar.weeklyBudgetMicroUsd).toBe(1_375_000);
     expect(PLANS.ministry.weeklyBudgetMicroUsd).toBe(2_825_000);
     expect(PLANS.churchTeam.weeklyBudgetMicroUsd).toBe(7_200_000);
+  });
+});
+
+describe("planMeetsMinimum", () => {
+  test("a plan meets its own minimum and every lower one", () => {
+    expect(planMeetsMinimum("scholar", "scholar")).toBe(true);
+    expect(planMeetsMinimum("scholar", "free")).toBe(true);
+  });
+
+  test("a plan does not meet a higher minimum", () => {
+    expect(planMeetsMinimum("free", "scholar")).toBe(false);
+    expect(planMeetsMinimum("scholar", "ministry")).toBe(false);
+  });
+
+  test("churchTeam meets the ministry minimum", () => {
+    expect(planMeetsMinimum("churchTeam", "ministry")).toBe(true);
   });
 });

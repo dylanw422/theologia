@@ -7,7 +7,13 @@ import { useQuery } from "convex/react";
 
 import ChatComposer, { type ComposerInsert } from "./chat-composer";
 import type { ConversationSetup, ModeId } from "./lib/chat-state";
-import { getMode, isSetupValid, type SetupKind } from "./lib/modes";
+import {
+  getMode,
+  isModeAllowedForPlan,
+  isSetupValid,
+  type SetupKind,
+} from "./lib/modes";
+import ModeLockNotice from "./mode-lock-notice";
 import ModePicker from "./mode-picker";
 import SetupPicker from "./setup-picker";
 import styles from "./chat-empty.module.css";
@@ -35,9 +41,14 @@ export default function ChatEmpty({
   const [mode, setMode] = useState<ModeId>("qa");
   const [setup, setSetup] = useState<ConversationSetup>({});
   const defaultFramework = useQuery(api.userPreferences.getDefaultFramework);
+  const usage = useQuery(api.usage.getUsage);
+  // Most-restrictive default while the plan is still loading, so the
+  // composer never briefly permits a mode it'll then reject.
+  const planId = usage?.planId ?? "free";
 
   const modeDef = getMode(mode);
-  const canSend = isSetupValid(mode, setup);
+  const modeAllowed = isModeAllowedForPlan(mode, planId);
+  const canSend = modeAllowed && isSetupValid(mode, setup);
 
   useEffect(() => {
     if (!defaultFramework) return;
@@ -63,7 +74,7 @@ export default function ChatEmpty({
         </p>
 
         <div className={`${styles.modes} ${styles.reveal} ${styles.d2}`}>
-          <ModePicker mode={mode} onChange={handleModeChange} />
+          <ModePicker mode={mode} planId={planId} onChange={handleModeChange} />
         </div>
 
         {/* Re-key on mode so the copy re-reveals when the study changes */}
@@ -85,12 +96,21 @@ export default function ChatEmpty({
               contextFirst
               insert={insert}
               placeholder={
-                canSend ? modeDef.placeholder : "Complete the setup to begin…"
+                !modeAllowed
+                  ? "Upgrade to unlock this mode…"
+                  : canSend
+                    ? modeDef.placeholder
+                    : "Complete the setup to begin…"
               }
               context={
-                <SetupPicker mode={mode} setup={setup} onChange={setSetup} />
+                modeAllowed ? (
+                  <SetupPicker mode={mode} setup={setup} onChange={setSetup} />
+                ) : undefined
               }
             />
+            {modeAllowed ? null : (
+              <ModeLockNotice modeId={mode} modeLabel={modeDef.label} />
+            )}
           </div>
 
           <div className={`${styles.cards} ${styles.reveal} ${styles.d5}`}>

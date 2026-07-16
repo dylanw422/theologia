@@ -1,7 +1,7 @@
 import { ConvexError } from "convex/values";
 import { describe, expect, test } from "vitest";
 
-import { usageLimitMessage } from "./usage-limit";
+import { modeLockedMessage, usageLimitMessage } from "./usage-limit";
 
 describe("usageLimitMessage", () => {
   test("free-plan limit", () => {
@@ -22,5 +22,25 @@ describe("usageLimitMessage", () => {
     expect(usageLimitMessage(new Error("boom"))).toBeNull();
     expect(usageLimitMessage(new ConvexError({ code: "OTHER" }))).toBeNull();
     expect(usageLimitMessage(undefined)).toBeNull();
+  });
+});
+
+describe("modeLockedMessage", () => {
+  test("names the mode and the required plan", () => {
+    const err = new ConvexError({ code: "MODE_LOCKED", mode: "catechism" });
+    expect(modeLockedMessage(err)).toBe(
+      "Catechism requires the Ministry plan.",
+    );
+  });
+
+  test("falls back to a generic message when the mode is missing", () => {
+    const err = new ConvexError({ code: "MODE_LOCKED" });
+    expect(modeLockedMessage(err)).toBe("This mode requires a higher plan.");
+  });
+
+  test("other errors return null", () => {
+    expect(modeLockedMessage(new Error("boom"))).toBeNull();
+    expect(modeLockedMessage(new ConvexError({ code: "OTHER" }))).toBeNull();
+    expect(modeLockedMessage(undefined)).toBeNull();
   });
 });

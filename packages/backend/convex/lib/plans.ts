@@ -44,6 +44,19 @@ export const PLANS: Record<PlanId, Plan> = {
   },
 };
 
+/** Ordinal ranking for "does plan X grant at least plan Y" checks. Ranks,
+ * not the PLANS insertion order, are the source of truth for comparisons. */
+export const PLAN_RANK: Record<PlanId, number> = {
+  free: 0,
+  scholar: 1,
+  ministry: 2,
+  churchTeam: 3,
+};
+
+export function planMeetsMinimum(planId: PlanId, minimum: PlanId): boolean {
+  return PLAN_RANK[planId] >= PLAN_RANK[minimum];
+}
+
 export function planFromProductKey(
   key: string | null | undefined,
 ): PlanId {

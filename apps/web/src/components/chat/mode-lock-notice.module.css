@@ -1,0 +1,24 @@
+.notice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 0.9rem;
+  padding: 0.6rem 0.9rem;
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.82rem;
+  text-align: center;
+  color: var(--parchment-dim);
+  background: rgba(244, 232, 208, 0.02);
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+}
+
+.cta {
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  white-space: nowrap;
+  color: var(--gold);
+}
